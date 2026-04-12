@@ -32,6 +32,7 @@ tags:
 - Pivot (2026-04-12): [[pivot-to-chat-preview-wrapper]] · [[iframe-sandbox-over-webcontainers]] · [[parent-gated-signup-first]]
 - Tooling (2026-04-12): [[subagent-team-structure]]
 - Workshop Structure (2026-04-12): [[track-a-primary-b-backup]] · [[stack-decision-after-curriculum]]
+- Architecture (2026-04-12): [[nextjs-fastapi-wrapper-architecture]]
 
 ### Deliverables (9)
 - [[deliverables/_index|_index]]
@@ -39,9 +40,10 @@ tags:
 - [[pilot-5-5-milestones]] — 전체 팀 마일스톤 (2026-04-12 확정)
 - [[pilot-gemini-api-key]] · [[pilot-server-domain]] · [[pilot-oauth-setup]] · [[pilot-cline-gemini-integration]] · [[pilot-game-starter-template]] · [[pilot-rehearsal-late-april]] · [[pilot-operator-guide]]
 
-### Specs (2)
+### Specs (3)
 - [[specs/_index|_index]]
 - [[pilot-env-design]] · [[pilot-curriculum-adapted]]
+- [[ai-prompting-literacy-input]] (2026-04-12) — BH 커리큘럼 인풋: 블록별 AI 프롬프팅 스킬 매핑
 
 ### Components (6)
 - [[components/_index|_index]]

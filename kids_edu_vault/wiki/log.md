@@ -13,6 +13,25 @@ tags:
 
 ---
 
+## 2026-04-12 (8) — MVP 개발 계획 확정: FastAPI + CLI subprocess + AI 프롬프팅 리터러시
+
+### Why
+- 어린이 인터페이스에서 Claude를 어떻게 호출할지 결정. Claude Agent SDK vs CLI subprocess 검토.
+- 4/21 스택 결정 게이트 후 4/26 리허설까지 5일밖에 없어 `sanshome_bot/claude_runner.py` 재활용이 유일한 현실적 선택.
+- "AI로 게임 만들기" + "AI에게 잘 시키는 법 체득" 두 교육 목표 병행 필요성 확인 → 커리큘럼 + 제품 동시 설계.
+
+### 결정
+- 백엔드: FastAPI (Python) + `claude -p --output-format stream-json` CLI subprocess.
+- 프론트: Next.js — 채팅 pane + 게임 preview iframe + 프롬프트 스캐폴딩 카드.
+- 블록별 프롬프팅 스킬 매핑 (묘사→구체화→추가→수정→자유→언어화) 커리큘럼에 반영 요청.
+
+### 파일 변경
+- 갱신: `2026-04-12-mvp-dev-plan.md` — FastAPI 스택으로 전면 업데이트
+- 생성: `wiki/specs/ai-prompting-literacy-input.md` — BH 커리큘럼 인풋 spec
+- 생성: `wiki/decisions/nextjs-fastapi-wrapper-architecture.md` — 아키텍처 ADR
+
+---
+
 ## 2026-04-12 (7) — Subagent 팀 빌드: Dev 4 추가 (architect / implementer / reviewer / tester)
 
 ### Why
