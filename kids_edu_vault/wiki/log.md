@@ -13,6 +13,19 @@ tags:
 
 ---
 
+## 2026-04-12 (12) — Frontend Unit 4 완료: 2-pane 레이아웃 + GamePreview
+
+### 완료 내용
+- `GamePreview.tsx`: srcdoc + sandbox="allow-scripts" iframe
+- `page.tsx`: 채팅 40% | 게임 60% 분할 레이아웃, 임시 테스트 버튼
+- `wiki/components/kids-edu-frontend.md` 신규 생성
+- 빌드 통과 확인
+
+### 다음 Unit
+- Unit 5: ChatPane (WebSocket + 스트리밍)
+
+---
+
 ## 2026-04-12 (11) — Frontend Unit 3 완료: Next.js 초기화
 
 ### 완료 내용
