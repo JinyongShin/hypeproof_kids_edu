@@ -40,10 +40,11 @@ tags:
 - [[pilot-5-5-milestones]] — 전체 팀 마일스톤 (2026-04-12 확정)
 - [[pilot-gemini-api-key]] · [[pilot-server-domain]] · [[pilot-oauth-setup]] · [[pilot-cline-gemini-integration]] · [[pilot-game-starter-template]] · [[pilot-rehearsal-late-april]] · [[pilot-operator-guide]]
 
-### Specs (3)
+### Specs (4)
 - [[specs/_index|_index]]
 - [[pilot-env-design]] · [[pilot-curriculum-adapted]]
 - [[ai-prompting-literacy-input]] (2026-04-12) — BH 커리큘럼 인풋: 블록별 AI 프롬프팅 스킬 매핑
+- [[product-requirements]] (2026-04-12) — JY/Ryan 공통 상품 요구사항 R1-R9 + 충족 현황
 
 ### Components (7)
 - [[components/_index|_index]]

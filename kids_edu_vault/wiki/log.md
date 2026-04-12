@@ -13,6 +13,21 @@ tags:
 
 ---
 
+## 2026-04-12 (16) — 상품 요구사항 인제스트 + 갭 분석
+
+### 내용
+- `meeting_notes/production_requirements.md` (R1-R9) 수신
+- 현재 구현 대비 갭 분석 완료
+- ❌ 미충족: R4(폴백), R7(갤러리), R8(공유), R9(밝은 UI)
+- 🔶 부분: R2(타이핑 최소화 — 원클릭 전송 검토 필요)
+- ✅ 충족: R1, R3, R5, R6
+
+### 생성 파일
+- `kids_edu_vault/wiki/specs/product-requirements.md` — R1-R9 요구사항 + 현황 태그
+- `product-requirements-gap-plan.md` (프로젝트 루트) — 갭 해소 구현 계획 (P0/P1/P2)
+
+---
+
 ## 2026-04-12 (15) — Unit 7 완료: MVP 통합 확인
 
 ### 검증 항목 (MOCK_CLAUDE=1)
