@@ -166,6 +166,7 @@ async def stream_claude(prompt: str, child_id: str):
         "claude", "-p", prompt,
         "--model", CLAUDE_MODEL,
         "--output-format", "stream-json",
+        "--verbose",
         "--allowedTools", "Read,Write,Glob",
     ]
     if persona:
