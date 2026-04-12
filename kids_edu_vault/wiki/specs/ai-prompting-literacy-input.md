@@ -3,7 +3,7 @@ type: spec
 title: "AI 프롬프팅 리터러시 — 커리큘럼 인풋"
 created: 2026-04-12
 updated: 2026-04-12
-status: proposed
+status: implemented
 tags:
   - curriculum
   - ai-literacy

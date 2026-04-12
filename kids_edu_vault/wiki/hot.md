@@ -1,75 +1,82 @@
 ---
 type: meta
 title: "Hot Cache"
+created: 2026-04-12
 updated: 2026-04-12
 tags:
-  - meta/hot
+  - meta/cache
 ---
 
-# Recent Context
+# Hot Cache — 2026-04-12
 
-## Last Updated
-2026-04-12 (Session 8). MVP 개발 계획 확정: FastAPI + CLI subprocess + AI 프롬프팅 리터러시 레이어.
+최근 컨텍스트 스냅샷. 세션 시작 시 가장 먼저 읽을 것.
 
-## Key Recent Facts
-- 파일럿: **2026-05-05 13:30–15:30 · 국립암센터 일산로323 강당 · 40명, 8–12세** ([[environ-kukrip-amsenter]]). 23일 남음.
-- 비용 목표: $0.15 미만 / 세션. Q2 OKR: KR1 수강생 5명+ 실습 / KR2 치명 장애 0 / KR3 운영자 가이드 ([[okr-q2-jy]]).
-- 운영 모드: [[fast-implementation-mode]] (피로도·타이핑 제약).
-- Track A(웹 래퍼, 주력) / Track B(텔레그램, 백업) — 커리큘럼 단일 ([[track-a-primary-b-backup]]).
+---
 
-## 현재 스택 (2026-04-12 확정)
+## 현재 상태: MVP 완료 (Unit 1-7 전체)
 
-**교육 목표 2개 병행:**
-1. AI와 함께 게임 만들기 (창작 경험)
-2. AI에게 잘 시키는 법 체득 ([[ai-prompting-literacy-input]])
+### 프로젝트 개요
+- 목표: 소아암 병동 어린이(8-12세) AI 코딩 교육 파일럿 (2026-05-05)
+- 스택: FastAPI (Python/uv) + Next.js 16 (App Router) + Claude CLI subprocess
+- 래퍼: 채팅(WebSocket) + iframe 게임 프리뷰 + 블록별 프롬프트 스캐폴드
 
-**아키텍처** ([[nextjs-fastapi-wrapper-architecture]]):
+### 완료된 작업 (2026-04-12)
+| Unit | 내용 | 상태 |
+|---|---|---|
+| 1 | Backend TDD (28개 테스트) | ✅ |
+| 2 | Backend 마무리 (.env.example, uvicorn 기동) | ✅ |
+| 3 | Frontend Next.js 초기화 | ✅ |
+| 4 | 2-pane 레이아웃 + GamePreview (iframe sandbox) | ✅ |
+| 5 | ChatPane (WebSocket 스트리밍) | ✅ |
+| 6 | PromptScaffold (블록별 예시 문장 카드) | ✅ |
+| 7 | 통합 확인 (MOCK_CLAUDE, 세션 독립, 5탭 동시) | ✅ |
+
+### 아키텍처 요약
+
 ```
-[ Next.js 프론트 ] ←WebSocket→ [ FastAPI 백엔드 ]
-  채팅 + iframe preview              ↓
-  프롬프트 스캐폴딩 카드      claude -p --stream-json
-                               --allowedTools Read,Write,Glob
-                               --resume [child_session_id]
+아이 브라우저
+  └─ Next.js (localhost:3000)
+       ├─ ChatPane — WebSocket → FastAPI (localhost:8000)
+       │                              └─ MOCK_CLAUDE=1: 모의 스트리밍
+       │                                 MOCK_CLAUDE=0: Claude CLI subprocess
+       └─ GamePreview — <iframe srcdoc sandbox="allow-scripts">
 ```
 
-- sanshome_bot/claude_runner.py 재활용 (빠른 구현)
-- iframe srcdoc sandbox="allow-scripts" ([[iframe-sandbox-over-webcontainers]])
-- Bash 툴 제거 (아동 보안)
+### 핵심 파일 경로
+- `src/backend/main.py` — FastAPI WebSocket 서버
+- `src/backend/claude_runner.py` — SessionStore + stream_claude
+- `src/backend/tests/test_claude_runner.py` — 28개 TDD 테스트
+- `src/backend/personas/TUTOR.md` — AI 튜터 페르소나
+- `src/frontend/app/page.tsx` — 루트 페이지 (Suspense 래핑)
+- `src/frontend/components/ChatPane.tsx` — 채팅 UI + WS 연동
+- `src/frontend/components/GamePreview.tsx` — iframe 게임 프리뷰
+- `src/frontend/components/PromptScaffold.tsx` — 예시 문장 카드
+- `src/frontend/hooks/useChat.ts` — WS 상태 관리
+- `src/frontend/lib/scaffoldData.ts` — 블록별 커리큘럼 데이터
 
-## AI 프롬프팅 스킬 — 블록별 매핑
+### 검증 결과 (MOCK_CLAUDE=1)
+- WS 이벤트 시퀀스: text×N → game → done ✅
+- 세션 독립 (child01 vs child02 동시) ✅
+- 5탭 동시 접속 ✅
+- /admin/reset 엔드포인트 확인 ✅
+- 28개 pytest 전체 통과 ✅
+- `npm run build` 통과 ✅
 
-| 블록 | 스킬 |
-|---|---|
-| Block 0 | 묘사하기 |
-| Block 1 | 구체화 |
-| Block 2 | 추가 요청 |
-| Block 3 | 수정 요청 |
-| Block 4 | 자유 조합 |
-| Block 5 | 언어화 (어떻게 말했는지 설명) |
+### 다음 단계
+- 실제 Claude 연동 (MOCK_CLAUDE=0) 테스트
+- 리허설 준비 (2026-04-26)
+- 파일럿 당일 운영 (2026-05-05)
 
-UI: 블록별 프롬프트 스캐폴딩 카드 + "잘 됐던 말들" 히스토리 패널.
-Claude 응답 끝: "💡 다음엔 ~라고 해봐!" 1줄.
+### 환경 변수
+```
+CLAUDE_TIMEOUT=120
+CLAUDE_MODEL=sonnet
+MOCK_CLAUDE=0       # 1로 설정 시 실제 Claude 호출 없이 개발 가능
+```
 
-## 마일스톤 (JY 담당)
-
-| 날짜 | 마감 |
-|---|---|
-| **4/19** | BH에게 [[ai-prompting-literacy-input]] 전달 |
-| **4/21** | 커리큘럼 리뷰 → 스택 최종 확정 ([[stack-decision-after-curriculum]]) |
-| **4/26** | 리허설 가능 상태 (FastAPI + Next.js 연동 완료) |
-| **4/30** | 드라이런 |
-| **5/5** | 파일럿 당일 |
-
-## Active Threads
-
-- **Jay 확인 대기**: 피벗 방향 승인 (`2026-04-12-pivot-briefing-jay.md`).
-- **BH 전달 필요 (4/18까지)**: [[ai-prompting-literacy-input]] spec.
-- **JY 구현 Phase 1 (~ 4/21)**: `wrapper/` Next.js 스캐폴드 + `backend/` FastAPI 초기화.
-- **JY 구현 Phase 2 (4/21~4/26)**: Claude 스트리밍 → iframe 게임 실행 → 세션 → 스캐폴딩 UI.
-- **의료진 합의 필요**: ANC 컷오프, 사전 문진, 강당 HVAC. 4/20 전 확정.
-- **랩탑/태블릿 40대 확보**: 4/26까지 ([[pilot-5-5-milestones]]).
-
-## Subagent 팀 (2026-04-12 빌드 완료, 총 6개)
-- **Wiki**: `wiki-ingest`, `wiki-lint`.
-- **Dev**: `architect` → `implementer` → `tester` → `reviewer` — 전원 sonnet.
-- 위임 규칙: `.claude/CLAUDE.md`. 팀 개요: 루트 `CLAUDE.md`.
+### 주요 결정 & 함정
+- iframe `sandbox="allow-scripts"` only — allow-same-origin 엄격 금지
+- MOCK_CLAUDE는 import 시점 평가 → monkeypatch는 setenv 아닌 setattr 사용
+- uv PATH: `$HOME/.local/bin` → `~/.bashrc`에 추가 필수
+- Next.js useSearchParams → 반드시 Suspense boundary 안에서 호출
+- pyproject.toml `[build-system]` 제거 — FastAPI app은 distributable package 아님

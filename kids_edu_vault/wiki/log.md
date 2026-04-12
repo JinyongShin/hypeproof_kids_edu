@@ -13,6 +13,39 @@ tags:
 
 ---
 
+## 2026-04-12 (15) — Unit 7 완료: MVP 통합 확인
+
+### 검증 항목 (MOCK_CLAUDE=1)
+- WS 이벤트 시퀀스 (text×N → game → done): PASS
+- 세션 독립 (child01 vs child02 동시 접속): PASS
+- 5탭 동시 접속 (child01-05): PASS
+- /admin/reset 엔드포인트: PASS (mock 세션 미저장으로 false 반환 — 정상)
+- `uv run pytest -v` 28개 전체: PASS
+- `npm run build` Turbopack 컴파일: PASS
+
+### 볼트 업데이트
+- `hot.md` 전면 갱신 (MVP 완료 스냅샷)
+- `specs/ai-prompting-literacy-input.md` status → implemented
+
+### 커밋
+- `feat: MVP 통합 확인 완료`
+
+---
+
+## 2026-04-12 (14) — Frontend Unit 6 완료: 프롬프트 스캐폴딩 카드
+
+### 완료 내용
+- `scaffoldData.ts`: 블록 0-5 교육 목표·스킬·예시 문장 데이터 (이 파일만 봐도 커리큘럼 구조 파악 가능)
+- `PromptScaffold.tsx`: 블록별 클릭형 예시 문장 카드 UI
+- `ChatPane.tsx` 통합: 카드 클릭 → 입력창 자동 채워짐
+- 블록 4(자유 조합)·5(언어화)는 카드 미표시 (자유 입력 유도)
+- `npm run build` 통과 확인
+
+### 커밋
+- `feat(frontend): 블록별 프롬프트 스캐폴딩 카드`
+
+---
+
 ## 2026-04-12 (12) — Frontend Unit 4 완료: 2-pane 레이아웃 + GamePreview
 
 ### 완료 내용
