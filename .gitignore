@@ -16,6 +16,9 @@ kids_edu_vault/.obsidian/workspace-mobile.json
 kids_edu_vault/.obsidian/workspaces.json
 kids_edu_vault/.trash/
 
+# Runtime data
+src/backend/data/
+
 # Python / uv
 __pycache__/
 *.pyc
@@ -34,4 +37,6 @@ desktop.ini
 .vscode/
 .idea/
 *.swp
+
 .claude
+.mcp.json
