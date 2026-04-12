@@ -1,0 +1,35 @@
+# Secrets
+.env
+.env.*
+*.key
+*.pem
+credentials*.json
+
+# External reference repo (already copied relevant md into kids_edu_vault/.raw/sans-kids-2025/)
+sans-kids-school-2025/
+
+# Obsidian user state (per-user workspace, not shared)
+kids_edu_vault/.obsidian/workspace.json
+kids_edu_vault/.obsidian/workspace-mobile.json
+kids_edu_vault/.obsidian/workspaces.json
+kids_edu_vault/.trash/
+
+# Python / uv
+__pycache__/
+*.pyc
+.venv/
+.ruff_cache/
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+.claude
