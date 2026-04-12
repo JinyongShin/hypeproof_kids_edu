@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useChat } from "@/hooks/useChat";
+import PromptScaffold from "@/components/PromptScaffold";
 
 interface ChatPaneProps {
   childId: string;
@@ -62,6 +63,9 @@ export default function ChatPane({
         ))}
         <span className="ml-2 self-center text-xs text-gray-500">블록</span>
       </div>
+
+      {/* 블록별 프롬프트 스캐폴딩 카드 */}
+      <PromptScaffold currentBlock={currentBlock} onSelect={setInput} />
 
       {/* 메시지 목록 */}
       <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
