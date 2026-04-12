@@ -13,6 +13,18 @@ tags:
 
 ---
 
+## 2026-04-12 (11) — Frontend Unit 3 완료: Next.js 초기화
+
+### 완료 내용
+- `src/frontend/` create-next-app@16 초기화 (TypeScript + App Router + Tailwind)
+- 보일러플레이트 정리 (page.tsx, layout.tsx, globals.css)
+- 빌드 통과 확인
+
+### 다음 Unit
+- Unit 4: 2-pane 레이아웃 + GamePreview (iframe sandbox)
+
+---
+
 ## 2026-04-12 (10) — Backend Unit 2 완료: 서버 기동 확인 + 볼트 문서화
 
 ### 완료 내용
