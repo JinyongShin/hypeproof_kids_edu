@@ -13,6 +13,19 @@ tags:
 
 ---
 
+## 2026-04-12 (9) — Backend TDD Unit 1 완료: 28/28 테스트 통과
+
+### 완료 내용
+- `src/backend/` 초기 구현: `main.py`(FastAPI WebSocket), `claude_runner.py`(subprocess + SessionStore), `personas/TUTOR.md`(W3+W4)
+- TDD 테스트 28개 작성·통과: SessionStore(10), _extract_hint(5), _HTML_RE(5), reset_session(2), stream_claude mock(6)
+- `pyproject.toml` dev 의존성 추가 (pytest, pytest-asyncio)
+- 발견한 패턴: `MOCK_CLAUDE` 같은 모듈 레벨 상수는 `monkeypatch.setattr(module, 'VAR', val)`로 패치해야 함
+
+### 다음 Unit
+- Unit 2: `.env.example` 작성 + 서버 기동 확인 → backend 볼트 컴포넌트 페이지
+
+---
+
 ## 2026-04-12 (8) — MVP 개발 계획 확정: FastAPI + CLI subprocess + AI 프롬프팅 리터러시
 
 ### Why
