@@ -14,6 +14,9 @@ tags:
 ## OKR
 - [[okr-q2-jy]] — Q2 OKR (JY, 파일럿 실행환경)
 
+## Milestones
+- [[pilot-5-5-milestones]] — 2026-05-05 파일럿 전체 팀 마일스톤 (2026-04-12 확정)
+
 ## In Progress — Pilot (due 2026-05-05)
 - [[pilot-gemini-api-key]] (due 2026-04-18)
 - [[pilot-server-domain]] (due 2026-04-18)

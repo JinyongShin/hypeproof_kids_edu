@@ -24,9 +24,15 @@ tags:
 
 ### Pilot
 - [[fast-implementation-mode]] — AI 튜터 빠른 구현 모드 (2026-04-10)
+- [[track-a-primary-b-backup]] — Track A 웹 주력 / Track B 텔레그램 백업 구조 (2026-04-12, accepted)
+- [[stack-decision-after-curriculum]] — 스택 최종 결정을 커리큘럼(4/21) 이후로 연기 (2026-04-12, accepted)
 
 ## Pending
 - [[combat-vs-cooperative-framing]] — 병동 파일럿 게임 서사: 협력형 우선 (2026-04-12, proposed)
+- [[pivot-to-chat-preview-wrapper]] — code-server+cline → chat+preview 래퍼 피벗 (2026-04-12, proposed)
+- [[iframe-sandbox-over-webcontainers]] — 라이브 프리뷰 샌드박스 기술 선택 (2026-04-12, proposed)
+- [[parent-gated-signup-first]] — 부모 이메일 가입 우선, Google OAuth는 14+/교사 한정 (2026-04-12, proposed)
+- [[subagent-team-structure]] — Wiki 2 + Dev 4 subagent 팀 구조 (2026-04-12, proposed)
 
 ## Superseded
 _없음._

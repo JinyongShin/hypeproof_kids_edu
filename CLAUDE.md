@@ -78,6 +78,74 @@ kids_edu_vault/wiki/
 
 ---
 
+## 팀 & 워크플로우
+
+이 프로젝트는 **지식 관리(Wiki) 2 + 개발(Dev) 4** = 총 6개 subagent로 운영된다.
+세부 위임 규칙은 `.claude/CLAUDE.md` 참조. 본 섹션은 한눈에 보는 지도.
+
+### Subagent 팀
+
+| Agent | 역할 | Model | 핵심 스킬 | 트리거 |
+|---|---|---|---|---|
+| `wiki-ingest` | 소스 일괄 ingest → wiki 페이지 생성·갱신 | sonnet | wiki-ingest, obsidian-markdown, defuddle | "ingest [파일]", `.raw/` 드랍 후 |
+| `wiki-lint` | 볼트 헬스체크 (고아·끊긴 링크·frontmatter) | sonnet | wiki-lint | 주간 점검, `/wiki-lint` |
+| `architect` | 기능·아키텍처 설계, ADR 작성 | sonnet | obsidian-markdown, wiki, simplify, wiki-query | 새 기능·리팩터 착수 시 |
+| `implementer` | Next.js / Agent SDK 코드 구현 | sonnet | claude-api, tdd, worktree-parallel, wiki-query | architect ADR 승인 후 |
+| `reviewer` | 보안·성능·품질·시크릿·PIPA 리뷰 (read-only) | sonnet | simplify, wiki-query | 커밋·PR 전 필수 |
+| `tester` | Vitest/Playwright 테스트 작성·실행 | sonnet | tdd, wiki-query | implementer 산출물에 대해 |
+
+### 스킬 인벤토리 (컨텍스트별)
+
+- **Wiki 운영**: `wiki`, `wiki-ingest`, `wiki-query`, `wiki-lint`, `save`, `autoresearch`, `canvas`
+- **Obsidian 문법·도구**: `obsidian-markdown`, `obsidian-bases`, `obsidian-cli`, `json-canvas`, `defuddle`
+- **개발**: `claude-api`, `tdd`, `worktree-parallel`, `simplify`
+- **하네스**: `update-config`, `keybindings-help`, `loop`, `schedule`
+
+### 단계별 규칙 (매 기능·변경마다)
+
+| 단계 | 담당 | 필수 행위 | 산출물 |
+|---|---|---|---|
+| 1. Design | `architect` (또는 메인) | ADR 작성 (`_templates/decision.md`), `status: proposed` | `wiki/decisions/<slug>.md` |
+| 2. Implement | `implementer` | architect ADR 경로를 컨텍스트로 받음. `.env.local` 사용, 시크릿 인라인 금지 | 코드 파일 + `.env.example` 갱신 |
+| 3. Test | `tester` | 기본 후행 모드, 지시 시 TDD 모드. Python은 `uv run pytest` | 테스트 파일 |
+| 4. Review | `reviewer` | iframe sandbox escape, 시크릿 누출, PIPA 경로, server/client 경계 점검 (read-only) | 리뷰 리포트 |
+| 5. Commit | 메인 | `git push` 등 되돌릴 수 없는 작업은 메인만. subagent는 `git add`/`commit`까지 | 커밋 |
+| 6. Archive | `wiki-ingest` 또는 `save` | 결정·학습을 볼트에 반영, `hot.md` 갱신 | wiki 업데이트 |
+| 7. Weekly | `wiki-lint` | 금요일 볼트 점검 | lint 리포트 |
+
+### 공통 규약
+
+- **컨텍스트 시딩**: 모든 subagent는 첫 작업 전 `kids_edu_vault/wiki/hot.md` + 이 파일 + 호출자가 지정한 ADR/파일 경로 Read.
+- **핸드오프 = 파일 경로**: 요약 복붙 금지. architect→implementer→tester→reviewer 전체가 파일 경로로 연결.
+- **이전 결정 조회**: `wiki-query` 스킬 직접 호출. 별도 agent 호출 금지.
+- **Bash 스코프**: `git push`, `reset --hard`, `rm -rf`, 전역 설치는 subagent 금지 — 메인만 실행.
+- **병행 작업**: 독립 기능 2개 이상이면 `worktree-parallel` 스킬로 worktree 분기 후 worktree별 implementer.
+
+### 표준 흐름
+
+```
+새 기능 요청
+    ↓
+[architect] → wiki/decisions/<slug>.md (proposed)
+    ↓ (ADR 경로 전달)
+[implementer] → 코드 + .env.example
+    ↓ (파일 경로 전달)
+[tester] → 테스트 파일
+    ↓ (변경 파일 목록 전달)
+[reviewer] → 리뷰 리포트
+    ↓ (issue 있으면 implementer 재호출, 리포트 경로 전달)
+메인 → git commit (로컬까지)
+    ↓
+[wiki-ingest] or save → 볼트 반영, hot.md 갱신
+```
+
+### 모델 비용 가드레일
+
+- 대부분은 `sonnet`. architect도 `sonnet` 기본 — 복합 아키텍처 판단이 필요한 결정만 메인(opus)이 직접 작성.
+- 새 agent 추가 전 질문: "기존 6개에 녹지 않는 이유를 한 줄로 답할 수 있는가?" 답할 수 없으면 만들지 말 것. 과도한 specialist는 자동 위임 신뢰도를 떨어뜨린다.
+
+---
+
 ## Obsidian 마크다운 규칙 (필수 준수)
 
 ### Frontmatter (YAML)

@@ -29,10 +29,11 @@ tags:
 - [[case-oep-socioecological-program]] — 호주 OEP. Bronfenbrenner 기반 다채널 프로그램 평가.
 
 ## Competitive
-_아직 없음._
+- [[intel-competitive-landscape-2026]] — Chat-to-code/game 시장 구도 (bolt·Lovable·v0·Replit·Scratch·엔트리·Khanmigo). 2026-04-12.
 
 ## Technical References
-_아직 없음._
+- [[intel-wrapper-architecture]] — Chat+preview 래퍼 스택 (Claude Agent SDK, iframe sandbox, Next.js). 2026-04-12.
+- [[intel-auth-billing-compliance]] — 아동 SaaS 인증·결제·PIPA/COPPA 컴플라이언스. 2026-04-12.
 
 ## Notes
 - `/defuddle <url>` 로 웹 페이지 본문만 추출 후 `.raw/`에 저장 → ingest.
