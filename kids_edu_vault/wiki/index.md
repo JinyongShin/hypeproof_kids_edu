@@ -45,9 +45,10 @@ tags:
 - [[pilot-env-design]] · [[pilot-curriculum-adapted]]
 - [[ai-prompting-literacy-input]] (2026-04-12) — BH 커리큘럼 인풋: 블록별 AI 프롬프팅 스킬 매핑
 
-### Components (6)
+### Components (7)
 - [[components/_index|_index]]
 - [[code-server]] · [[oauth2-proxy]] · [[caddy]] · [[cline]] · [[gemini-2-5-flash]] · [[sans-kids-school-2025]]
+- Dev (2026-04-12): [[kids-edu-backend]]
 
 ### Concepts (8)
 - [[concepts/_index|_index]]

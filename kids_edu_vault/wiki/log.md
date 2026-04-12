@@ -13,6 +13,19 @@ tags:
 
 ---
 
+## 2026-04-12 (10) — Backend Unit 2 완료: 서버 기동 확인 + 볼트 문서화
+
+### 완료 내용
+- `.env.example` 추가 (CLAUDE_TIMEOUT, CLAUDE_MODEL, MOCK_CLAUDE)
+- `/health` 응답 확인 완료
+- `.gitignore` 수정 (`.env.example` 추적 가능하도록)
+- `wiki/components/kids-edu-backend.md` 신규 생성
+
+### 다음 Unit
+- Unit 3: Next.js 프론트엔드 초기화
+
+---
+
 ## 2026-04-12 (9) — Backend TDD Unit 1 완료: 28/28 테스트 통과
 
 ### 완료 내용
