@@ -2,7 +2,7 @@
 type: meta
 title: "Log"
 created: 2026-04-12
-updated: 2026-04-13
+updated: 2026-04-14
 tags:
   - meta/log
 ---
@@ -10,6 +10,29 @@ tags:
 # Log
 
 추가 전용. 새 엔트리는 **최상단**에 삽입. 과거 엔트리 수정 금지.
+
+---
+
+## 2026-04-14 — 채팅 히스토리 저장/복원 + Windows UTF-8 버그 수정
+
+### 구현
+- **채팅 히스토리 저장**: `done` 이벤트 시 `data/messages/{child_id}/{session_id}.json` 에 user+assistant pair 저장. atomic write, 경로 순회 방어 적용.
+- **복원 API**: `GET /sessions/{child_id}/{session_id}/messages` 엔드포인트 추가.
+- **프론트엔드**: `useChat.ts` sessionId 변경 감지 시 자동 히스토리 로드.
+- **세션 삭제 연동**: `delete_session` 호출 시 messages 파일도 함께 삭제.
+
+### 버그 수정 (f59b5e4) — Windows CP949 인코딩
+- `_append_messages`, `_save_session_meta`, `SessionStore._save` 의 `write_text()` 3곳에 `encoding='utf-8'` 누락 → 한국어 깨짐 + HTTP 500 오류 발생.
+- `_load_messages` 에 `UnicodeDecodeError` 예외 처리 추가.
+
+### E2E 검증
+- 메시지 전송 → 로그아웃 → 재로그인 → 세션 클릭 → 히스토리 복원 전 구간 확인 완료.
+
+### 커밋
+- `f59b5e4` fix(backend): Windows CP949 인코딩 버그 수정
+- `40e585d` feat: 채팅 히스토리 백엔드 저장/복원
+- `5ee623b` fix(frontend): 재로그인 시 게임 복원 + 로딩 UI
+- `2d8693f` fix(frontend): React Strict Mode WS 오류 오탐 수정
 
 ---
 
