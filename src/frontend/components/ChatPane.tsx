@@ -6,25 +6,30 @@ import PromptScaffold from "@/components/PromptScaffold";
 
 interface ChatPaneProps {
   childId: string;
-  onGameHtmlChange: (html: string) => void;
+  sessionId: string;
+  onGameReady: (gameUrl: string) => void;
   currentBlock: number;
   onBlockChange: (block: number) => void;
 }
 
 export default function ChatPane({
   childId,
-  onGameHtmlChange,
+  sessionId,
+  onGameReady,
   currentBlock,
   onBlockChange,
 }: ChatPaneProps) {
-  const { messages, gameHtml, hint, isLoading, send } = useChat(childId);
+  const { messages, gameUrl, hint, isLoading, send } = useChat(
+    childId,
+    sessionId
+  );
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // 게임 HTML 변경 시 부모에 전달
+  // 게임 URL 변경 시 부모에 전달
   useEffect(() => {
-    if (gameHtml) onGameHtmlChange(gameHtml);
-  }, [gameHtml, onGameHtmlChange]);
+    if (gameUrl) onGameReady(gameUrl);
+  }, [gameUrl, onGameReady]);
 
   // 새 메시지 도착 시 스크롤 최하단
   useEffect(() => {
@@ -98,19 +103,22 @@ export default function ChatPane({
           </div>
         ))}
         {/* 💡 힌트 — 클릭하면 따옴표 안 텍스트를 즉시 전송 */}
-        {hint && (() => {
-          const match = hint.match(/"([^"]+)"/);
-          const sendText = match ? match[1] : hint.replace(/^💡\s*/, "").trim();
-          return (
-            <button
-              onClick={() => handleQuickSend(sendText)}
-              disabled={isLoading}
-              className="mx-auto block rounded-full border border-indigo-700 px-3 py-1 text-center text-xs text-indigo-400 hover:bg-indigo-950 disabled:opacity-50"
-            >
-              {hint}
-            </button>
-          );
-        })()}
+        {hint &&
+          (() => {
+            const match = hint.match(/"([^"]+)"/);
+            const sendText = match
+              ? match[1]
+              : hint.replace(/^💡\s*/, "").trim();
+            return (
+              <button
+                onClick={() => handleQuickSend(sendText)}
+                disabled={isLoading}
+                className="mx-auto block rounded-full border border-indigo-700 px-3 py-1 text-center text-xs text-indigo-400 hover:bg-indigo-950 disabled:opacity-50"
+              >
+                {hint}
+              </button>
+            );
+          })()}
         <div ref={messagesEndRef} />
       </div>
 

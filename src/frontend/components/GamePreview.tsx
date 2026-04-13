@@ -1,12 +1,12 @@
 "use client";
 
 interface GamePreviewProps {
-  /** Claude가 생성한 게임 HTML. 빈 문자열이면 대기 화면 표시. */
-  html: string;
+  /** 저장된 게임의 URL. 빈 문자열이면 대기 화면 표시. */
+  gameUrl: string;
 }
 
-export default function GamePreview({ html }: GamePreviewProps) {
-  if (!html) {
+export default function GamePreview({ gameUrl }: GamePreviewProps) {
+  if (!gameUrl) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-4 bg-gray-950 text-gray-500">
         <div className="text-6xl">🎮</div>
@@ -18,8 +18,7 @@ export default function GamePreview({ html }: GamePreviewProps) {
 
   return (
     <iframe
-      // srcdoc으로 HTML 직접 주입 — 외부 URL 없이 실행
-      srcDoc={html}
+      src={gameUrl}
       // allow-scripts: JS 실행 허용
       // allow-same-origin 금지: 부모 페이지 DOM 접근 차단
       sandbox="allow-scripts"

@@ -2,7 +2,7 @@
 type: index
 title: "Decisions"
 created: 2026-04-12
-updated: 2026-04-12
+updated: 2026-04-13
 tags:
   - index/decisions
 ---
@@ -33,6 +33,7 @@ tags:
 - [[iframe-sandbox-over-webcontainers]] — 라이브 프리뷰 샌드박스 기술 선택 (2026-04-12, proposed)
 - [[parent-gated-signup-first]] — 부모 이메일 가입 우선, Google OAuth는 14+/교사 한정 (2026-04-12, proposed)
 - [[subagent-team-structure]] — Wiki 2 + Dev 4 subagent 팀 구조 (2026-04-12, proposed)
+- [[auth-session-game-persistence]] — 로그인·채팅 세션 관리·게임 HTML 파일 저장 통합 (2026-04-13, proposed)
 
 ## Superseded
 _없음._

@@ -2,7 +2,7 @@
 type: meta
 title: "Index"
 created: 2026-04-12
-updated: 2026-04-12
+updated: 2026-04-13
 tags:
   - meta/index
 ---
@@ -26,7 +26,7 @@ tags:
 - [[comms/_index|_index]]
 - [[2026-04-12-jay-workshop-structure]] · [[2026-04-11-call-note]] · [[2026-02-09-meeting]] · [[2026-01-26-meeting]] · [[2026-01-19-meeting]] · [[2026-01-12-meeting]] · [[2026-01-05-meeting]]
 
-### Decisions (13)
+### Decisions (14)
 - [[decisions/_index|_index]]
 - [[regular-meeting-monday-930]] · [[discord-for-comms]] · [[podcast-format-host-panels-guest]] · [[markdown-for-knowledge-share]] · [[ai-onboarding-role]] · [[fast-implementation-mode]] · [[combat-vs-cooperative-framing]]
 - Pivot (2026-04-12): [[pivot-to-chat-preview-wrapper]] · [[iframe-sandbox-over-webcontainers]] · [[parent-gated-signup-first]]
@@ -35,6 +35,7 @@ tags:
 - Architecture (2026-04-12): [[nextjs-fastapi-wrapper-architecture]]
 - Mobile UX (2026-04-13): [[mobile-swipe-navigation]]
 - Frontend UX (2026-04-13): [[click-to-send-ui]]
+- Auth + Session + Game Persistence (2026-04-13): [[auth-session-game-persistence]]
 
 ### Deliverables (9)
 - [[deliverables/_index|_index]]
