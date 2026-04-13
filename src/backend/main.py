@@ -48,7 +48,7 @@ async def _load_messages(child_id: str, session_id: str) -> list[dict]:
         return []
     try:
         return json.loads(path.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, OSError):
+    except (json.JSONDecodeError, OSError, UnicodeDecodeError):
         return []
 
 
@@ -61,7 +61,7 @@ async def _append_messages(child_id: str, session_id: str, new_msgs: list[dict])
         updated = existing + new_msgs
         path.parent.mkdir(parents=True, exist_ok=True)
         tmp = path.with_suffix(".tmp")
-        tmp.write_text(json.dumps(updated, ensure_ascii=False, indent=2))
+        tmp.write_text(json.dumps(updated, ensure_ascii=False, indent=2), encoding="utf-8")
         tmp.replace(path)
 
 
@@ -81,7 +81,7 @@ async def _save_session_meta():
     async with _meta_lock:
         snapshot = dict(_session_meta)
     tmp = _SESSION_META_FILE.with_suffix(".tmp")
-    tmp.write_text(json.dumps(snapshot, indent=2, ensure_ascii=False))
+    tmp.write_text(json.dumps(snapshot, indent=2, ensure_ascii=False), encoding="utf-8")
     tmp.replace(_SESSION_META_FILE)
 
 
