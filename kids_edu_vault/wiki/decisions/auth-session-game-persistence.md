@@ -1,6 +1,6 @@
 ---
 type: decision
-status: proposed
+status: implemented
 priority: 1
 date: 2026-04-13
 owner: "JY"
