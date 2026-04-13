@@ -13,6 +13,47 @@ tags:
 
 ---
 
+## 2026-04-13 — React Strict Mode WS 오탐 버그 수정 + Playwright MCP 설정
+
+### 수정
+- **useChat.ts**: `intentionallyClosed` 플래그 추가. React Strict Mode에서 effect 2회 실행 시 첫 번째 WS cleanup이 연결 수립 전 `onerror`를 트리거하던 문제 해결.
+- **.mcp.json**: Windows 환경에서 `npx` 실행 시 `cmd /c` 래퍼 누락 문제 수정. Playwright·context7·sequential-thinking 모두 적용.
+
+### 확인 (Playwright MCP)
+- `localhost:3000` → `/login` 자동 리다이렉트 정상
+- root/0000 로그인 → 메인 앱 진입, 세션 사이드바 표시 정상
+- WS 연결 에러 메시지 제거 확인
+
+### 커밋
+- `2d8693f` fix(frontend): React Strict Mode WS 오류 메시지 오탐 수정
+
+---
+
+## 2026-04-13 — 로그인 + 채팅 세션 관리 + 게임 HTML 파일 저장
+
+### 구현된 기능
+- **로그인**: `/login` 페이지 신규. `ADMIN_USERNAME`/`ADMIN_PASSWORD` 환경변수 기반 검증. sessionStorage auth state. 미인증 시 `/login` 리다이렉트.
+- **채팅 세션 관리**: `SessionSidebar` 신규. `{child_id}_{YYYYMMDD_HHmmss}` 형식 `session_id`. REST API `GET/POST/DELETE /sessions/{child_id}`. 세션 전환 시 마지막 게임 URL 복원.
+- **게임 HTML 파일 저장**: `srcdoc` → 파일 저장 + `/games/{child_id}/{session_id}/{game_id}` URL 서빙. React 재렌더 시 게임 중단 버그 해결. 세션당 최신 10개 보관.
+
+### 보안 수정
+- 경로 순회 공격 방어: `path.resolve().is_relative_to(base)` 검증
+- 하드코딩 자격증명 → 환경변수 이동
+- WebSocket `accept()` 순서 수정
+- `asyncio.Lock` 동시쓰기 race condition 방어
+
+### 테스트
+- 백엔드 pytest: 29개 통과 (`src/backend/tests/test_auth_session_game.py`)
+- 프론트엔드 Vitest: 9개 통과 (`src/frontend/__tests__/useChat.test.ts`)
+
+### ADR
+- [[auth-session-game-persistence]] — status: proposed → implemented
+
+### 커밋
+- `2e9f555` feat: 로그인 + 세션 관리 + 게임 HTML 파일 저장
+
+---
+
 ## 2026-04-13 — 클릭 즉시 전송 UI
 
 - Type: decision
