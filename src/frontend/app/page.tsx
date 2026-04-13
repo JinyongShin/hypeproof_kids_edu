@@ -15,6 +15,7 @@ export default function Home() {
   const [childId, setChildId] = useState("");
   const [activeSessionId, setActiveSessionId] = useState("");
   const [gameUrl, setGameUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [currentBlock, setCurrentBlock] = useState(0);
   const [activePane, setActivePane] = useState<"chat" | "game">("chat");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -46,10 +47,10 @@ export default function Home() {
     }
   }, [router]);
 
-  const handleSessionChange = useCallback((sessionId: string) => {
+  const handleSessionChange = useCallback((sessionId: string, lastGameUrl: string) => {
     setActiveSessionId(sessionId);
     sessionStorage.setItem("active_session_id", sessionId);
-    setGameUrl("");
+    setGameUrl(lastGameUrl);
   }, []);
 
   const handleLogout = useCallback(() => {
@@ -87,8 +88,8 @@ export default function Home() {
         <SessionSidebar
           childId={childId}
           activeSessionId={activeSessionId}
-          onSessionChange={(id) => {
-            handleSessionChange(id);
+          onSessionChange={(id, lastGameUrl) => {
+            handleSessionChange(id, lastGameUrl);
             setSidebarOpen(false);
           }}
           onLogout={handleLogout}
@@ -129,6 +130,7 @@ export default function Home() {
               childId={childId}
               sessionId={activeSessionId}
               onGameReady={handleGameReady}
+              onLoadingChange={setIsLoading}
               currentBlock={currentBlock}
               onBlockChange={setCurrentBlock}
             />
@@ -136,7 +138,7 @@ export default function Home() {
 
           {/* 게임 프리뷰 영역: 모바일 50%(=100vw) / 데스크탑 flex-1 */}
           <div className="relative w-1/2 md:flex-1 h-full">
-            <GamePreview gameUrl={gameUrl} />
+            <GamePreview gameUrl={gameUrl} isLoading={isLoading} />
 
             {/* 좌측 에지 스와이프 캡처 존 — iframe이 터치 이벤트를 소비하는 문제 우회 */}
             <div

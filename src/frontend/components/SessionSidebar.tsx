@@ -14,7 +14,7 @@ interface SessionItem {
 interface SessionSidebarProps {
   childId: string;
   activeSessionId: string;
-  onSessionChange: (sessionId: string) => void;
+  onSessionChange: (sessionId: string, lastGameUrl: string) => void;
   onLogout: () => void;
 }
 
@@ -60,7 +60,7 @@ export default function SessionSidebar({
       if (res.ok) {
         const { session_id } = await res.json();
         await fetchSessions();
-        onSessionChange(session_id);
+        onSessionChange(session_id, "");
       }
     } catch {
       // 네트워크 오류 무시
@@ -78,7 +78,7 @@ export default function SessionSidebar({
         setSessions(next);
         if (sessionId === activeSessionId) {
           if (next.length > 0) {
-            onSessionChange(next[0].session_id);
+            onSessionChange(next[0].session_id, next[0].last_game_url ?? "");
           } else {
             // 목록이 비면 새 세션 자동 생성
             handleNewSession();
@@ -113,7 +113,7 @@ export default function SessionSidebar({
                 ? "bg-indigo-900 text-white"
                 : "hover:bg-gray-800 text-gray-300"
             }`}
-            onClick={() => onSessionChange(s.session_id)}
+            onClick={() => onSessionChange(s.session_id, s.last_game_url ?? "")}
           >
             <span className="truncate text-xs">
               {formatSessionLabel(s.session_id)}

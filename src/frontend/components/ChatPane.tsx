@@ -8,6 +8,7 @@ interface ChatPaneProps {
   childId: string;
   sessionId: string;
   onGameReady: (gameUrl: string) => void;
+  onLoadingChange?: (loading: boolean) => void;
   currentBlock: number;
   onBlockChange: (block: number) => void;
 }
@@ -16,6 +17,7 @@ export default function ChatPane({
   childId,
   sessionId,
   onGameReady,
+  onLoadingChange,
   currentBlock,
   onBlockChange,
 }: ChatPaneProps) {
@@ -30,6 +32,11 @@ export default function ChatPane({
   useEffect(() => {
     if (gameUrl) onGameReady(gameUrl);
   }, [gameUrl, onGameReady]);
+
+  // 로딩 상태 변경 시 부모에 전달
+  useEffect(() => {
+    onLoadingChange?.(isLoading);
+  }, [isLoading, onLoadingChange]);
 
   // 새 메시지 도착 시 스크롤 최하단
   useEffect(() => {
@@ -102,6 +109,20 @@ export default function ChatPane({
             </div>
           </div>
         ))}
+        {/* 생각 중 dots — 로딩 중이고 아직 AI 응답이 없을 때 */}
+        {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
+          <div className="flex justify-start">
+            <div className="flex items-center gap-1 rounded-2xl bg-gray-800 px-4 py-3">
+              {[0, 200, 400].map((delay) => (
+                <span
+                  key={delay}
+                  className="h-2 w-2 rounded-full bg-gray-400 animate-bounce"
+                  style={{ animationDelay: `${delay}ms` }}
+                />
+              ))}
+            </div>
+          </div>
+        )}
         {/* 💡 힌트 — 클릭하면 따옴표 안 텍스트를 즉시 전송 */}
         {hint &&
           (() => {
