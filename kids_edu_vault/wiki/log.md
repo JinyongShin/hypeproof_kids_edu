@@ -13,6 +13,17 @@ tags:
 
 ---
 
+## 2026-04-13 — 재로그인 게임 복원 + 로딩 UI 개선
+
+### 수정
+- **게임 복원**: 세션 전환 시 `last_game_url`을 `onSessionChange` 콜백으로 전달, `setGameUrl(lastGameUrl)`로 즉시 복원. 기존엔 `setGameUrl("")`로 강제 초기화하던 버그.
+- **로딩 UI**: 전송 후 AI 첫 응답 전 구간에 `●●●` bounce dots 버블 표시. GamePreview에 `isLoading` prop 추가, 게임 없을 때 스피너, 게임 있을 때 반투명 오버레이+스피너.
+
+### 커밋
+- `5ee623b` fix(frontend): 재로그인 시 게임 복원 + 로딩 UI 개선
+
+---
+
 ## 2026-04-13 — React Strict Mode WS 오탐 버그 수정 + Playwright MCP 설정
 
 ### 수정
