@@ -33,6 +33,8 @@ tags:
 - Tooling (2026-04-12): [[subagent-team-structure]]
 - Workshop Structure (2026-04-12): [[track-a-primary-b-backup]] · [[stack-decision-after-curriculum]]
 - Architecture (2026-04-12): [[nextjs-fastapi-wrapper-architecture]]
+- Mobile UX (2026-04-13): [[mobile-swipe-navigation]]
+- Frontend UX (2026-04-13): [[click-to-send-ui]]
 
 ### Deliverables (9)
 - [[deliverables/_index|_index]]

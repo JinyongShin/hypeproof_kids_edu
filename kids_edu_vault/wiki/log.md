@@ -2,7 +2,7 @@
 type: meta
 title: "Log"
 created: 2026-04-12
-updated: 2026-04-12
+updated: 2026-04-13
 tags:
   - meta/log
 ---
@@ -10,6 +10,24 @@ tags:
 # Log
 
 추가 전용. 새 엔트리는 **최상단**에 삽입. 과거 엔트리 수정 금지.
+
+---
+
+## 2026-04-13 — 클릭 즉시 전송 UI
+
+- Type: decision
+- Location: wiki/decisions/click-to-send-ui.md
+- From: PromptScaffold 카드 + 힌트 클릭 시 textarea 거치지 않고 즉시 채팅 전송
+- 변경 파일: `src/frontend/components/ChatPane.tsx` (handleQuickSend 추가, hint `<p>` → `<button>`)
+
+---
+
+## 2026-04-13 — 모바일 스와이프 네비게이션
+
+- Type: decision
+- Location: wiki/decisions/mobile-swipe-navigation.md
+- From: 모바일에서 채팅창이 너무 작아지는 문제 → 스와이프 전환 UX 구현
+- 변경 파일: `hooks/useSwipe.ts` (신규), `app/layout.tsx`, `app/page.tsx`
 
 ---
 

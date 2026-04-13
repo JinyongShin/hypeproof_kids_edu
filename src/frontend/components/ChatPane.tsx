@@ -37,6 +37,11 @@ export default function ChatPane({
     setInput("");
   };
 
+  const handleQuickSend = (text: string) => {
+    if (!text.trim() || isLoading) return;
+    send(text.trim());
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -65,7 +70,7 @@ export default function ChatPane({
       </div>
 
       {/* 블록별 프롬프트 스캐폴딩 카드 */}
-      <PromptScaffold currentBlock={currentBlock} onSelect={setInput} />
+      <PromptScaffold currentBlock={currentBlock} onSelect={handleQuickSend} />
 
       {/* 메시지 목록 */}
       <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
@@ -92,10 +97,20 @@ export default function ChatPane({
             </div>
           </div>
         ))}
-        {/* 💡 힌트 */}
-        {hint && (
-          <p className="text-center text-xs text-indigo-400 py-1">{hint}</p>
-        )}
+        {/* 💡 힌트 — 클릭하면 따옴표 안 텍스트를 즉시 전송 */}
+        {hint && (() => {
+          const match = hint.match(/"([^"]+)"/);
+          const sendText = match ? match[1] : hint.replace(/^💡\s*/, "").trim();
+          return (
+            <button
+              onClick={() => handleQuickSend(sendText)}
+              disabled={isLoading}
+              className="mx-auto block rounded-full border border-indigo-700 px-3 py-1 text-center text-xs text-indigo-400 hover:bg-indigo-950 disabled:opacity-50"
+            >
+              {hint}
+            </button>
+          );
+        })()}
         <div ref={messagesEndRef} />
       </div>
 

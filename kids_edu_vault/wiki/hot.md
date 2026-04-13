@@ -7,7 +7,7 @@ tags:
   - meta/cache
 ---
 
-# Hot Cache — 2026-04-12
+# Hot Cache — 2026-04-13
 
 최근 컨텍스트 스냅샷. 세션 시작 시 가장 먼저 읽을 것.
 
@@ -90,3 +90,5 @@ MOCK_CLAUDE=0       # 1로 설정 시 실제 Claude 호출 없이 개발 가능
 - uv PATH: `$HOME/.local/bin` → `~/.bashrc`에 추가 필수
 - Next.js useSearchParams → 반드시 Suspense boundary 안에서 호출
 - pyproject.toml `[build-system]` 제거 — FastAPI app은 distributable package 아님
+- 모바일 스와이프 전환 (2026-04-13): 200% 슬라이딩 트랙 패턴. `useSwipe` 훅 + `activePane` state. viewport 메타 필수. 상세: [[mobile-swipe-navigation]]
+- 클릭 즉시 전송 (2026-04-13): PromptScaffold 카드 + 힌트 버튼 클릭 시 textarea 거치지 않고 바로 `send()`. 힌트는 따옴표 안 텍스트 추출. 상세: [[click-to-send-ui]]
