@@ -30,6 +30,7 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
   useEffect(() => {
     if (!sessionId) return;
 
+    let intentionallyClosed = false;
     const ws = new WebSocket(
       `${BACKEND_WS_URL}/ws/chat/${childId}?session_id=${sessionId}`
     );
@@ -85,6 +86,7 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
     };
 
     ws.onerror = () => {
+      if (intentionallyClosed) return;
       setMessages((prev) => [
         ...prev,
         {
@@ -97,6 +99,7 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
     };
 
     return () => {
+      intentionallyClosed = true;
       ws.close();
     };
   }, [childId, sessionId]);
