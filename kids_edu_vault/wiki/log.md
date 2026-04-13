@@ -13,6 +13,17 @@ tags:
 
 ---
 
+## 2026-04-13 — 채팅 히스토리 백엔드 저장/복원
+
+### 구현
+- **백엔드**: `done` 이벤트 시 `data/messages/{child_id}/{session_id}.json` 에 user+assistant pair 저장 (atomic write, 경로 순회 방어). `GET /sessions/{child_id}/{session_id}/messages` 엔드포인트 추가. `delete_session` 시 메시지 파일도 함께 삭제.
+- **프론트엔드**: 세션 전환 시 `GET /sessions/.../messages` 호출 → 메시지 목록 즉시 복원. React state에만 존재하던 기존 구조 탈피.
+
+### 커밋
+- `40e585d` feat: 채팅 히스토리 백엔드 저장/복원
+
+---
+
 ## 2026-04-13 — 재로그인 게임 복원 + 로딩 UI 개선
 
 ### 수정

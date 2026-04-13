@@ -91,6 +91,7 @@ NEXT_PUBLIC_BACKEND_HTTP_URL=http://localhost:8000
 - [[auth-session-game-persistence]] — status: implemented (2026-04-13)
 
 ### 커밋
+- `40e585d` feat: 채팅 히스토리 백엔드 저장/복원
 - `5ee623b` fix(frontend): 재로그인 시 게임 복원 + 로딩 UI 개선
 - `2d8693f` fix(frontend): React Strict Mode WS 오류 메시지 오탐 수정
 - `2e9f555` feat: 로그인 + 세션 관리 + 게임 HTML 파일 저장
