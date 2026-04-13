@@ -30,6 +30,40 @@ _SESSION_META_FILE = _DATA_DIR / "session_meta.json"
 _session_meta: dict[str, dict] = {}
 _meta_lock = asyncio.Lock()
 
+# 채팅 히스토리 저장 (data/messages/{child_id}/{session_id}.json)
+_messages_lock = asyncio.Lock()
+_MESSAGES_BASE = _DATA_DIR / "messages"
+
+
+def _messages_path(child_id: str, session_id: str) -> Path | None:
+    """경로 순회 공격 방어 후 메시지 파일 경로 반환. 유효하지 않으면 None."""
+    base = _MESSAGES_BASE.resolve()
+    path = (_MESSAGES_BASE / child_id / f"{session_id}.json").resolve()
+    return path if path.is_relative_to(base) else None
+
+
+async def _load_messages(child_id: str, session_id: str) -> list[dict]:
+    path = _messages_path(child_id, session_id)
+    if path is None or not path.exists():
+        return []
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return []
+
+
+async def _append_messages(child_id: str, session_id: str, new_msgs: list[dict]) -> None:
+    path = _messages_path(child_id, session_id)
+    if path is None:
+        raise ValueError("잘못된 child_id 또는 session_id")
+    async with _messages_lock:
+        existing = await _load_messages(child_id, session_id)
+        updated = existing + new_msgs
+        path.parent.mkdir(parents=True, exist_ok=True)
+        tmp = path.with_suffix(".tmp")
+        tmp.write_text(json.dumps(updated, ensure_ascii=False, indent=2))
+        tmp.replace(path)
+
 
 def _load_session_meta():
     global _session_meta
@@ -154,8 +188,23 @@ async def delete_session(child_id: str, session_id: str):
     if game_dir.exists():
         shutil.rmtree(game_dir, ignore_errors=True)
 
+    # 채팅 히스토리 파일 삭제
+    msg_path = _messages_path(child_id, session_id)
+    if msg_path is not None and msg_path.exists():
+        msg_path.unlink(missing_ok=True)
+
     logger.info("[%s] 세션 삭제: %s", child_id, session_id)
     return {"deleted": True}
+
+
+# ---------------------------------------------------------------------------
+# Chat history
+# ---------------------------------------------------------------------------
+
+@app.get("/sessions/{child_id}/{session_id}/messages")
+async def get_messages(child_id: str, session_id: str):
+    """세션의 채팅 히스토리 반환. 없으면 빈 배열."""
+    return await _load_messages(child_id, session_id)
 
 
 # ---------------------------------------------------------------------------
@@ -214,9 +263,11 @@ async def chat_ws(websocket: WebSocket, child_id: str):
 
             logger.info("[%s::%s] 프롬프트 수신: %s", child_id, session_id, prompt[:60])
 
+            assistant_text = ""
             async for event in stream_claude(prompt, child_id, session_id):
                 payload: dict = {"type": event.type}
                 if event.type == "text":
+                    assistant_text += event.chunk or ""
                     payload["chunk"] = event.chunk
                 elif event.type == "game":
                     payload["game_url"] = event.game_url
@@ -230,6 +281,14 @@ async def chat_ws(websocket: WebSocket, child_id: str):
                             if session_id in _session_meta:
                                 _session_meta[session_id]["last_game_url"] = event.game_url
                         await _save_session_meta()
+                    # 채팅 히스토리 저장
+                    try:
+                        await _append_messages(child_id, session_id, [
+                            {"role": "user", "text": prompt},
+                            {"role": "assistant", "text": assistant_text},
+                        ])
+                    except Exception:
+                        logger.exception("[%s::%s] 메시지 저장 실패", child_id, session_id)
                 elif event.type == "error":
                     payload["chunk"] = event.chunk
 

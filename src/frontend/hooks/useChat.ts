@@ -18,6 +18,8 @@ interface UseChatReturn {
 
 const BACKEND_WS_URL =
   process.env.NEXT_PUBLIC_BACKEND_WS_URL ?? "ws://localhost:8000";
+const BACKEND_HTTP_URL =
+  process.env.NEXT_PUBLIC_BACKEND_HTTP_URL ?? "http://localhost:8000";
 
 export function useChat(childId: string, sessionId: string): UseChatReturn {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -26,6 +28,18 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
   const [isLoading, setIsLoading] = useState(false);
 
   const wsRef = useRef<WebSocket | null>(null);
+
+  // 세션 전환 시 히스토리 복원
+  useEffect(() => {
+    if (!childId || !sessionId) return;
+    setMessages([]);
+    fetch(`${BACKEND_HTTP_URL}/sessions/${childId}/${sessionId}/messages`)
+      .then((r) => (r.ok ? r.json() : []))
+      .then((msgs: { role: "user" | "assistant"; text: string }[]) => {
+        setMessages(msgs.map((m) => ({ ...m, isStreaming: false })));
+      })
+      .catch(() => {});
+  }, [childId, sessionId]);
 
   useEffect(() => {
     if (!sessionId) return;
