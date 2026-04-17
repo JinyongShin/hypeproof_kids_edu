@@ -40,3 +40,31 @@
 - 단일 `<canvas>` 기반. 키보드 또는 마우스 입력.
 - 60fps 이하, 단순한 게임 루프.
 - 모바일 터치도 가능하면 지원.
+
+### 필수 코딩 규칙 (어기면 게임이 깨짐)
+
+1. **캔버스 크기는 고정값 사용** — `window.innerWidth/innerHeight` 금지.
+   iframe 환경에서 타이밍에 따라 0을 반환해 캐릭터가 전부 좌상단 코너에 몰림.
+   ```js
+   // ✅ 올바른 방법
+   cv.width = 480; cv.height = 480;
+   // ❌ 금지
+   cv.width = window.innerWidth;
+   ```
+
+2. **`ctx.roundRect()` 금지** — 지원하지 않는 환경에서 게임 루프가 완전히 멈춤.
+   점수판은 `fillRect` 또는 수동 모서리 그리기 사용.
+   ```js
+   // ✅ 올바른 방법
+   ctx.fillRect(10, 10, 180, 50);
+   // ❌ 금지
+   ctx.roundRect(10, 10, 180, 50, 12);
+   ```
+
+3. **게임 루프는 try-catch로 보호** — 어떤 오류도 루프를 멈추지 않게.
+   ```js
+   function loop() {
+     try { /* 게임 로직 */ } catch(e) {}
+     requestAnimationFrame(loop);
+   }
+   ```

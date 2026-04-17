@@ -32,6 +32,8 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
   // 세션 전환 시 히스토리 복원
   useEffect(() => {
     if (!childId || !sessionId) return;
+    setIsLoading(false);
+    setGameUrl("");
     setMessages([]);
     fetch(`${BACKEND_HTTP_URL}/sessions/${childId}/${sessionId}/messages`)
       .then((r) => (r.ok ? r.json() : []))
@@ -45,76 +47,95 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
     if (!sessionId) return;
 
     let intentionallyClosed = false;
-    const ws = new WebSocket(
-      `${BACKEND_WS_URL}/ws/chat/${childId}?session_id=${sessionId}`
-    );
-    wsRef.current = ws;
+    let retryCount = 0;
+    const MAX_RETRIES = 3;
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
 
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data) as {
-        type: "text" | "game" | "done" | "error";
-        chunk?: string;
-        game_url?: string;
-        hint?: string;
-        session_id?: string;
+    function connect() {
+      const ws = new WebSocket(
+        `${BACKEND_WS_URL}/ws/chat/${childId}?session_id=${sessionId}`
+      );
+      wsRef.current = ws;
+
+      ws.onmessage = (event) => {
+        retryCount = 0; // 메시지 수신 시 재시도 카운트 초기화
+        const data = JSON.parse(event.data) as {
+          type: "text" | "game" | "done" | "error";
+          chunk?: string;
+          game_url?: string;
+          hint?: string;
+          session_id?: string;
+        };
+
+        if (data.type === "text" && data.chunk) {
+          setMessages((prev) => {
+            const last = prev[prev.length - 1];
+            if (last?.role === "assistant" && last.isStreaming) {
+              return [
+                ...prev.slice(0, -1),
+                { ...last, text: last.text + data.chunk },
+              ];
+            }
+            return [
+              ...prev,
+              { role: "assistant", text: data.chunk!, isStreaming: true },
+            ];
+          });
+        } else if (data.type === "game" && data.game_url) {
+          setGameUrl(data.game_url);
+        } else if (data.type === "done") {
+          setMessages((prev) => {
+            const last = prev[prev.length - 1];
+            if (last?.role === "assistant") {
+              return [...prev.slice(0, -1), { ...last, isStreaming: false }];
+            }
+            return prev;
+          });
+          if (data.hint) setHint(data.hint);
+          if (data.game_url) setGameUrl(data.game_url);
+          setIsLoading(false);
+        } else if (data.type === "error") {
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "assistant",
+              text: `⚠️ ${data.chunk ?? "오류가 발생했어"}`,
+              isStreaming: false,
+            },
+          ]);
+          setIsLoading(false);
+        }
       };
 
-      if (data.type === "text" && data.chunk) {
-        setMessages((prev) => {
-          const last = prev[prev.length - 1];
-          if (last?.role === "assistant" && last.isStreaming) {
-            return [
-              ...prev.slice(0, -1),
-              { ...last, text: last.text + data.chunk },
-            ];
-          }
-          return [
-            ...prev,
-            { role: "assistant", text: data.chunk!, isStreaming: true },
-          ];
-        });
-      } else if (data.type === "game" && data.game_url) {
-        setGameUrl(data.game_url);
-      } else if (data.type === "done") {
-        setMessages((prev) => {
-          const last = prev[prev.length - 1];
-          if (last?.role === "assistant") {
-            return [...prev.slice(0, -1), { ...last, isStreaming: false }];
-          }
-          return prev;
-        });
-        if (data.hint) setHint(data.hint);
-        if (data.game_url) setGameUrl(data.game_url);
+      ws.onerror = () => {
         setIsLoading(false);
-      } else if (data.type === "error") {
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: "assistant",
-            text: `⚠️ ${data.chunk ?? "오류가 발생했어"}`,
-            isStreaming: false,
-          },
-        ]);
-        setIsLoading(false);
-      }
-    };
+      };
 
-    ws.onerror = () => {
-      if (intentionallyClosed) return;
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          text: "⚠️ 서버에 연결할 수 없어. 잠깐 기다렸다 다시 해봐!",
-          isStreaming: false,
-        },
-      ]);
-      setIsLoading(false);
-    };
+      ws.onclose = () => {
+        if (intentionallyClosed) return;
+        if (retryCount < MAX_RETRIES) {
+          retryCount++;
+          retryTimer = setTimeout(connect, 1500);
+        } else {
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "assistant",
+              text: "⚠️ 서버 연결이 끊겼어. 잠깐 기다렸다 다시 해봐!",
+              isStreaming: false,
+            },
+          ]);
+          setIsLoading(false);
+        }
+      };
+    }
+
+    connect();
 
     return () => {
       intentionallyClosed = true;
-      ws.close();
+      if (retryTimer) clearTimeout(retryTimer);
+      wsRef.current?.close();
     };
   }, [childId, sessionId]);
 

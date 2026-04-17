@@ -9,6 +9,7 @@ interface SessionItem {
   session_id: string;
   created_at: string;
   last_game_url: string;
+  name: string;
 }
 
 interface SessionSidebarProps {
@@ -16,16 +17,7 @@ interface SessionSidebarProps {
   activeSessionId: string;
   onSessionChange: (sessionId: string, lastGameUrl: string) => void;
   onLogout: () => void;
-}
-
-function formatSessionLabel(sessionId: string): string {
-  // session_id = "{child_id}_{YYYYMMDD_HHmmss}"
-  const match = sessionId.match(/_(\d{8})_(\d{6})$/);
-  if (!match) return sessionId;
-  const [, date, time] = match;
-  const hh = time.slice(0, 2);
-  const mm = time.slice(2, 4);
-  return `세션 ${hh}:${mm}`;
+  refreshToken?: number;
 }
 
 export default function SessionSidebar({
@@ -33,6 +25,7 @@ export default function SessionSidebar({
   activeSessionId,
   onSessionChange,
   onLogout,
+  refreshToken,
 }: SessionSidebarProps) {
   const [sessions, setSessions] = useState<SessionItem[]>([]);
 
@@ -50,7 +43,7 @@ export default function SessionSidebar({
   useEffect(() => {
     fetchSessions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [childId]);
+  }, [childId, refreshToken]);
 
   const handleNewSession = async () => {
     try {
@@ -116,7 +109,7 @@ export default function SessionSidebar({
             onClick={() => onSessionChange(s.session_id, s.last_game_url ?? "")}
           >
             <span className="truncate text-xs">
-              {formatSessionLabel(s.session_id)}
+              {s.name || "대화"}
             </span>
             <button
               onClick={(e) => {

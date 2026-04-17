@@ -2,34 +2,55 @@
 type: meta
 title: "Hot Cache"
 created: 2026-04-12
-updated: 2026-04-14
+updated: 2026-04-17
 tags:
   - meta/cache
 ---
 
-# Hot Cache — 2026-04-14
+# Hot Cache — 2026-04-17
 
 최근 컨텍스트 스냅샷. 세션 시작 시 가장 먼저 읽을 것.
 
 ---
 
-## 현재 상태: 채팅 히스토리 백엔드 저장/복원 완료 + Windows UTF-8 버그 수정
+## 현재 상태: 4/19 마감 D-2 — BH 커리큘럼 + Ryan 와우 포인트 대기 중
 
 ### 프로젝트 개요
-- 목표: 소아암 병동 어린이(8-12세) AI 코딩 교육 파일럿 (2026-05-05)
+- 목표: 소아암 병동 어린이(8-12세) AI 크리에이터 워크샵 파일럿 (2026-05-05, 국립암센터 강당)
 - 스택: FastAPI (Python/uv) + Next.js 16 (App Router) + Claude CLI subprocess
 - 래퍼: 채팅(WebSocket) + iframe 게임 프리뷰 + 블록별 프롬프트 스캐폴드
 
-### 최근 완료된 작업 (2026-04-13 심야)
+### 긴급 마일스톤 (현재 ~ 4/26)
 
-| 기능 | 내용 | 상태 |
-|---|---|---|
-| 채팅 히스토리 저장 | `data/messages/{child_id}/{session_id}.json` 파일 저장 | ✅ |
-| 히스토리 복원 API | `GET /sessions/{child_id}/{session_id}/messages` 엔드포인트 | ✅ |
-| 히스토리 자동 로드 | 프론트엔드 sessionId 변경 시 히스토리 자동 복원 | ✅ |
-| 세션 삭제 연동 | 세션 삭제 시 messages 파일도 함께 삭제 | ✅ |
-| Windows UTF-8 버그 수정 | `write_text()` encoding 누락 → 한국어 깨짐·500 오류 수정 | ✅ |
-| E2E 검증 | 전송→로그아웃→재로그인→세션 클릭→히스토리 복원 확인 | ✅ |
+| 날짜 | 마일스톤 | 담당 | 상태 |
+|---|---|---|---|
+| 2026-04-19 | 커리큘럼 초안 (2시간 타임테이블 + 조 편성) | BH | **대기 중** |
+| 2026-04-19 | 와우 포인트 설계 + 반응 측정 설계 | Ryan | **대기 중** |
+| 2026-04-21 | 커리큘럼 리뷰 → Track A 스택 최종 결정 | Jay + JY | Pending |
+| 2026-04-26 | Track A 래퍼 리허설 가능 상태 | JY | Pending |
+| 2026-04-26 | 갤러리 페이지 + 랜딩 페이지 | JeHyeong | Pending |
+
+### Jay에게 공유 필요한 내용 (JY 담당, 4/17)
+1. **BH 커리큘럼 초안 4/19 수령 확인** — 스택 확정 인풋. Jay가 독촉 필요.
+2. **랩탑/태블릿 40대 확보 방향 결정** — 4/21 미팅 전 Jay 액션.
+3. **자원봉사자 퍼실리테이터 섭외 여부** — 팀원만으로 8–10조 커버 불가.
+4. Track A 개발 진행 중. 4/26 리허설 목표 유지.
+
+### 완료된 개발 작업 (최신순, 2026-04-17 기준)
+| 기능 | 상태 |
+|---|---|
+| SQLite 마이그레이션 (storage.py) + 게임 파일시스템 저장 | ✅ |
+| 세션 이름 자동 할당 ("대화 N" → 첫 메시지 앞 15자) | ✅ |
+| 세션 전환 버그 3종 수정 (히스토리 유실·스피너·stale game URL) | ✅ |
+| WS 재연결 로직 (최대 3회, 1.5초 간격) | ✅ |
+| 말풍선 원본 프롬프트 표시 (주입 전 저장) | ✅ |
+| 게임 수정 vs 신규 분기 (Read 도구 활용) | ✅ |
+| TUTOR.md 게임 코딩 규칙 추가 (roundRect 금지, 고정 캔버스) | ✅ |
+| Claude subprocess cwd 격리 (프로젝트 컨텍스트 차단) | ✅ |
+| 채팅 히스토리 저장/복원 | ✅ |
+| Windows CP949 UTF-8 버그 수정 | ✅ |
+| 재로그인 시 게임 복원 + 로딩 UI | ✅ |
+| 로그인 + 세션 관리 + 게임 HTML 저장 | ✅ |
 
 ### 아키텍처 요약 (최신)
 
@@ -37,69 +58,31 @@ tags:
 아이 브라우저
   └─ Next.js (localhost:3000)
        ├─ /login — 로그인 페이지 (root/0000, 환경변수 기반)
-       ├─ SessionSidebar — 세션 목록·생성·삭제
+       ├─ SessionSidebar — 세션 목록·생성·삭제 (name 표시, × 버튼 삭제)
        ├─ ChatPane — WebSocket → /ws/chat/{child_id}?session_id={session_id}
        └─ GamePreview — <iframe src="/games/{child_id}/{session_id}/{game_id}">
 
 FastAPI (localhost:8000)
   ├─ GET/POST/DELETE /sessions/{child_id}
-  ├─ GET /sessions/{child_id}/{session_id}/messages  ← 신규
-  ├─ GET /games/{child_id}/{session_id}/{game_id}  ← HTML 파일 서빙
+  ├─ PATCH /sessions/{child_id}/{session_id}/name
+  ├─ GET /sessions/{child_id}/{session_id}/messages
+  ├─ GET /games/{child_id}/{session_id}/{game_id}
   └─ WS /ws/chat/{child_id}?session_id={session_id}
-       └─ game 이벤트: HTML 디스크 저장 후 game_url 반환 (html 페이로드 미전송)
 
-데이터 레이어
-  ├─ data/sessions/{child_id}.json  ← 세션 메타
-  ├─ data/messages/{child_id}/{session_id}.json  ← 채팅 히스토리 (신규)
-  └─ data/games/{child_id}/{session_id}/*.html  ← 게임 파일
+데이터 레이어 (SQLite)
+  ├─ data/kids_edu.db — sessions, messages, games 테이블 + FTS5
+  └─ data/games/{child_id}/{session_id}/*.html — 게임 파일 (세션당 최대 10개)
 ```
 
-### 핵심 파일 경로 (신규·변경)
-- `src/backend/main.py` — 메시지 저장/복원 API 추가, UTF-8 encoding 수정
-- `src/backend/claude_runner.py` — `_append_messages`, `_save_session_meta`, `SessionStore._save`, `_load_messages` 수정
-- `src/frontend/hooks/useChat.ts` — sessionId 변경 시 히스토리 자동 로드
+### 핵심 파일 경로
+- `src/backend/storage.py` — SQLite 래퍼 (init_db, CRUD)
+- `src/backend/main.py` — WebSocket 핸들러, 세션 API, JSON→SQLite 마이그레이션
+- `src/backend/claude_runner.py` — Claude CLI subprocess, 게임 HTML 저장
+- `src/backend/personas/TUTOR.md` — 게임 생성 규칙 (Canvas 고정 크기, roundRect 금지)
+- `src/frontend/hooks/useChat.ts` — sessionId 변경 시 리셋, WS 자동 재연결
+- `src/frontend/app/page.tsx` — sessionRefreshToken, activeSessionId 변경 시 game URL fetch
 
-### Windows UTF-8 수정 위치 (f59b5e4)
-- `_append_messages`: `write_text(..., encoding='utf-8')` 추가
-- `_save_session_meta`: `write_text(..., encoding='utf-8')` 추가
-- `SessionStore._save`: `write_text(..., encoding='utf-8')` 추가
-- `_load_messages`: `UnicodeDecodeError` 예외 처리 추가
-
-### WS 이벤트 프로토콜 (현재)
-```
-{"type": "game", "game_url": "http://localhost:8000/games/{child_id}/{session_id}/{game_id}"}
-{"type": "done", "hint": "...", "session_id": "...", "game_url": "http://localhost:8000/games/..."}
-```
-
-### 환경 변수 (최신)
-```
-CLAUDE_TIMEOUT=120
-CLAUDE_MODEL=sonnet
-MOCK_CLAUDE=0
-ADMIN_USERNAME=root        # 기본값 root
-ADMIN_PASSWORD=0000        # 기본값 0000
-NEXT_PUBLIC_BACKEND_HTTP_URL=http://localhost:8000
-```
-
-### 보안 결정 & 주의사항
-- 경로 순회 방어: `path.resolve().is_relative_to(base)` 검증 (메시지 파일에도 적용)
-- 자격증명: `.env.local` 환경변수. 하드코딩 금지
-- WebSocket: `accept()` 는 인증 검증 이전에 호출
-- 동시 쓰기: `asyncio.Lock` race condition 방어
-- iframe sandbox: `"allow-scripts"` 유지. `allow-same-origin` 추가 금지
-- 세션당 최신 게임 10개 보관 (초과 시 오래된 파일 자동 삭제)
-
-### ADR
-- [[auth-session-game-persistence]] — status: implemented (2026-04-13)
-
-### 최신 커밋 로그 (최신순)
-- `f59b5e4` fix(backend): Windows CP949 인코딩 버그 수정
-- `40e585d` feat: 채팅 히스토리 백엔드 저장/복원
-- `5ee623b` fix(frontend): 재로그인 시 게임 복원 + 로딩 UI
-- `2d8693f` fix(frontend): React Strict Mode WS 오류 오탐 수정
-- `2e9f555` feat: 로그인 + 세션 관리 + 게임 HTML 파일 저장
-
-### 다음 단계 — 상품 요구사항 갭 잔여
+### 남은 상품 요구사항 갭 (4/26 리허설 목표)
 | 우선순위 | 항목 | 내용 |
 |---|---|---|
 | P0 | R4 폴백 | Claude 실패 시 기본 게임 자동 삽입 |
@@ -107,5 +90,14 @@ NEXT_PUBLIC_BACKEND_HTTP_URL=http://localhost:8000
 | P1 | R8 결과물 공유 | 게임 URL QR 공유 |
 | P2 | R7 갤러리 | 퍼실리테이터용 전체 작품 뷰 |
 
-- 리허설 (2026-04-26): P0 완료 목표
-- 파일럿 (2026-05-05): P1 완료 목표
+### ADR
+- [[auth-session-game-persistence]] — status: implemented (2026-04-13)
+- [[track-a-primary-b-backup]] — Track A 주력 (스택 확정은 4/21)
+- [[stack-decision-after-curriculum]] — 커리큘럼이 스택을 결정
+
+### 보안 결정 & 주의사항
+- 경로 순회 방어: `path.resolve().is_relative_to(base)` 검증
+- 자격증명: `.env.local` 환경변수. 하드코딩 금지
+- WebSocket: `accept()` 는 인증 검증 이전에 호출
+- iframe sandbox: `"allow-scripts"` 유지. `allow-same-origin` 추가 금지
+- Claude subprocess: `cwd=tempfile.gettempdir()` + `--add-dir` 로 프로젝트 컨텍스트 격리

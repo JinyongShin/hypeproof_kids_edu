@@ -20,6 +20,7 @@ export default function Home() {
   const [activePane, setActivePane] = useState<"chat" | "game">("chat");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [ready, setReady] = useState(false);
+  const [sessionRefreshToken, setSessionRefreshToken] = useState(0);
 
   // 로그인 확인 + 세션 초기화
   useEffect(() => {
@@ -47,6 +48,19 @@ export default function Home() {
     }
   }, [router]);
 
+  // Fix 3: activeSessionId 변경 시 최신 last_game_url fetch + isLoading 강제 리셋
+  useEffect(() => {
+    if (!childId || !activeSessionId) return;
+    setIsLoading(false);
+    fetch(`${BACKEND_HTTP_URL}/sessions/${childId}`)
+      .then((r) => r.json())
+      .then((sessions: { session_id: string; last_game_url: string }[]) => {
+        const s = sessions.find((x) => x.session_id === activeSessionId);
+        if (s?.last_game_url) setGameUrl(s.last_game_url);
+      })
+      .catch(() => {});
+  }, [childId, activeSessionId]);
+
   const handleSessionChange = useCallback((sessionId: string, lastGameUrl: string) => {
     setActiveSessionId(sessionId);
     sessionStorage.setItem("active_session_id", sessionId);
@@ -60,6 +74,7 @@ export default function Home() {
 
   const handleGameReady = useCallback((url: string) => {
     setGameUrl(url);
+    setSessionRefreshToken((t) => t + 1);
   }, []);
 
   const { onTouchStart, onTouchEnd } = useSwipe({
@@ -93,6 +108,7 @@ export default function Home() {
             setSidebarOpen(false);
           }}
           onLogout={handleLogout}
+          refreshToken={sessionRefreshToken}
         />
       </div>
 

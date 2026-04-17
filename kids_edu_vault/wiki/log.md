@@ -2,7 +2,7 @@
 type: meta
 title: "Log"
 created: 2026-04-12
-updated: 2026-04-14
+updated: 2026-04-17
 tags:
   - meta/log
 ---
@@ -10,6 +10,45 @@ tags:
 # Log
 
 추가 전용. 새 엔트리는 **최상단**에 삽입. 과거 엔트리 수정 금지.
+
+---
+
+## 2026-04-17 — SQLite 마이그레이션 + 세션 버그 수정 + WS 재연결
+
+### 백엔드
+- `storage.py` 신규: SQLite DB (`kids_edu.db`), sessions/messages/games/FTS5 테이블
+- JSON 파일 → SQLite 자동 마이그레이션 (서버 시작 1회, flag 파일로 멱등성 보장)
+- 세션 이름: "대화 N" 기본값 → 첫 메시지 앞 15자 자동 갱신
+- `PATCH /sessions/{child_id}/{session_id}/name` 수동 이름 변경 엔드포인트 추가
+- WebSocket: user 메시지 스트리밍 전 저장, assistant 메시지 done 시점 저장, 연결 해제 시 부분 저장
+- 말풍선 버그 수정: `original_prompt` 를 DB 저장 (주입 전), Claude에는 게임 파일 경로 주입
+- 게임 수정/신규 분기: "수정 요청이면 Read 도구로, 새 게임이면 무시하고 새로 만들어"
+- `from pathlib import Path` 누락 → NameError → WebSocket 크래시 수정
+- Claude subprocess `cwd=tempfile.gettempdir()` + `--add-dir` 로 프로젝트 컨텍스트 격리
+- `TUTOR.md` 게임 코딩 규칙 추가: Canvas 고정 480×480, `roundRect()` 금지, try-catch 게임 루프
+
+### 프론트엔드
+- `useChat.ts`: sessionId 변경 시 `isLoading`·`gameUrl` 리셋, WS 자동 재연결 (최대 3회)
+- `page.tsx`: `activeSessionId` 변경 시 `last_game_url` fresh fetch, `sessionRefreshToken` 추가
+- `SessionSidebar.tsx`: `name` 필드 표시, `refreshToken` prop으로 게임 생성 후 re-fetch
+
+---
+
+## 2026-04-17 — 0412 워크샵 구조 문서 확인 + Jay 공유 내용 정리
+
+### 확인
+- `0412.md` (프로젝트 루트) 내용 검토 → 볼트 이미 완전 반영됨 (중복 ingest 불필요)
+- 기존 `2026-04-12-jay-workshop-structure.md` + `pilot-5-5-milestones.md` 가 최신 기준
+
+### JY → Jay 공유 내용 (4/17 기준)
+- Track A 개발 진행 중 (채팅 히스토리, 게임 복원, 로딩 UI 완료)
+- **4/21 스택 결정 미팅 전 선행 조건**: BH 커리큘럼 초안 4/19 수령 확인 (Jay 독촉)
+- **Jay 액션 필요**: 랩탑/태블릿 40대 확보 방향 결정 (4/21 이전)
+- **Jay 액션 필요**: 자원봉사자 퍼실리테이터 섭외 여부 결정
+
+### 다음 게이트
+- 2026-04-19: BH 커리큘럼 초안 + Ryan 와우 포인트 설계 마감
+- 2026-04-21: Jay ↔ JY 스택 확정 미팅
 
 ---
 

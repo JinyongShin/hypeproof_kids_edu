@@ -9,15 +9,16 @@ import json
 import logging
 import os
 import shutil
-import time
 from contextlib import asynccontextmanager
+from datetime import datetime
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import FileResponse
 
-from claude_runner import StreamEvent, _DATA_DIR, _sessions, reset_session, stream_claude
+import storage
+from claude_runner import StreamEvent, _DATA_DIR, reset_session, stream_claude
 
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "root")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "0000")
@@ -25,69 +26,84 @@ ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "0000")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
 logger = logging.getLogger(__name__)
 
-# sessions.json 과 분리된 세션 메타 저장 (session_id → 생성 시각 + 마지막 game_url)
-_SESSION_META_FILE = _DATA_DIR / "session_meta.json"
-_session_meta: dict[str, dict] = {}
-_meta_lock = asyncio.Lock()
 
-# 채팅 히스토리 저장 (data/messages/{child_id}/{session_id}.json)
-_messages_lock = asyncio.Lock()
-_MESSAGES_BASE = _DATA_DIR / "messages"
+# ---------------------------------------------------------------------------
+# JSON → SQLite 마이그레이션 (서버 시작 시 1회)
+# ---------------------------------------------------------------------------
+
+_MIGRATION_DONE_FLAG = _DATA_DIR / "migration_done.flag"
 
 
-def _messages_path(child_id: str, session_id: str) -> Path | None:
-    """경로 순회 공격 방어 후 메시지 파일 경로 반환. 유효하지 않으면 None."""
-    base = _MESSAGES_BASE.resolve()
-    path = (_MESSAGES_BASE / child_id / f"{session_id}.json").resolve()
-    return path if path.is_relative_to(base) else None
+def _migrate_json_to_sqlite() -> None:
+    """session_meta.json + sessions.json + messages/ → SQLite. 완료 플래그 파일로 멱등성 보장."""
+    if _MIGRATION_DONE_FLAG.exists():
+        logger.info("SQLite 마이그레이션 이미 완료 (플래그 존재), 스킵")
+        return
 
+    migrated = 0
 
-async def _load_messages(child_id: str, session_id: str) -> list[dict]:
-    path = _messages_path(child_id, session_id)
-    if path is None or not path.exists():
-        return []
-    try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, OSError, UnicodeDecodeError):
-        return []
+    # session_meta.json 읽기
+    meta_file = _DATA_DIR / "session_meta.json"
+    sessions_file = _DATA_DIR / "sessions.json"
 
-
-async def _append_messages(child_id: str, session_id: str, new_msgs: list[dict]) -> None:
-    path = _messages_path(child_id, session_id)
-    if path is None:
-        raise ValueError("잘못된 child_id 또는 session_id")
-    async with _messages_lock:
-        existing = await _load_messages(child_id, session_id)
-        updated = existing + new_msgs
-        path.parent.mkdir(parents=True, exist_ok=True)
-        tmp = path.with_suffix(".tmp")
-        tmp.write_text(json.dumps(updated, ensure_ascii=False, indent=2), encoding="utf-8")
-        tmp.replace(path)
-
-
-def _load_session_meta():
-    global _session_meta
-    _DATA_DIR.mkdir(parents=True, exist_ok=True)
-    if _SESSION_META_FILE.exists():
+    session_meta: dict = {}
+    if meta_file.exists():
         try:
-            _session_meta = json.loads(_SESSION_META_FILE.read_text(encoding="utf-8"))
+            session_meta = json.loads(meta_file.read_text(encoding="utf-8"))
         except (json.JSONDecodeError, ValueError):
-            logger.warning("session_meta.json 손상, 초기화")
-            _session_meta = {}
+            logger.warning("session_meta.json 손상, 건너뜀")
+
+    # sessions.json (claude_session_id 맵)
+    claude_sessions: dict = {}
+    if sessions_file.exists():
+        try:
+            raw = json.loads(sessions_file.read_text(encoding="utf-8"))
+            # 복합키 포맷: "child_id::session_id" → claude_session_id
+            claude_sessions = {k: v for k, v in raw.items() if "::" in k}
+        except (json.JSONDecodeError, ValueError):
+            logger.warning("sessions.json 손상, 건너뜀")
+
+    for session_id, meta in session_meta.items():
+        child_id = meta.get("child_id", "")
+        if not child_id:
+            continue
+        created_at = meta.get("created_at", datetime.now().isoformat())
+        name = meta.get("name", "")
+        storage.create_session(session_id, child_id, name, created_at)
+
+        # claude_session_id 복원
+        key = f"{child_id}::{session_id}"
+        if key in claude_sessions:
+            storage.set_claude_session_id(session_id, claude_sessions[key])
+
+        # 채팅 히스토리 복원
+        msg_path = _DATA_DIR / "messages" / child_id / f"{session_id}.json"
+        if msg_path.exists():
+            try:
+                msgs = json.loads(msg_path.read_text(encoding="utf-8"))
+                for m in msgs:
+                    role = m.get("role", "")
+                    text = m.get("text", "")
+                    if role and text:
+                        storage.append_message(session_id, child_id, role, text)
+            except (json.JSONDecodeError, ValueError):
+                logger.warning("메시지 파일 손상 건너뜀: %s", msg_path)
+
+        migrated += 1
+
+    # 마이그레이션 완료 플래그 기록 (재시작 시 재실행 방지)
+    _MIGRATION_DONE_FLAG.write_text("done", encoding="utf-8")
+    logger.info("JSON→SQLite 마이그레이션 완료: %d세션", migrated)
 
 
-async def _save_session_meta():
-    """_meta_lock 보유 중에 호출하지 말 것. 파일 쓰기는 tmp→rename으로 원자적."""
-    async with _meta_lock:
-        snapshot = dict(_session_meta)
-    tmp = _SESSION_META_FILE.with_suffix(".tmp")
-    tmp.write_text(json.dumps(snapshot, indent=2, ensure_ascii=False), encoding="utf-8")
-    tmp.replace(_SESSION_META_FILE)
-
+# ---------------------------------------------------------------------------
+# Lifespan
+# ---------------------------------------------------------------------------
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    _load_session_meta()
+    storage.init_db()
+    await asyncio.to_thread(_migrate_json_to_sqlite)
     logger.info("Kids Edu Backend 시작")
     yield
     logger.info("Kids Edu Backend 종료")
@@ -131,44 +147,30 @@ async def login(body: dict):
 
 @app.get("/sessions/{child_id}")
 async def list_sessions(child_id: str):
-    """child_id 의 세션 목록 반환."""
-    results = []
-    for session_id, meta in _session_meta.items():
-        if meta.get("child_id") == child_id:
-            results.append({
-                "session_id": session_id,
-                "created_at": meta.get("created_at", ""),
-                "last_game_url": meta.get("last_game_url", ""),
-            })
-    # 생성 시각 오름차순
-    results.sort(key=lambda x: x["created_at"])
-    return results
+    """child_id의 세션 목록 반환 (name, last_game_url 포함)."""
+    return await asyncio.to_thread(storage.list_sessions, child_id)
 
 
 @app.post("/sessions/{child_id}")
 async def create_session(child_id: str):
-    """새 세션 생성. session_id = {child_id}_{YYYYMMDD_HHmmss}"""
-    from datetime import datetime
+    """새 세션 생성. name = '대화 N' 자동 할당."""
+    sessions = await asyncio.to_thread(storage.list_sessions, child_id)
+    name = f"대화 {len(sessions) + 1}"
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     session_id = f"{child_id}_{ts}"
-    async with _meta_lock:
-        _session_meta[session_id] = {
-            "child_id": child_id,
-            "created_at": datetime.now().isoformat(),
-            "last_game_url": "",
-        }
-    await _save_session_meta()
-    logger.info("[%s] 세션 생성: %s", child_id, session_id)
-    return {"session_id": session_id}
+    created_at = datetime.now().isoformat()
+    await asyncio.to_thread(storage.create_session, session_id, child_id, name, created_at)
+    logger.info("[%s] 세션 생성: %s (%s)", child_id, session_id, name)
+    return {"session_id": session_id, "name": name}
 
 
 @app.delete("/sessions/{child_id}/{session_id}")
 async def delete_session(child_id: str, session_id: str):
-    """세션 삭제 — session_meta + sessions.json + games 폴더 모두 제거."""
-    async with _meta_lock:
-        meta = _session_meta.get(session_id)
-        if meta is None or meta.get("child_id") != child_id:
-            raise HTTPException(status_code=404, detail="세션을 찾을 수 없어요")
+    """세션 삭제 — DB + games 폴더 모두 제거."""
+    sessions = await asyncio.to_thread(storage.list_sessions, child_id)
+    target = next((s for s in sessions if s["session_id"] == session_id), None)
+    if target is None:
+        raise HTTPException(status_code=404, detail="세션을 찾을 수 없어요")
 
     # 경로 순회 공격 방어
     games_base = (_DATA_DIR / "games").resolve()
@@ -176,25 +178,28 @@ async def delete_session(child_id: str, session_id: str):
     if not game_dir.is_relative_to(games_base):
         raise HTTPException(status_code=400, detail="잘못된 요청이에요")
 
-    # claude 세션 삭제
+    # claude 세션 초기화
     reset_session(child_id, session_id)
 
-    # 메타 삭제
-    async with _meta_lock:
-        _session_meta.pop(session_id, None)
-    await _save_session_meta()
+    # DB 삭제 (messages + games + session)
+    await asyncio.to_thread(storage.delete_session, session_id)
 
     # games 폴더 삭제
     if game_dir.exists():
         shutil.rmtree(game_dir, ignore_errors=True)
 
-    # 채팅 히스토리 파일 삭제
-    msg_path = _messages_path(child_id, session_id)
-    if msg_path is not None and msg_path.exists():
-        msg_path.unlink(missing_ok=True)
-
     logger.info("[%s] 세션 삭제: %s", child_id, session_id)
     return {"deleted": True}
+
+
+@app.patch("/sessions/{child_id}/{session_id}/name")
+async def rename_session(child_id: str, session_id: str, body: dict):
+    """세션 이름 수동 변경."""
+    name = body.get("name", "").strip()[:30]
+    if not name:
+        raise HTTPException(status_code=400, detail="이름을 입력해주세요")
+    await asyncio.to_thread(storage.update_session_name, session_id, name)
+    return {"ok": True}
 
 
 # ---------------------------------------------------------------------------
@@ -204,7 +209,7 @@ async def delete_session(child_id: str, session_id: str):
 @app.get("/sessions/{child_id}/{session_id}/messages")
 async def get_messages(child_id: str, session_id: str):
     """세션의 채팅 히스토리 반환. 없으면 빈 배열."""
-    return await _load_messages(child_id, session_id)
+    return await asyncio.to_thread(storage.load_messages, session_id)
 
 
 # ---------------------------------------------------------------------------
@@ -248,6 +253,7 @@ async def chat_ws(websocket: WebSocket, child_id: str):
         return
     logger.info("[%s::%s] WebSocket 연결", child_id, session_id)
 
+    assistant_text = ""
     try:
         while True:
             raw = await websocket.receive_text()
@@ -257,45 +263,74 @@ async def chat_ws(websocket: WebSocket, child_id: str):
                 await websocket.send_json({"type": "error", "chunk": "잘못된 요청 형식"})
                 continue
 
-            prompt = data.get("prompt", "").strip()
-            if not prompt:
+            original_prompt = data.get("prompt", "").strip()
+            if not original_prompt:
                 continue
 
-            logger.info("[%s::%s] 프롬프트 수신: %s", child_id, session_id, prompt[:60])
+            logger.info("[%s::%s] 프롬프트 수신: %s", child_id, session_id, original_prompt[:60])
+
+            # Fix: user 메시지는 원본 프롬프트로 저장 (주입 전)
+            await asyncio.to_thread(storage.append_message, session_id, child_id, "user", original_prompt)
+
+            # 첫 메시지면 세션 이름 자동 갱신
+            count = await asyncio.to_thread(storage.message_count, session_id)
+            if count == 1:
+                auto_name = original_prompt[:15].strip()
+                await asyncio.to_thread(storage.update_session_name, session_id, auto_name)
+
+            # 기존 게임이 있으면 파일 경로를 프롬프트에 주입 — Claude가 Read 도구로 읽어서 수정
+            prompt = original_prompt
+            games = await asyncio.to_thread(storage.list_games, session_id)
+            if games:
+                latest_path = Path(games[-1]["file_path"])
+                if latest_path.exists():
+                    prompt = (
+                        f"{original_prompt}\n\n"
+                        f"---\n"
+                        f"현재 게임 파일: {latest_path}\n"
+                        f"수정 요청이면 Read 도구로 읽어서 고쳐줘. 완전히 새 게임 요청이면 무시하고 새로 만들어."
+                    )
 
             assistant_text = ""
-            async for event in stream_claude(prompt, child_id, session_id):
-                payload: dict = {"type": event.type}
-                if event.type == "text":
-                    assistant_text += event.chunk or ""
-                    payload["chunk"] = event.chunk
-                elif event.type == "game":
-                    payload["game_url"] = event.game_url
-                elif event.type == "done":
-                    payload["hint"] = event.hint
-                    payload["session_id"] = event.session_id
-                    payload["game_url"] = event.game_url
-                    # 마지막 game_url 세션 메타에 반영
-                    if event.game_url and session_id in _session_meta:
-                        async with _meta_lock:
-                            if session_id in _session_meta:
-                                _session_meta[session_id]["last_game_url"] = event.game_url
-                        await _save_session_meta()
-                    # 채팅 히스토리 저장
-                    try:
-                        await _append_messages(child_id, session_id, [
-                            {"role": "user", "text": prompt},
-                            {"role": "assistant", "text": assistant_text},
-                        ])
-                    except Exception:
-                        logger.exception("[%s::%s] 메시지 저장 실패", child_id, session_id)
-                elif event.type == "error":
-                    payload["chunk"] = event.chunk
+            try:
+                async for event in stream_claude(prompt, child_id, session_id):
+                    payload: dict = {"type": event.type}
+                    if event.type == "text":
+                        assistant_text += event.chunk or ""
+                        payload["chunk"] = event.chunk
+                    elif event.type == "game":
+                        payload["game_url"] = event.game_url
+                    elif event.type == "done":
+                        payload["hint"] = event.hint
+                        payload["session_id"] = event.session_id
+                        payload["game_url"] = event.game_url
+                        # Fix 1: assistant 메시지 done 시점에 저장
+                        try:
+                            await asyncio.to_thread(
+                                storage.append_message, session_id, child_id, "assistant", assistant_text
+                            )
+                        except Exception:
+                            logger.exception("[%s::%s] assistant 메시지 저장 실패", child_id, session_id)
+                        assistant_text = ""  # 저장 완료 후 초기화
+                    elif event.type == "error":
+                        payload["chunk"] = event.chunk
 
-                await websocket.send_json(payload)
+                    await websocket.send_json(payload)
+
+            except Exception as inner_exc:
+                logger.exception("[%s::%s] stream_claude 내부 오류", child_id, session_id)
+                await websocket.send_json({"type": "error", "chunk": str(inner_exc)})
 
     except WebSocketDisconnect:
         logger.info("[%s::%s] WebSocket 연결 해제", child_id, session_id)
+        # Fix 1: 연결 해제 시 부분 응답 저장
+        if assistant_text:
+            try:
+                await asyncio.to_thread(
+                    storage.append_message, session_id, child_id, "assistant", assistant_text
+                )
+            except Exception:
+                logger.exception("[%s::%s] 부분 응답 저장 실패", child_id, session_id)
     except Exception as e:
         logger.exception("[%s::%s] WebSocket 오류", child_id, session_id)
         try:

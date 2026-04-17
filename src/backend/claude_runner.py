@@ -12,18 +12,19 @@ import json
 import logging
 import os
 import re
-import shutil
 import subprocess
+import tempfile
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
+
+import storage
 
 logger = logging.getLogger(__name__)
 
 _BACKEND_ROOT = Path(__file__).parent
 _PERSONA_DIR = _BACKEND_ROOT / "personas"
 _DATA_DIR = _BACKEND_ROOT / "data"
-_SESSIONS_FILE = _DATA_DIR / "sessions.json"
 
 CLAUDE_TIMEOUT = int(os.getenv("CLAUDE_TIMEOUT", "120"))
 CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "sonnet")
@@ -79,60 +80,6 @@ loop();
 _HTML_RE = re.compile(r"```html\s*([\s\S]*?)```", re.IGNORECASE)
 
 
-class SessionStore:
-    """{child_id}::{session_id} 복합키 → claude session_id 영구 저장.
-
-    기존 단순키 포맷(:: 없는 키) 감지 시 자동 비워서 재초기화.
-    """
-
-    def __init__(self, path: Path):
-        self._path = path
-        self._path.parent.mkdir(parents=True, exist_ok=True)
-        self._data: dict[str, str] = {}
-        if self._path.exists():
-            try:
-                raw = json.loads(self._path.read_text(encoding="utf-8"))
-                # old-format 감지: 키에 "::" 가 전혀 없으면 비워서 재초기화
-                if raw and all("::" not in k for k in raw):
-                    logger.warning(
-                        "sessions.json 구 포맷 감지 — 복합키 포맷으로 재초기화: %s", self._path
-                    )
-                else:
-                    self._data = raw
-            except (json.JSONDecodeError, ValueError):
-                logger.warning("세션 파일 손상, 초기화: %s", self._path)
-
-    def _key(self, child_id: str, session_id: str) -> str:
-        return f"{child_id}::{session_id}"
-
-    def get(self, child_id: str, session_id: str) -> str | None:
-        return self._data.get(self._key(child_id, session_id))
-
-    def __contains__(self, key: object) -> bool:
-        # key는 (child_id, session_id) 튜플 또는 복합키 문자열
-        if isinstance(key, tuple):
-            return self._key(*key) in self._data
-        return key in self._data
-
-    def __setitem__(self, key: tuple[str, str] | str, claude_session_id: str):
-        k = self._key(*key) if isinstance(key, tuple) else key
-        self._data[k] = claude_session_id
-        self._save()
-
-    def __delitem__(self, key: tuple[str, str] | str):
-        k = self._key(*key) if isinstance(key, tuple) else key
-        self._data.pop(k, None)
-        self._save()
-
-    def _save(self):
-        tmp = self._path.with_suffix(".tmp")
-        tmp.write_text(json.dumps(self._data, indent=2, ensure_ascii=False), encoding="utf-8")
-        tmp.replace(self._path)
-
-
-_sessions = SessionStore(_SESSIONS_FILE)
-
-
 def _load_persona() -> str:
     parts = []
     for name in ("TUTOR.md",):
@@ -164,7 +111,7 @@ def _extract_hint(text: str) -> str:
 
 
 def _save_game_html(html: str, child_id: str, session_id: str, game_id: str) -> Path:
-    """게임 HTML을 디스크에 저장하고 파일 경로를 반환."""
+    """게임 HTML을 디스크에 저장하고 파일 경로를 반환. storage.add_game도 호출."""
     games_base = (_DATA_DIR / "games").resolve()
     game_dir = (_DATA_DIR / "games" / child_id / session_id).resolve()
     if not game_dir.is_relative_to(games_base):
@@ -172,15 +119,22 @@ def _save_game_html(html: str, child_id: str, session_id: str, game_id: str) -> 
 
     game_dir.mkdir(parents=True, exist_ok=True)
 
-    # 세션당 최신 10개 초과 시 오래된 파일 삭제
+    # 세션당 최신 10개 초과 시 오래된 파일 삭제 + DB에서도 정리
     existing = sorted(game_dir.glob("game_*.html"), key=lambda p: p.name)
     while len(existing) >= _MAX_GAMES_PER_SESSION:
-        existing.pop(0).unlink(missing_ok=True)
+        old_path = existing.pop(0)
+        old_game_id = old_path.stem
+        old_path.unlink(missing_ok=True)
+        storage.delete_game(session_id, old_game_id)
 
     game_path = game_dir / f"{game_id}.html"
     if not game_path.resolve().is_relative_to(games_base):
         raise ValueError(f"경로 순회 공격 감지: {game_path}")
     game_path.write_text(html, encoding="utf-8")
+
+    url = f"{BACKEND_BASE_URL}/games/{child_id}/{session_id}/{game_id}"
+    storage.add_game(session_id, child_id, game_id, str(game_path), url)
+
     return game_path
 
 
@@ -224,7 +178,7 @@ async def stream_claude(prompt: str, child_id: str, session_id: str):
     ]
     if persona:
         cmd += ["--append-system-prompt", persona]
-    claude_session_id = _sessions.get(child_id, session_id)
+    claude_session_id = storage.get_claude_session_id(session_id)
     if claude_session_id:
         cmd += ["--resume", claude_session_id]
 
@@ -233,12 +187,12 @@ async def stream_claude(prompt: str, child_id: str, session_id: str):
 
     try:
         proc = subprocess.Popen(
-            cmd,
+            cmd + ["--add-dir", str(_BACKEND_ROOT)],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
             encoding="utf-8",
-            cwd=str(_BACKEND_ROOT),
+            cwd=tempfile.gettempdir(),
             env=env,
         )
     except FileNotFoundError:
@@ -282,14 +236,13 @@ async def stream_claude(prompt: str, child_id: str, session_id: str):
         if proc.returncode != 0:
             stderr = (proc.stderr.read() if proc.stderr else "").strip()
             logger.error("[%s::%s] claude 실패 (returncode=%d): %s", child_id, session_id, proc.returncode, stderr)
-            if (child_id, session_id) in _sessions:
-                del _sessions[(child_id, session_id)]
+            storage.delete_claude_session_id(session_id)
             yield StreamEvent(type="error", chunk=f"claude 실행 오류: {stderr or '알 수 없는 오류'}")
             return
 
         # 세션 저장
         if new_claude_session_id:
-            _sessions[(child_id, session_id)] = new_claude_session_id
+            storage.set_claude_session_id(session_id, new_claude_session_id)
             logger.info("[%s::%s] 세션 저장: %s", child_id, session_id, new_claude_session_id)
 
         # 게임 HTML 추출 및 저장
@@ -312,8 +265,7 @@ async def stream_claude(prompt: str, child_id: str, session_id: str):
     except subprocess.TimeoutExpired:
         proc.kill()
         logger.error("[%s::%s] 타임아웃 (%d초)", child_id, session_id, CLAUDE_TIMEOUT)
-        if (child_id, session_id) in _sessions:
-            del _sessions[(child_id, session_id)]
+        storage.delete_claude_session_id(session_id)
         yield StreamEvent(type="error", chunk=f"응답 시간 초과 ({CLAUDE_TIMEOUT}초)")
     except Exception as e:
         logger.exception("[%s::%s] 예외", child_id, session_id)
@@ -321,21 +273,17 @@ async def stream_claude(prompt: str, child_id: str, session_id: str):
 
 
 def reset_session(child_id: str, session_id: str | None = None) -> bool:
-    """child_id (+ 선택적 session_id) 세션 초기화 (운영자용)."""
+    """child_id (+ 선택적 session_id) claude 세션 초기화 (운영자용)."""
     if session_id is not None:
-        key = (child_id, session_id)
-        if key in _sessions:
-            del _sessions[key]
+        existing = storage.get_claude_session_id(session_id)
+        if existing:
+            storage.delete_claude_session_id(session_id)
             logger.info("[%s::%s] 세션 리셋", child_id, session_id)
             return True
         return False
-    # session_id 미지정 시 해당 child_id 의 모든 세션 삭제
-    prefix = f"{child_id}::"
-    keys_to_delete = [k for k in _sessions._data if k.startswith(prefix)]
-    for k in keys_to_delete:
-        del _sessions._data[k]
-    if keys_to_delete:
-        _sessions._save()
-        logger.info("[%s] 전체 세션 리셋 (%d개)", child_id, len(keys_to_delete))
+    # session_id 미지정 시 해당 child_id 의 모든 세션의 claude_session_id 초기화
+    changed = storage.reset_all_claude_sessions(child_id)
+    if changed:
+        logger.info("[%s] 전체 세션 리셋 (%d개)", child_id, changed)
         return True
     return False
