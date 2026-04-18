@@ -110,6 +110,17 @@ def _extract_hint(text: str) -> str:
     return ""
 
 
+def _friendly_error(kind: str) -> str:
+    """아이에게 보여줄 친근한 오류 메시지 반환. 원본 오류는 호출 전에 logger로 기록."""
+    _messages = {
+        "timeout":    "AI가 너무 오래 생각했어. 다시 한 번 말해봐! ⏰",
+        "not_found":  "AI 도우미를 찾을 수 없어. 선생님한테 도움을 요청해봐! 🙏",
+        "returncode": "AI가 잠깐 실수했어. 다시 한 번 해볼까? 🔄",
+        "generic":    "뭔가 잘못됐어. 다시 한 번 해볼까? 😅",
+    }
+    return _messages.get(kind, _messages["generic"])
+
+
 def _save_game_html(html: str, child_id: str, session_id: str, game_id: str) -> Path:
     """게임 HTML을 디스크에 저장하고 파일 경로를 반환. storage.add_game도 호출."""
     games_base = (_DATA_DIR / "games").resolve()
@@ -159,7 +170,7 @@ async def stream_claude(prompt: str, child_id: str, session_id: str):
             html_content = html_match.group(1).strip()
             _save_game_html(html_content, child_id, session_id, mock_game_id)
             game_url = f"{BACKEND_BASE_URL}/games/{child_id}/{session_id}/{mock_game_id}"
-            yield StreamEvent(type="game", game_url=game_url)
+            yield StreamEvent(type="game", game_url=game_url, html=html_content)
         yield StreamEvent(
             type="done",
             session_id="mock-session",
@@ -175,6 +186,7 @@ async def stream_claude(prompt: str, child_id: str, session_id: str):
         "--output-format", "stream-json",
         "--verbose",
         "--allowedTools", "Read,Write,Glob",
+        "--dangerously-skip-permissions",
     ]
     if persona:
         cmd += ["--append-system-prompt", persona]
@@ -196,7 +208,8 @@ async def stream_claude(prompt: str, child_id: str, session_id: str):
             env=env,
         )
     except FileNotFoundError:
-        yield StreamEvent(type="error", chunk="claude CLI를 찾을 수 없습니다.")
+        logger.error("[%s::%s] claude CLI를 찾을 수 없습니다.", child_id, session_id)
+        yield StreamEvent(type="error", chunk=_friendly_error("not_found"))
         return
 
     full_text = ""
@@ -237,7 +250,7 @@ async def stream_claude(prompt: str, child_id: str, session_id: str):
             stderr = (proc.stderr.read() if proc.stderr else "").strip()
             logger.error("[%s::%s] claude 실패 (returncode=%d): %s", child_id, session_id, proc.returncode, stderr)
             storage.delete_claude_session_id(session_id)
-            yield StreamEvent(type="error", chunk=f"claude 실행 오류: {stderr or '알 수 없는 오류'}")
+            yield StreamEvent(type="error", chunk=_friendly_error("returncode"))
             return
 
         # 세션 저장
@@ -251,9 +264,10 @@ async def stream_claude(prompt: str, child_id: str, session_id: str):
         if html_match:
             html_content = html_match.group(1).strip()
             game_id = f"game_{int(time.time() * 1000)}"
+            logger.info("[%s::%s] 게임 HTML 크기: %d bytes", child_id, session_id, len(html_content))
             _save_game_html(html_content, child_id, session_id, game_id)
             game_url = f"{BACKEND_BASE_URL}/games/{child_id}/{session_id}/{game_id}"
-            yield StreamEvent(type="game", game_url=game_url)
+            yield StreamEvent(type="game", game_url=game_url, html=html_content)
 
         yield StreamEvent(
             type="done",
@@ -266,10 +280,10 @@ async def stream_claude(prompt: str, child_id: str, session_id: str):
         proc.kill()
         logger.error("[%s::%s] 타임아웃 (%d초)", child_id, session_id, CLAUDE_TIMEOUT)
         storage.delete_claude_session_id(session_id)
-        yield StreamEvent(type="error", chunk=f"응답 시간 초과 ({CLAUDE_TIMEOUT}초)")
+        yield StreamEvent(type="error", chunk=_friendly_error("timeout"))
     except Exception as e:
-        logger.exception("[%s::%s] 예외", child_id, session_id)
-        yield StreamEvent(type="error", chunk=str(e))
+        logger.exception("[%s::%s] 예외: %s", child_id, session_id, e)
+        yield StreamEvent(type="error", chunk=_friendly_error("generic"))
 
 
 def reset_session(child_id: str, session_id: str | None = None) -> bool:

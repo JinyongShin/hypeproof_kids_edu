@@ -2,7 +2,7 @@
 type: meta
 title: "Index"
 created: 2026-04-12
-updated: 2026-04-13
+updated: 2026-04-17
 tags:
   - meta/index
 ---
@@ -13,18 +13,19 @@ tags:
 
 ## Meta
 - [[overview]] · [[hot]] · [[log]]
+- Sessions: [[session-2026-04-18-ux-improvements]] (2026-04-18) — UX 개선 5종 + QA
 - Subagent 팀 (2026-04-12 빌드, 6개): Wiki=`wiki-ingest`/`wiki-lint`, Dev=`architect`→`implementer`→`tester`→`reviewer`. 정의: `.claude/agents/`, 위임 규칙: `.claude/CLAUDE.md`, 팀 개요·흐름: 루트 `CLAUDE.md` "팀 & 워크플로우".
 
 ## Domains
 
-### Stakeholders (9)
+### Stakeholders (10)
 - [[stakeholders/_index|_index]]
-- [[jay-lee]] · [[jinyong-shin]] · [[jiwoong-kim]] · [[tj]] · [[bongho-tae]] · [[kiwon-nam]]
+- [[jay-lee]] · [[jay]] (별칭, 2026-04-17) · [[jinyong-shin]] · [[jiwoong-kim]] · [[tj]] · [[bongho-tae]] · [[kiwon-nam]]
 - Pilot (신규, 2026-04-12): [[ryan]] · [[jehyeong]] · [[jungwoo]]
 
-### Comms — Meetings (7)
+### Comms — Meetings (8)
 - [[comms/_index|_index]]
-- [[2026-04-12-jay-workshop-structure]] · [[2026-04-11-call-note]] · [[2026-02-09-meeting]] · [[2026-01-26-meeting]] · [[2026-01-19-meeting]] · [[2026-01-12-meeting]] · [[2026-01-05-meeting]]
+- [[2026-04-17-jay-jinyong-call]] (2026-04-17) · [[2026-04-12-jay-workshop-structure]] · [[2026-04-11-call-note]] · [[2026-02-09-meeting]] · [[2026-01-26-meeting]] · [[2026-01-19-meeting]] · [[2026-01-12-meeting]] · [[2026-01-05-meeting]]
 
 ### Decisions (14)
 - [[decisions/_index|_index]]
@@ -37,10 +38,11 @@ tags:
 - Frontend UX (2026-04-13): [[click-to-send-ui]]
 - Auth + Session + Game Persistence (2026-04-13): [[auth-session-game-persistence]]
 
-### Deliverables (9)
+### Deliverables (10)
 - [[deliverables/_index|_index]]
 - [[okr-q2-jy]]
 - [[pilot-5-5-milestones]] — 전체 팀 마일스톤 (2026-04-12 확정)
+- [[2026-05-05-pilot]] — 파일럿 실행 현황 페이지 (2026-04-17 신규)
 - [[pilot-gemini-api-key]] · [[pilot-server-domain]] · [[pilot-oauth-setup]] · [[pilot-cline-gemini-integration]] · [[pilot-game-starter-template]] · [[pilot-rehearsal-late-april]] · [[pilot-operator-guide]]
 
 ### Specs (4)
@@ -71,6 +73,8 @@ tags:
 - [[pilot-day-operation]] (stub, planned, 2026-04-12)
 
 ## Recent Sources (ingested)
+- `0417-call.md` (통화 일자 2026-04-17로 정정) → [[2026-04-17-jay-jinyong-call]] + [[jay]] + [[2026-05-05-pilot]]
+
 - `meeting_notes/2026-04-12-jay-decision.md` → [[2026-04-12-jay-workshop-structure]] + [[track-a-primary-b-backup]] + [[stack-decision-after-curriculum]] + [[pilot-5-5-milestones]] + [[ryan]] + [[jehyeong]] + [[jungwoo]]
 - `meeting_notes/Meeting started 2026_01_05 22_00 KST - Notes by Gemini.md` → [[2026-01-05-meeting]]
 - `meeting_notes/Meeting started 2026_01_12 21_27 KST - Notes by Gemini.md` → [[2026-01-12-meeting]]

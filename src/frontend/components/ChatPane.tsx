@@ -3,11 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useChat } from "@/hooks/useChat";
 import PromptScaffold from "@/components/PromptScaffold";
+import { SCAFFOLD_DATA } from "@/lib/scaffoldData";
 
 interface ChatPaneProps {
   childId: string;
   sessionId: string;
-  onGameReady: (gameUrl: string) => void;
+  onGameReady: (gameUrl: string, gameHtml: string) => void;
   onLoadingChange?: (loading: boolean) => void;
   currentBlock: number;
   onBlockChange: (block: number) => void;
@@ -21,17 +22,18 @@ export default function ChatPane({
   currentBlock,
   onBlockChange,
 }: ChatPaneProps) {
-  const { messages, gameUrl, hint, isLoading, send } = useChat(
+  const { messages, gameUrl, gameHtml, hint, isLoading, wsStatus, send } = useChat(
     childId,
     sessionId
   );
   const [input, setInput] = useState("");
+  const [waitingMessage, setWaitingMessage] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // 게임 URL 변경 시 부모에 전달
+  // 게임 URL/HTML 변경 시 부모에 전달
   useEffect(() => {
-    if (gameUrl) onGameReady(gameUrl);
-  }, [gameUrl, onGameReady]);
+    if (gameUrl) onGameReady(gameUrl, gameHtml);
+  }, [gameUrl, gameHtml, onGameReady]);
 
   // 로딩 상태 변경 시 부모에 전달
   useEffect(() => {
@@ -42,6 +44,26 @@ export default function ChatPane({
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // 대기 중 중간 피드백 타이머
+  useEffect(() => {
+    if (!isLoading) {
+      setWaitingMessage(null);
+      return;
+    }
+    const t1 = setTimeout(
+      () => setWaitingMessage("AI가 열심히 생각하고 있어... 잠깐만 기다려봐! 💭"),
+      15_000
+    );
+    const t2 = setTimeout(
+      () => setWaitingMessage("거의 다 됐어! 조금만 더 기다려봐 🎮"),
+      40_000
+    );
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [isLoading]);
 
   const handleSend = () => {
     if (!input.trim() || isLoading) return;
@@ -63,22 +85,44 @@ export default function ChatPane({
 
   return (
     <div className="flex h-full flex-col">
+      {/* WS 재연결 상태 배너 */}
+      {wsStatus !== "connected" && (
+        <div
+          className={`flex items-center justify-center gap-2 px-3 py-1.5 text-xs font-medium ${
+            wsStatus === "reconnecting"
+              ? "bg-yellow-900/80 text-yellow-300"
+              : "bg-red-900/80 text-red-300"
+          }`}
+        >
+          <span
+            className={`h-1.5 w-1.5 rounded-full ${
+              wsStatus === "reconnecting"
+                ? "bg-yellow-400 animate-pulse"
+                : "bg-red-400"
+            }`}
+          />
+          {wsStatus === "reconnecting"
+            ? "연결 중... 잠깐만 기다려봐 🔄"
+            : "서버 연결이 끊겼어. 새로고침 해봐! ⚠️"}
+        </div>
+      )}
       {/* 블록 진행 표시 */}
-      <div className="flex gap-1 border-b border-gray-800 px-4 py-2">
-        {[0, 1, 2, 3, 4, 5].map((b) => (
+      <div className="flex flex-wrap gap-1 border-b border-gray-800 px-4 py-2">
+        {SCAFFOLD_DATA.map(({ block, skill }) => (
           <button
-            key={b}
-            onClick={() => onBlockChange(b)}
-            className={`rounded px-2 py-1 text-xs font-medium transition-colors ${
-              b === currentBlock
+            key={block}
+            onClick={() => onBlockChange(block)}
+            title={skill}
+            className={`flex-shrink-0 rounded px-2 py-1 text-xs font-medium transition-colors whitespace-nowrap ${
+              block === currentBlock
                 ? "bg-indigo-600 text-white"
                 : "bg-gray-800 text-gray-400 hover:bg-gray-700"
             }`}
           >
-            {b}
+            <span className="sm:hidden">{block + 1}</span>
+            <span className="hidden sm:inline">{block + 1} {skill}</span>
           </button>
         ))}
-        <span className="ml-2 self-center text-xs text-gray-500">블록</span>
       </div>
 
       {/* 블록별 프롬프트 스캐폴딩 카드 */}
@@ -104,11 +148,22 @@ export default function ChatPane({
               } ${msg.isStreaming ? "animate-pulse" : ""}`}
             >
               {/* 게임 HTML 제외하고 텍스트만 표시 */}
-              {msg.text.replace(/```html[\s\S]*?```/gi, "").trim() ||
+              {msg.text
+                .replace(/```html[\s\S]*?```/gi, "")   // HTML 코드블록 제거
+                .replace(/\n*💡[^\n]*$/m, "")           // 마지막 💡 힌트 줄 제거 (별도 버튼으로 표시)
+                .trim() ||
                 (msg.isStreaming ? "..." : "")}
             </div>
           </div>
         ))}
+        {/* 대기 피드백 — 15초·40초 후 안심 메시지 */}
+        {waitingMessage && isLoading && (
+          <div className="flex justify-center">
+            <p className="rounded-full bg-indigo-950 border border-indigo-800 px-4 py-1.5 text-xs text-indigo-300 animate-pulse">
+              {waitingMessage}
+            </p>
+          </div>
+        )}
         {/* 생각 중 dots — 로딩 중이고 아직 AI 응답이 없을 때 */}
         {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
           <div className="flex justify-start">

@@ -11,8 +11,10 @@ export interface Message {
 interface UseChatReturn {
   messages: Message[];
   gameUrl: string;
+  gameHtml: string;
   hint: string;
   isLoading: boolean;
+  wsStatus: "connected" | "reconnecting" | "disconnected";
   send: (prompt: string) => void;
 }
 
@@ -24,8 +26,10 @@ const BACKEND_HTTP_URL =
 export function useChat(childId: string, sessionId: string): UseChatReturn {
   const [messages, setMessages] = useState<Message[]>([]);
   const [gameUrl, setGameUrl] = useState("");
+  const [gameHtml, setGameHtml] = useState("");
   const [hint, setHint] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [wsStatus, setWsStatus] = useState<"connected" | "reconnecting" | "disconnected">("connected");
 
   const wsRef = useRef<WebSocket | null>(null);
 
@@ -34,6 +38,8 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
     if (!childId || !sessionId) return;
     setIsLoading(false);
     setGameUrl("");
+    setGameHtml("");
+    setHint("");
     setMessages([]);
     fetch(`${BACKEND_HTTP_URL}/sessions/${childId}/${sessionId}/messages`)
       .then((r) => (r.ok ? r.json() : []))
@@ -57,12 +63,18 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
       );
       wsRef.current = ws;
 
+      ws.onopen = () => {
+        setWsStatus("connected");
+      };
+
       ws.onmessage = (event) => {
         retryCount = 0; // 메시지 수신 시 재시도 카운트 초기화
+        setWsStatus("connected");
         const data = JSON.parse(event.data) as {
           type: "text" | "game" | "done" | "error";
           chunk?: string;
           game_url?: string;
+          game_html?: string;
           hint?: string;
           session_id?: string;
         };
@@ -83,6 +95,7 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
           });
         } else if (data.type === "game" && data.game_url) {
           setGameUrl(data.game_url);
+          if (data.game_html) setGameHtml(data.game_html);
         } else if (data.type === "done") {
           setMessages((prev) => {
             const last = prev[prev.length - 1];
@@ -115,8 +128,10 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
         if (intentionallyClosed) return;
         if (retryCount < MAX_RETRIES) {
           retryCount++;
+          setWsStatus("reconnecting");
           retryTimer = setTimeout(connect, 1500);
         } else {
+          setWsStatus("disconnected");
           setMessages((prev) => [
             ...prev,
             {
@@ -156,5 +171,5 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
     [isLoading]
   );
 
-  return { messages, gameUrl, hint, isLoading, send };
+  return { messages, gameUrl, gameHtml, hint, isLoading, wsStatus, send };
 }

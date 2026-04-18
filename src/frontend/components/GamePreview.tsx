@@ -3,12 +3,14 @@
 interface GamePreviewProps {
   /** 저장된 게임의 URL. 빈 문자열이면 대기 화면 표시. */
   gameUrl: string;
+  /** 게임 원본 HTML. 있으면 srcDoc으로 렌더링해 네트워크 독립성 확보. */
+  gameHtml?: string;
   /** 새 게임 생성 중 여부 */
   isLoading?: boolean;
 }
 
-export default function GamePreview({ gameUrl, isLoading = false }: GamePreviewProps) {
-  if (!gameUrl) {
+export default function GamePreview({ gameUrl, gameHtml, isLoading = false }: GamePreviewProps) {
+  if (!gameUrl && !gameHtml) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-4 bg-gray-950 text-gray-500">
         {isLoading ? (
@@ -30,7 +32,9 @@ export default function GamePreview({ gameUrl, isLoading = false }: GamePreviewP
   return (
     <div className="relative h-full w-full">
       <iframe
-        src={gameUrl}
+        // gameHtml이 있으면 srcDoc으로 렌더링 (네트워크 독립적)
+        // 없으면 URL로 폴백 (세션 복원 시)
+        {...(gameHtml ? { srcDoc: gameHtml } : { src: gameUrl })}
         // allow-scripts: JS 실행 허용
         // allow-same-origin 금지: 부모 페이지 DOM 접근 차단
         sandbox="allow-scripts"

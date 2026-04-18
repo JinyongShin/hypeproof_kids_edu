@@ -15,6 +15,7 @@ export default function Home() {
   const [childId, setChildId] = useState("");
   const [activeSessionId, setActiveSessionId] = useState("");
   const [gameUrl, setGameUrl] = useState("");
+  const [gameHtml, setGameHtml] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [currentBlock, setCurrentBlock] = useState(0);
   const [activePane, setActivePane] = useState<"chat" | "game">("chat");
@@ -65,6 +66,7 @@ export default function Home() {
     setActiveSessionId(sessionId);
     sessionStorage.setItem("active_session_id", sessionId);
     setGameUrl(lastGameUrl);
+    setGameHtml(""); // 세션 전환 시 srcdoc 초기화 → URL 폴백
   }, []);
 
   const handleLogout = useCallback(() => {
@@ -72,8 +74,9 @@ export default function Home() {
     router.replace("/login");
   }, [router]);
 
-  const handleGameReady = useCallback((url: string) => {
+  const handleGameReady = useCallback((url: string, html: string) => {
     setGameUrl(url);
+    setGameHtml(html);
     setSessionRefreshToken((t) => t + 1);
   }, []);
 
@@ -154,7 +157,7 @@ export default function Home() {
 
           {/* 게임 프리뷰 영역: 모바일 50%(=100vw) / 데스크탑 flex-1 */}
           <div className="relative w-1/2 md:flex-1 h-full">
-            <GamePreview gameUrl={gameUrl} isLoading={isLoading} />
+            <GamePreview gameUrl={gameUrl} gameHtml={gameHtml} isLoading={isLoading} />
 
             {/* 좌측 에지 스와이프 캡처 존 — iframe이 터치 이벤트를 소비하는 문제 우회 */}
             <div

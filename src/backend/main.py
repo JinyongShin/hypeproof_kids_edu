@@ -300,6 +300,7 @@ async def chat_ws(websocket: WebSocket, child_id: str):
                         payload["chunk"] = event.chunk
                     elif event.type == "game":
                         payload["game_url"] = event.game_url
+                        payload["game_html"] = event.html
                     elif event.type == "done":
                         payload["hint"] = event.hint
                         payload["session_id"] = event.session_id
@@ -318,8 +319,8 @@ async def chat_ws(websocket: WebSocket, child_id: str):
                     await websocket.send_json(payload)
 
             except Exception as inner_exc:
-                logger.exception("[%s::%s] stream_claude 내부 오류", child_id, session_id)
-                await websocket.send_json({"type": "error", "chunk": str(inner_exc)})
+                logger.exception("[%s::%s] stream_claude 내부 오류: %s", child_id, session_id, inner_exc)
+                await websocket.send_json({"type": "error", "chunk": "뭔가 잘못됐어. 다시 한 번 해볼까? 😅"})
 
     except WebSocketDisconnect:
         logger.info("[%s::%s] WebSocket 연결 해제", child_id, session_id)
@@ -332,9 +333,9 @@ async def chat_ws(websocket: WebSocket, child_id: str):
             except Exception:
                 logger.exception("[%s::%s] 부분 응답 저장 실패", child_id, session_id)
     except Exception as e:
-        logger.exception("[%s::%s] WebSocket 오류", child_id, session_id)
+        logger.exception("[%s::%s] WebSocket 오류: %s", child_id, session_id, e)
         try:
-            await websocket.send_json({"type": "error", "chunk": str(e)})
+            await websocket.send_json({"type": "error", "chunk": "뭔가 잘못됐어. 다시 한 번 해볼까? 😅"})
         except Exception:
             pass
 

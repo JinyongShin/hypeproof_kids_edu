@@ -2,7 +2,7 @@
 type: meta
 title: "Log"
 created: 2026-04-12
-updated: 2026-04-17
+updated: 2026-04-18
 tags:
   - meta/log
 ---
@@ -10,6 +10,36 @@ tags:
 # Log
 
 추가 전용. 새 엔트리는 **최상단**에 삽입. 과거 엔트리 수정 금지.
+
+---
+
+## 2026-04-18 — 0417-call.md ingest: Jay–JY 통화 (2026-04-17)
+
+- Source: `0417-call.md` (원본 날짜 4/18 표기 → 실제 통화일 **2026-04-17**로 정정)
+- Type: ingest
+- Created: [[2026-04-17-jay-jinyong-call]] (comms), [[jay]] (stakeholder 별칭), [[2026-05-05-pilot]] (deliverable)
+- Updated: [[index]] (Stakeholders 10, Comms 8, Deliverables 10, Recent Sources 추가)
+
+### 핵심 내용
+- Jay가 HypeProof 사업 구조 브리핑: 교육 트랙 (라이센스 인증 모델) + AX 전환 트랙 (SI/서비스 이원화).
+- 세일즈 파이프라인 이미 확보 — 프로덕트가 "필터" 역할. JY → 사업 구조 러프 초안 → 지웅 엔지니어링 디테일.
+- 파일럿 개발 현황 공유: 채팅+게임 프레임 완성, 커리큘럼 미완 (봉호 4/19 목표).
+- 소아암 환자 게임 콘텐츠 주의: 적/체력 깎임 요소 치료 철학 충돌 가능 → 국립암센터 사전 확인 필요 (JY 액션).
+- 4/21 월요일 미팅 확인: 지웅·봉호·정우 참석 확정.
+
+---
+
+## 2026-04-18 — UX 개선 5종 구현 + QA (E2E, 실제 Claude)
+
+- Type: session
+- Location: wiki/meta/session-2026-04-18-ux-improvements.md
+- 개선 1: iframe `srcdoc` 전환 — `game_html` 필드 WS 전송, 네트워크 독립적 렌더링
+- 개선 3: 아동 친화적 에러 메시지 — `_friendly_error()` 헬퍼 4곳 적용
+- 개선 4: 블록 버튼 스킬 이름 표시 — `SCAFFOLD_DATA` 사용, 1-based, `flex-wrap`
+- 개선 5: 대기 중 중간 피드백 메시지 — 15초/40초 타이머
+- 개선 6: WS 재연결 상태 배너 — 황색/적색 조건부 배너
+- QA 버그 수정 3건: 블록 버튼 5·6 잘림, 힌트 중복 표시, 세션 전환 시 힌트 잔류
+- 커밋: db1df5d
 
 ---
 
