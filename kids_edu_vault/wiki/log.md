@@ -13,6 +13,16 @@ tags:
 
 ---
 
+## 2026-04-21 — 병원 측 확인 질문 초안 작성
+
+- Type: 작업 기록
+- 산출물: `meeting_notes/2026-04-21-hospital-inquiry-draft.md`
+- 내용: 소아암 환아 교육 선례 조사 기반 + 운영 미확정 사항을 병원 측에 확인하는 질문 초안 (9개 섹션, 행사허가·연령·참가기준·감염관리·공간·기기·보호자·콘텐츠·진행인력)
+- 상태: 팀 공유 완료, 검토 의견 대기 중
+- Updated: [[hot]] (JY 현장 상황 정리 태스크 In Progress로 갱신)
+
+---
+
 ## 2026-04-21 — 배치 ingest 3종 (wizard-curriculum / asap / meeting-briefing)
 
 - Source: `.raw/wizard-curriculum-20260420.md`, `.raw/2026-04-21-asap.md`, `.raw/2026-04-20-meeting-briefing.md`

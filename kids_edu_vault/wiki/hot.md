@@ -20,6 +20,7 @@ tags:
 1. **[[bongho-tae]] + [[jiwoong-kim]]**: 당일 커리큘럼 (시간·활동·감정 포인트) 작성 → [[filamentary]] 부대표 전달
    - 선행: 회의록 녹음본 재검토 필요
 2. **[[jinyong-shin]]**: 현장 상황 정리 (부모 동반 여부 등) → [[filamentary]] 전달
+   - 병원 측 확인 질문 초안 작성 완료 (`meeting_notes/2026-04-21-hospital-inquiry-draft.md`), 팀 검토 대기 중
 3. 두 산출물 합쳐서 2026-04-24 필라멘트리에 통합 전달
 
 상세: [[2026-04-21-asap-action-items]]
@@ -91,7 +92,7 @@ tags:
 |---|---|---|---|
 | 2026-04-21 | 커리큘럼 리뷰 → Track A 스택 결정 | Jay + JY | **오늘** → [[stack-decision-after-curriculum]] |
 | 2026-04-24 | 커리큘럼 → 필라멘트리 전달 | BH + 지웅 | Pending |
-| 2026-04-24 | 현장 상황 정리 → 필라멘트리 전달 | JY | Pending |
+| 2026-04-24 | 현장 상황 정리 → 필라멘트리 전달 | JY | **In Progress** (초안 팀 검토 중) |
 | 2026-04-26 | Track A 래퍼 리허설 가능 상태 | JY | Pending |
 | 2026-04-26 | 갤러리 + 랜딩 페이지 | JeHyeong | Pending |
 | 2026-04-30 | 드라이런 | 전원 | Planned |
