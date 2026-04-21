@@ -2,7 +2,7 @@
 type: meta
 title: "Index"
 created: 2026-04-12
-updated: 2026-04-17
+updated: 2026-04-19
 tags:
   - meta/index
 ---
@@ -18,13 +18,18 @@ tags:
 
 ## Domains
 
-### Stakeholders (10)
+### Stakeholders (11)
 - [[stakeholders/_index|_index]]
 - [[jay-lee]] · [[jay]] (별칭, 2026-04-17) · [[jinyong-shin]] · [[jiwoong-kim]] · [[tj]] · [[bongho-tae]] · [[kiwon-nam]]
 - Pilot (신규, 2026-04-12): [[ryan]] · [[jehyeong]] · [[jungwoo]]
+- External (2026-04-21): [[filamentary]]
 
-### Comms — Meetings (8)
+### Comms — Meetings (12)
 - [[comms/_index|_index]]
+- [[2026-04-21-asap-action-items]] (2026-04-21) — ASAP 액션 아이템 (필라멘트리 전달 마감 2026-04-24)
+- [[2026-04-20-wizard-curriculum]] (2026-04-20) — 나만의 마법 게임 만들기: 게임 타이틀 카드 방식 설계
+- [[2026-04-20-meeting-briefing]] (2026-04-20) — AI 기반 게임 제작 교육 전략 브리핑
+- [[2026-04-19-curriculum-v0.3]] (2026-04-19) — 커리큘럼 v0.3 전문 요약
 - [[2026-04-17-jay-jinyong-call]] (2026-04-17) · [[2026-04-12-jay-workshop-structure]] · [[2026-04-11-call-note]] · [[2026-02-09-meeting]] · [[2026-01-26-meeting]] · [[2026-01-19-meeting]] · [[2026-01-12-meeting]] · [[2026-01-05-meeting]]
 
 ### Decisions (14)
@@ -38,16 +43,18 @@ tags:
 - Frontend UX (2026-04-13): [[click-to-send-ui]]
 - Auth + Session + Game Persistence (2026-04-13): [[auth-session-game-persistence]]
 
-### Deliverables (10)
+### Deliverables (11)
 - [[deliverables/_index|_index]]
 - [[okr-q2-jy]]
 - [[pilot-5-5-milestones]] — 전체 팀 마일스톤 (2026-04-12 확정)
 - [[2026-05-05-pilot]] — 파일럿 실행 현황 페이지 (2026-04-17 신규)
+- [[curriculum-v0.3]] — 커리큘럼 v0.3 산출물 트래킹 (봉호·지웅, 2026-04-19 delivered)
 - [[pilot-gemini-api-key]] · [[pilot-server-domain]] · [[pilot-oauth-setup]] · [[pilot-cline-gemini-integration]] · [[pilot-game-starter-template]] · [[pilot-rehearsal-late-april]] · [[pilot-operator-guide]]
 
-### Specs (4)
+### Specs (5)
 - [[specs/_index|_index]]
 - [[pilot-env-design]] · [[pilot-curriculum-adapted]]
+- [[curriculum-wizard-v1]] (2026-04-20) — 나만의 마법 게임 만들기 커리큘럼 상세 스펙 (게임 타이틀 카드)
 - [[ai-prompting-literacy-input]] (2026-04-12) — BH 커리큘럼 인풋: 블록별 AI 프롬프팅 스킬 매핑
 - [[product-requirements]] (2026-04-12) — JY/Ryan 공통 상품 요구사항 R1-R9 + 충족 현황
 
@@ -56,10 +63,10 @@ tags:
 - [[code-server]] · [[oauth2-proxy]] · [[caddy]] · [[cline]] · [[gemini-2-5-flash]] · [[sans-kids-school-2025]]
 - Dev (2026-04-12): [[kids-edu-backend]]
 
-### Concepts (8)
+### Concepts (9)
 - [[concepts/_index|_index]]
 - [[hypeproof-lab]] · [[mission-driven]] · [[tracks-a-b]] · [[fundamental-content-teams]] · [[ai-native-workflow]]
-- Pedagogy: [[no-debug-philosophy]] · [[ai-persona-workflows]] · [[single-html-runtime]]
+- Pedagogy: [[no-debug-philosophy]] · [[ai-persona-workflows]] · [[single-html-runtime]] · [[vibe-coding]] (2026-04-21)
 
 ### Intel (14)
 - [[intel/_index|_index]]
@@ -73,6 +80,11 @@ tags:
 - [[pilot-day-operation]] (stub, planned, 2026-04-12)
 
 ## Recent Sources (ingested)
+- `wizard-curriculum-20260420.md` (2026-04-21) → [[2026-04-20-wizard-curriculum]] + [[curriculum-wizard-v1]] + [[filamentary]]
+- `2026-04-21-asap.md` (2026-04-21) → [[2026-04-21-asap-action-items]] + [[filamentary]]
+- `2026-04-20-meeting-briefing.md` (2026-04-21) → [[2026-04-20-meeting-briefing]] + [[vibe-coding]]
+- `2026-04-19-curriculum-v0.3.html` (2026-04-19) → [[2026-04-19-curriculum-v0.3]] + [[curriculum-v0.3]]
+
 - `0417-call.md` (통화 일자 2026-04-17로 정정) → [[2026-04-17-jay-jinyong-call]] + [[jay]] + [[2026-05-05-pilot]]
 
 - `meeting_notes/2026-04-12-jay-decision.md` → [[2026-04-12-jay-workshop-structure]] + [[track-a-primary-b-backup]] + [[stack-decision-after-curriculum]] + [[pilot-5-5-milestones]] + [[ryan]] + [[jehyeong]] + [[jungwoo]]

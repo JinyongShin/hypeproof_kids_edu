@@ -38,6 +38,6 @@ desktop.ini
 .idea/
 *.swp
 
-.claude
-.mcp.json
 .playwright-mcp
+src/.claude
+src/backend/.claude

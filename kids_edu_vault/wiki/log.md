@@ -2,7 +2,7 @@
 type: meta
 title: "Log"
 created: 2026-04-12
-updated: 2026-04-18
+updated: 2026-04-19
 tags:
   - meta/log
 ---
@@ -10,6 +10,45 @@ tags:
 # Log
 
 추가 전용. 새 엔트리는 **최상단**에 삽입. 과거 엔트리 수정 금지.
+
+---
+
+## 2026-04-21 — 배치 ingest 3종 (wizard-curriculum / asap / meeting-briefing)
+
+- Source: `.raw/wizard-curriculum-20260420.md`, `.raw/2026-04-21-asap.md`, `.raw/2026-04-20-meeting-briefing.md`
+- Type: batch ingest
+- Created: [[2026-04-20-wizard-curriculum]], [[2026-04-21-asap-action-items]], [[2026-04-20-meeting-briefing]], [[curriculum-wizard-v1]], [[filamentary]], [[vibe-coding]]
+- Updated: [[pilot-curriculum-adapted]] (3-way 커리큘럼 방향 contradiction 추가), [[pilot-5-5-milestones]] (4/24 필라멘트리 전달 마일스톤 추가), [[pilot-day-operation]] (wizard curriculum 참조 + open questions 확장), [[comms/_index]], [[stakeholders/_index]], [[index]], [[hot]]
+
+### 핵심 내용
+
+- **커리큘럼 방향 3종 병존**: HTML게임([[pilot-curriculum-adapted]]) vs 그림책([[2026-04-19-curriculum-v0.3]]) vs 게임타이틀카드([[curriculum-wizard-v1]]). 확정 필요.
+- **마감 2026-04-24**: BH+지웅 커리큘럼 + JY 현장상황 → [[filamentary]] 부대표 전달.
+- **신규 이해관계자**: [[filamentary]] — 현장 교육 협력 기관, 커리큘럼 피드백 파트너.
+- **교육 철학**: [[vibe-coding]] 개념 등장 (자연어로 AI를 지휘해 창작물 생성), 16가지 AI 덕목.
+- **인력 갭**: 브리핑 권장 6~7명 vs 현 계획 5명 → 1~2명 부족 가능성.
+
+---
+
+## 2026-04-19 — 커리큘럼 v0.3 ingest (2026-04-19-curriculum-v0.3.html)
+
+- Source: `.raw/2026-04-19-curriculum-v0.3.html`
+- Type: ingest
+- Created: [[2026-04-19-curriculum-v0.3]] (comms), [[curriculum-v0.3]] (deliverable)
+- Updated: [[pilot-5-5-milestones]] (커리큘럼 초안 Done 처리), [[pilot-curriculum-adapted]] (v0.3 cross-ref callout 추가), [[deliverables/_index]] (Curriculum 섹션 추가), [[comms/_index]] (v0.3 등록), [[index]] (Comms 9, Deliverables 11, Recent Sources 추가), [[hot]] (커리큘럼 v0.3 컨텍스트로 갱신)
+
+### 핵심 내용
+- 봉호([[bongho-tae]])·지웅([[jiwoong-kim]]) 공동 작성. 4/19 마감 목표 달성.
+- 코어 골: "내가 존재하는 세계가 있다" — 소아암 병동 어린이가 처음 통제하는 창작 세계.
+- 6블록 2시간 구성 (오프닝→캐릭터→세계→꾸미기→발표회→수료식).
+- 결과물 형식: **그림책** (표지 + 이름 삽입 이야기 + "지은이: OOO"). 기존 [[pilot-curriculum-adapted]] 게임 HTML 중심과 상이.
+- AI 호출 포인트 3종: 캐릭터 카드 생성 / 이름 삽입 이야기 / 표지 이미지.
+- 안전 체계 4종: R4(완성보장) / R6(콘텐츠) / R5(에러) / 퍼실리테이터 원칙.
+- 다음 게이트: 2026-04-21 Jay·JY 커리큘럼 리뷰 → [[stack-decision-after-curriculum]] 스택 결정.
+
+### 구현 주의사항
+- v0.3 커리큘럼의 AI 호출 3종(캐릭터 카드, 이야기, 표지 이미지)은 현재 백엔드 미구현.
+- R4 완성보장 폴백도 P0 미충족 상태 — 4/21 후 [[implementer]] 작업 범위 재산정 필요.
 
 ---
 

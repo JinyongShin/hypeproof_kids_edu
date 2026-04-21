@@ -1,0 +1,50 @@
+{
+  "sources": {
+    ".raw/wizard-curriculum-20260420.md": {
+      "hash": "29f12efa931a37ef05d36387a1849151",
+      "ingested_at": "2026-04-21",
+      "pages_created": [
+        "wiki/comms/2026-04-20-wizard-curriculum.md",
+        "wiki/specs/curriculum-wizard-v1.md"
+      ],
+      "pages_updated": [
+        "wiki/specs/pilot-curriculum-adapted.md",
+        "wiki/deliverables/pilot-5-5-milestones.md",
+        "wiki/runbooks/pilot-day-operation.md",
+        "wiki/comms/_index.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ]
+    },
+    ".raw/2026-04-21-asap.md": {
+      "hash": "56c529aa6e9c930446238938d3a89e61",
+      "ingested_at": "2026-04-21",
+      "pages_created": [
+        "wiki/comms/2026-04-21-asap-action-items.md",
+        "wiki/stakeholders/filamentary.md"
+      ],
+      "pages_updated": [
+        "wiki/deliverables/pilot-5-5-milestones.md",
+        "wiki/stakeholders/_index.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ]
+    },
+    ".raw/2026-04-20-meeting-briefing.md": {
+      "hash": "7bdd942157a7e6f9becbe7d27276a231",
+      "ingested_at": "2026-04-21",
+      "pages_created": [
+        "wiki/comms/2026-04-20-meeting-briefing.md",
+        "wiki/concepts/vibe-coding.md"
+      ],
+      "pages_updated": [
+        "wiki/comms/_index.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ]
+    }
+  }
+}

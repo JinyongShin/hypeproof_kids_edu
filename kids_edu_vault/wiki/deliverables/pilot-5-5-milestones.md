@@ -2,7 +2,7 @@
 type: deliverable
 title: "파일럿 2026-05-05 마일스톤 전체 일정"
 created: 2026-04-12
-updated: 2026-04-12
+updated: 2026-04-19
 status: in-progress
 tags:
   - deliverable
@@ -31,9 +31,11 @@ related:
 | 날짜 | 마일스톤 | 담당 | 상태 |
 |---|---|---|---|
 | 2026-04-12 | 상품 구조 확정 + 역할 배정 | [[jay-lee]] | Done |
-| 2026-04-19 | 커리큘럼 초안 (2시간 타임테이블 + 조 편성) | [[bongho-tae]] | Pending |
+| 2026-04-19 | 커리큘럼 초안 (2시간 타임테이블 + 조 편성) | [[bongho-tae]] | **Done** → [[curriculum-v0.3]] |
 | 2026-04-19 | 와우 포인트 설계 + 반응 측정 설계 초안 | [[ryan]] | Pending |
 | 2026-04-21 | 커리큘럼 리뷰 → Track A 스택 최종 결정 | [[jay-lee]], [[jinyong-shin]] | Pending |
+| 2026-04-24 | 당일 커리큘럼 → [[filamentary]] 부대표 전달 | [[bongho-tae]], [[jiwoong-kim]] | **Pending** → [[2026-04-21-asap-action-items]] |
+| 2026-04-24 | 현장 상황(부모 동반·현장 포인트) 정리 → [[filamentary]] 전달 | [[jinyong-shin]] | **Pending** → [[2026-04-21-asap-action-items]] |
 | 2026-04-26 | Track A 래퍼 리허설 가능 상태 | [[jinyong-shin]] | Pending |
 | 2026-04-26 | 창작물 갤러리 페이지 + 워크샵 랜딩 페이지 | [[jehyeong]] | Pending |
 | 2026-04-28 | 보호자 안내 발송 (개인정보·촬영 동의서 포함) | [[kiwon-nam]] | Pending |

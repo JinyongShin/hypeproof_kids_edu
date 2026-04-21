@@ -2,7 +2,7 @@
 type: index
 title: "Deliverables"
 created: 2026-04-12
-updated: 2026-04-12
+updated: 2026-04-19
 tags:
   - index/deliverables
 ---
@@ -16,6 +16,9 @@ tags:
 
 ## Milestones
 - [[pilot-5-5-milestones]] — 2026-05-05 파일럿 전체 팀 마일스톤 (2026-04-12 확정)
+
+## Curriculum
+- [[curriculum-v0.3]] — 커리큘럼 v0.3 산출물 트래킹 (봉호·지웅, 2026-04-19 전달, status: delivered)
 
 ## In Progress — Pilot (due 2026-05-05)
 - [[pilot-gemini-api-key]] (due 2026-04-18)

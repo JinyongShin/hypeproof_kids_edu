@@ -8,7 +8,7 @@ tags:
   - pilot
   - curriculum
 created: 2026-04-12
-updated: 2026-04-12
+updated: 2026-04-19
 ---
 
 # Pilot 커리큘럼: 병동용 재설계
@@ -69,6 +69,17 @@ updated: 2026-04-12
 - Google OAuth 로그인 시간([[pilot-oauth-setup]]) 블록 0에 흡수 가능한지 미검증 — 사전 로그인 세팅 vs 현장 로그인 중 결정 필요.
 - 40명 동시에 AI 호출 시 [[gemini-2-5-flash]] 비용 스파이크 — $0.15/회 목표 대비 시뮬레이션 필요.
 - 화면 공유·보여주기 장치(블록 5)의 병동 감염관리 제약 — 개별 노트북 화면 단위로 제한 가능성.
+
+> [!note] v0.3 업데이트 (2026-04-19)
+> [[bongho-tae]]·[[jiwoong-kim]]이 커리큘럼 v0.3을 4/19 전달했다. 이 페이지(게임 제작 중심)와 달리 v0.3은 **그림책(표지+이야기) 결과물** 중심으로 전환되었다. 상세: [[2026-04-19-curriculum-v0.3]], 산출물 트래킹: [[curriculum-v0.3]].
+
+> [!contradiction] 커리큘럼 방향 3종 병존 (2026-04-20)
+> 현재 세 가지 결과물 형식이 서로 다름:
+> - **본 문서**: HTML 게임 (실제 조작) 중심
+> - [[2026-04-19-curriculum-v0.3]]: 그림책 (표지+이야기)
+> - [[curriculum-wizard-v1]] (JY, 4/20): 게임 타이틀 카드 (이미지+텍스트)
+> 
+> [[bongho-tae]] + [[jiwoong-kim]]이 2026-04-24 [[filamentary]] 전달 전 최종 방향 확정 필요. → [[2026-04-21-asap-action-items]]
 
 ## 관련
 - [[pilot-env-design]] · [[combat-vs-cooperative-framing]] · [[fast-implementation-mode]]

@@ -22,7 +22,8 @@ tags:
 - [[jehyeong]] — Web Infrastructure / 현장 기술 (신규, 2026-04-12)
 - [[jungwoo]] — Lead Facilitator / 현장 피드백 (신규, 2026-04-12)
 
-## External (예정)
+## External
+- [[filamentary]] — 현장 교육 협력 기관. 커리큘럼 피드백 파트너 (2026-04-21 등장)
 - 이동훈 대표 · 문조일 대표 · 김성경 대표 · 박재현 소장 · 노수림 교수 — 필요 시 페이지 생성.
 
 ## Notes
