@@ -1,52 +1,148 @@
 "use client";
 
-interface GamePreviewProps {
-  /** 저장된 게임의 URL. 빈 문자열이면 대기 화면 표시. */
-  gameUrl: string;
-  /** 게임 원본 HTML. 있으면 srcDoc으로 렌더링해 네트워크 독립성 확보. */
-  gameHtml?: string;
-  /** 새 게임 생성 중 여부 */
+interface CardData {
+  card_type: "character" | "world" | "title";
+  name: string;
+  description: string;
+  traits: string[];
+  world: string;
+  image_prompt: string;
+  effects?: string[];
+}
+
+interface CardPreviewProps {
+  /** 저장된 카드의 URL. 빈 문자열이면 대기 화면 표시. */
+  cardUrl: string;
+  /** 카드 JSON 문자열. 있으면 직접 렌더링. */
+  cardJson?: string;
+  /** 새 카드 생성 중 여부 */
   isLoading?: boolean;
 }
 
-export default function GamePreview({ gameUrl, gameHtml, isLoading = false }: GamePreviewProps) {
-  if (!gameUrl && !gameHtml) {
+function parseCardJson(jsonStr: string): CardData | null {
+  try {
+    return JSON.parse(jsonStr) as CardData;
+  } catch {
+    return null;
+  }
+}
+
+function CardTypeLabel({ type }: { type: CardData["card_type"] }) {
+  const labels = {
+    character: { text: "캐릭터", bg: "bg-violet-100", color: "text-violet-700" },
+    world: { text: "세계", bg: "bg-sky-100", color: "text-sky-700" },
+    title: { text: "타이틀", bg: "bg-amber-100", color: "text-amber-700" },
+  };
+  const { text, bg, color } = labels[type] || labels.character;
+  return (
+    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${bg} ${color}`}>
+      {text}
+    </span>
+  );
+}
+
+export default function CardPreview({ cardUrl, cardJson, isLoading = false }: CardPreviewProps) {
+  const card = cardJson ? parseCardJson(cardJson) : null;
+
+  if (!cardUrl && !cardJson) {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-4 bg-gray-950 text-gray-500">
+      <div className="flex h-full flex-col items-center justify-center gap-4 bg-gradient-to-br from-violet-50 to-sky-50 text-gray-500">
         {isLoading ? (
           <>
-            <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-700 border-t-indigo-500" />
-            <p className="text-lg text-gray-400">게임 만드는 중...</p>
+            <div className="h-12 w-12 animate-spin rounded-full border-4 border-violet-200 border-t-violet-500" />
+            <p className="text-lg text-gray-600">카드 만드는 중...</p>
           </>
         ) : (
           <>
-            <div className="text-6xl">🎮</div>
-            <p className="text-lg">AI에게 만들고 싶은 게임을 말해봐!</p>
-            <p className="text-sm text-gray-600">예: "별을 모으는 게임 만들어줘"</p>
+            <div className="text-6xl">🎴</div>
+            <p className="text-lg text-gray-700">AI에게 만들고 싶은 캐릭터를 말해봐!</p>
+            <p className="text-sm text-gray-500">예: "토끼처럼 생긴 캐릭터 만들어줘"</p>
           </>
         )}
       </div>
     );
   }
 
-  return (
-    <div className="relative h-full w-full">
-      <iframe
-        // gameHtml이 있으면 srcDoc으로 렌더링 (네트워크 독립적)
-        // 없으면 URL로 폴백 (세션 복원 시)
-        {...(gameHtml ? { srcDoc: gameHtml } : { src: gameUrl })}
-        // allow-scripts: JS 실행 허용
-        // allow-same-origin 금지: 부모 페이지 DOM 접근 차단
-        sandbox="allow-scripts"
-        className="h-full w-full border-0 bg-gray-950"
-        title="게임 프리뷰"
-      />
-      {/* 새 게임 생성 중 오버레이 */}
-      {isLoading && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gray-950/70 backdrop-blur-sm">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-700 border-t-indigo-500" />
-          <p className="text-sm text-gray-300">새 게임 만드는 중...</p>
+  // 카드 데이터가 있으면 카드 UI 렌더링
+  if (card) {
+    return (
+      <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-violet-50 to-sky-50 p-6">
+        {/* 카드 컨테이너 */}
+        <div className="w-full max-w-sm bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+          {/* 카드 헤더 - 그라데이션 배경 */}
+          <div className="bg-gradient-to-r from-violet-400 to-sky-400 px-6 py-8 text-center">
+            <div className="text-6xl mb-2">
+              {card.card_type === "character" ? "🦸" : card.card_type === "world" ? "🌍" : "✨"}
+            </div>
+            <h2 className="text-2xl font-bold text-white drop-shadow-sm">{card.name}</h2>
+          </div>
+
+          {/* 카드 바디 */}
+          <div className="px-6 py-5 space-y-4">
+            {/* 카드 타입 */}
+            <div className="flex justify-center">
+              <CardTypeLabel type={card.card_type} />
+            </div>
+
+            {/* 설명 */}
+            <p className="text-gray-700 text-center leading-relaxed">{card.description}</p>
+
+            {/* 특성 태그 */}
+            {card.traits && card.traits.length > 0 && (
+              <div className="flex flex-wrap justify-center gap-2">
+                {card.traits.map((trait, i) => (
+                  <span
+                    key={i}
+                    className="px-3 py-1 bg-violet-50 text-violet-600 rounded-full text-sm font-medium"
+                  >
+                    {trait}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* 세계 설명 */}
+            {card.world && (
+              <div className="bg-sky-50 rounded-2xl px-4 py-3 text-center">
+                <p className="text-sm text-gray-500 mb-1">🌍 세계</p>
+                <p className="text-sky-700">{card.world}</p>
+              </div>
+            )}
+
+            {/* 꾸미기 효과 */}
+            {card.effects && card.effects.length > 0 && (
+              <div className="flex flex-wrap justify-center gap-2">
+                {card.effects.map((effect, i) => (
+                  <span
+                    key={i}
+                    className="px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-sm"
+                  >
+                    ✨ {effect}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
+
+        {/* 새 카드 생성 중 오버레이 */}
+        {isLoading && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-white/70 backdrop-blur-sm">
+            <div className="h-12 w-12 animate-spin rounded-full border-4 border-violet-200 border-t-violet-500" />
+            <p className="text-sm text-gray-600">새 카드 만드는 중...</p>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // JSON 파싱 실패 시 빈 카드 표시
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-4 bg-gradient-to-br from-violet-50 to-sky-50 text-gray-500">
+      <div className="text-6xl">🎴</div>
+      <p className="text-lg text-gray-700">카드를 불러오는 중...</p>
+      {isLoading && (
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-violet-200 border-t-violet-500" />
       )}
     </div>
   );

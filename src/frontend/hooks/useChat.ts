@@ -10,8 +10,8 @@ export interface Message {
 
 interface UseChatReturn {
   messages: Message[];
-  gameUrl: string;
-  gameHtml: string;
+  cardUrl: string;
+  cardJson: string;
   hint: string;
   isLoading: boolean;
   wsStatus: "connected" | "reconnecting" | "disconnected";
@@ -25,8 +25,8 @@ const BACKEND_HTTP_URL =
 
 export function useChat(childId: string, sessionId: string): UseChatReturn {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [gameUrl, setGameUrl] = useState("");
-  const [gameHtml, setGameHtml] = useState("");
+  const [cardUrl, setCardUrl] = useState("");
+  const [cardJson, setCardJson] = useState("");
   const [hint, setHint] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [wsStatus, setWsStatus] = useState<"connected" | "reconnecting" | "disconnected">("connected");
@@ -37,8 +37,8 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
   useEffect(() => {
     if (!childId || !sessionId) return;
     setIsLoading(false);
-    setGameUrl("");
-    setGameHtml("");
+    setCardUrl("");
+    setCardJson("");
     setHint("");
     setMessages([]);
     fetch(`${BACKEND_HTTP_URL}/sessions/${childId}/${sessionId}/messages`)
@@ -71,10 +71,10 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
         retryCount = 0; // 메시지 수신 시 재시도 카운트 초기화
         setWsStatus("connected");
         const data = JSON.parse(event.data) as {
-          type: "text" | "game" | "done" | "error";
+          type: "text" | "card" | "done" | "error";
           chunk?: string;
-          game_url?: string;
-          game_html?: string;
+          card_url?: string;
+          card_json?: string;
           hint?: string;
           session_id?: string;
         };
@@ -93,9 +93,9 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
               { role: "assistant", text: data.chunk!, isStreaming: true },
             ];
           });
-        } else if (data.type === "game" && data.game_url) {
-          setGameUrl(data.game_url);
-          if (data.game_html) setGameHtml(data.game_html);
+        } else if (data.type === "card" && data.card_url) {
+          setCardUrl(data.card_url);
+          if (data.card_json) setCardJson(data.card_json);
         } else if (data.type === "done") {
           setMessages((prev) => {
             const last = prev[prev.length - 1];
@@ -105,7 +105,7 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
             return prev;
           });
           if (data.hint) setHint(data.hint);
-          if (data.game_url) setGameUrl(data.game_url);
+          if (data.card_url) setCardUrl(data.card_url);
           setIsLoading(false);
         } else if (data.type === "error") {
           setMessages((prev) => [
@@ -171,5 +171,5 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
     [isLoading]
   );
 
-  return { messages, gameUrl, gameHtml, hint, isLoading, wsStatus, send };
+  return { messages, cardUrl, cardJson, hint, isLoading, wsStatus, send };
 }

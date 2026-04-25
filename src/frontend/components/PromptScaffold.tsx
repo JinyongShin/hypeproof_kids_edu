@@ -13,9 +13,9 @@ export default function PromptScaffold({ currentBlock, onSelect }: PromptScaffol
   if (!scaffold || scaffold.prompts.length === 0) return null;
 
   return (
-    <div className="border-b border-gray-800 px-4 py-2">
-      <p className="mb-1 text-xs text-gray-500">
-        <span className="font-medium text-indigo-400">{scaffold.skill}</span>
+    <div className="border-b border-gray-200 bg-violet-50/50 px-4 py-2">
+      <p className="mb-1 text-xs text-gray-600">
+        <span className="font-medium text-violet-600">{scaffold.skill}</span>
         {" — "}
         {scaffold.skillDesc}
       </p>
@@ -24,7 +24,7 @@ export default function PromptScaffold({ currentBlock, onSelect }: PromptScaffol
           <button
             key={i}
             onClick={() => onSelect(prompt)}
-            className="rounded-full border border-indigo-800 bg-indigo-950 px-3 py-1 text-xs text-indigo-300 transition-colors hover:bg-indigo-900 hover:text-white"
+            className="rounded-full border border-violet-200 bg-white px-3 py-1 text-xs text-violet-700 transition-colors hover:bg-violet-100 hover:border-violet-300 shadow-sm"
           >
             {prompt}
           </button>

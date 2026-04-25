@@ -5,7 +5,7 @@ sanshome_bot/claude_runner.py 기반, 교육용으로 수정:
   - allowedTools: Read,Write,Glob (Bash 제거)
   - {child_id}::{session_id} 복합키 기반 세션 관리
   - 교육용 TUTOR.md 페르소나
-  - 게임 HTML → 디스크 저장 + URL 서빙
+  - 카드 JSON → 디스크 저장 + URL 서빙
 """
 
 import json
@@ -31,53 +31,21 @@ CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "sonnet")
 MOCK_CLAUDE = os.getenv("MOCK_CLAUDE", "0") == "1"
 BACKEND_BASE_URL = os.getenv("BACKEND_BASE_URL", "http://localhost:8000")
 
-# 세션당 보존할 최신 게임 파일 수
-_MAX_GAMES_PER_SESSION = 10
+# 세션당 보존할 최신 카드 파일 수
+_MAX_CARDS_PER_SESSION = 10
 
 _MOCK_RESPONSE = """\
-별을 모으는 게임을 만들었어! 화살표 키로 움직여봐 ⭐
+와, 토끼 전사 캐릭터를 만들었어! 귀도 쫑긋하고 너무 귀엽다!
 
-```html
-<!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"><title>별 모으기</title></head>
-<body style="margin:0;background:#1a1a2e;">
-<canvas id="c" width="480" height="480"></canvas>
-<script>
-const c=document.getElementById('c'),ctx=c.getContext('2d');
-let px=240,py=400,stars=[],score=0;
-for(let i=0;i<8;i++)stars.push({x:Math.random()*460+10,y:Math.random()*200+10});
-const keys={};
-document.addEventListener('keydown',e=>keys[e.key]=true);
-document.addEventListener('keyup',e=>keys[e.key]=false);
-function loop(){
-  ctx.fillStyle='#1a1a2e';ctx.fillRect(0,0,480,480);
-  if(keys['ArrowLeft']&&px>20)px-=4;
-  if(keys['ArrowRight']&&px<460)px+=4;
-  if(keys['ArrowUp']&&py>20)py-=4;
-  if(keys['ArrowDown']&&py<460)py+=4;
-  ctx.fillStyle='#FFD700';ctx.font='24px sans-serif';
-  stars=stars.filter(s=>{
-    const d=Math.hypot(px-s.x,py-s.y);
-    if(d<20){score++;return false;}
-    ctx.fillText('⭐',s.x-12,s.y+8);return true;
-  });
-  if(stars.length===0)for(let i=0;i<8;i++)stars.push({x:Math.random()*460+10,y:Math.random()*200+10});
-  ctx.fillStyle='#00BFFF';ctx.beginPath();ctx.arc(px,py,16,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle='#fff';ctx.font='20px sans-serif';ctx.fillText('⭐ '+score,10,30);
-  requestAnimationFrame(loop);
-}
-loop();
-</script>
-</body>
-</html>
+```json
+{"card_type":"character","name":"별빛 토끼 전사","description":"달빛 아래서 태어난 용감한 토끼. 친구들을 지키는 수호자야.","traits":["용감함","친절함","점프 마스터"],"world":"","image_prompt":"cute brave rabbit warrior with long ears, wearing light armor with star patterns, soft pastel colors, friendly expression, chibi style, magical sparkles"}
 ```
 
-💡 다음엔 "별 대신 하트를 모으고 싶어"라고 해봐!
+💡 다음엔 "토끼가 사는 세계는 꽃이 가득한 숲이야"라고 해봐!
 """
 
-# HTML 코드 블록 추출 정규식
-_HTML_RE = re.compile(r"```html\s*([\s\S]*?)```", re.IGNORECASE)
+# JSON 코드 블록 추출 정규식
+_JSON_CARD_RE = re.compile(r"```json\s*([\s\S]*?)```", re.IGNORECASE)
 
 
 def _load_persona() -> str:
@@ -93,12 +61,12 @@ def _load_persona() -> str:
 
 @dataclass
 class StreamEvent:
-    type: str          # "text" | "game" | "done" | "error"
+    type: str          # "text" | "card" | "done" | "error"
     chunk: str = ""
-    html: str = ""
+    card_json: str = ""
     session_id: str | None = None
     hint: str = ""
-    game_url: str = ""
+    card_url: str = ""
 
 
 def _extract_hint(text: str) -> str:
@@ -121,32 +89,39 @@ def _friendly_error(kind: str) -> str:
     return _messages.get(kind, _messages["generic"])
 
 
-def _save_game_html(html: str, child_id: str, session_id: str, game_id: str) -> Path:
-    """게임 HTML을 디스크에 저장하고 파일 경로를 반환. storage.add_game도 호출."""
-    games_base = (_DATA_DIR / "games").resolve()
-    game_dir = (_DATA_DIR / "games" / child_id / session_id).resolve()
-    if not game_dir.is_relative_to(games_base):
-        raise ValueError(f"경로 순회 공격 감지: {game_dir}")
+def _save_card_json(card_json: str, child_id: str, session_id: str, card_id: str) -> Path:
+    """카드 JSON을 디스크에 저장하고 파일 경로를 반환. storage.add_card도 호출."""
+    cards_base = (_DATA_DIR / "cards").resolve()
+    card_dir = (_DATA_DIR / "cards" / child_id / session_id).resolve()
+    if not card_dir.is_relative_to(cards_base):
+        raise ValueError(f"경로 순회 공격 감지: {card_dir}")
 
-    game_dir.mkdir(parents=True, exist_ok=True)
+    card_dir.mkdir(parents=True, exist_ok=True)
 
     # 세션당 최신 10개 초과 시 오래된 파일 삭제 + DB에서도 정리
-    existing = sorted(game_dir.glob("game_*.html"), key=lambda p: p.name)
-    while len(existing) >= _MAX_GAMES_PER_SESSION:
+    existing = sorted(card_dir.glob("card_*.json"), key=lambda p: p.name)
+    while len(existing) >= _MAX_CARDS_PER_SESSION:
         old_path = existing.pop(0)
-        old_game_id = old_path.stem
+        old_card_id = old_path.stem
         old_path.unlink(missing_ok=True)
-        storage.delete_game(session_id, old_game_id)
+        storage.delete_card(session_id, old_card_id)
 
-    game_path = game_dir / f"{game_id}.html"
-    if not game_path.resolve().is_relative_to(games_base):
-        raise ValueError(f"경로 순회 공격 감지: {game_path}")
-    game_path.write_text(html, encoding="utf-8")
+    card_path = card_dir / f"{card_id}.json"
+    if not card_path.resolve().is_relative_to(cards_base):
+        raise ValueError(f"경로 순회 공격 감지: {card_path}")
+    card_path.write_text(card_json, encoding="utf-8")
 
-    url = f"{BACKEND_BASE_URL}/games/{child_id}/{session_id}/{game_id}"
-    storage.add_game(session_id, child_id, game_id, str(game_path), url)
+    # JSON에서 card_type 추출
+    try:
+        card_data = json.loads(card_json)
+        card_type = card_data.get("card_type", "character")
+    except json.JSONDecodeError:
+        card_type = "character"
 
-    return game_path
+    url = f"{BACKEND_BASE_URL}/cards/{child_id}/{session_id}/{card_id}"
+    storage.add_card(session_id, child_id, card_id, card_type, card_json)
+
+    return card_path
 
 
 async def stream_claude(prompt: str, child_id: str, session_id: str):
@@ -155,27 +130,28 @@ async def stream_claude(prompt: str, child_id: str, session_id: str):
 
     Yields:
         StreamEvent(type="text", chunk=...)   — 텍스트 청크
-        StreamEvent(type="game", game_url=...) — 저장된 게임의 URL
-        StreamEvent(type="done", session_id=..., hint=..., game_url=...)
+        StreamEvent(type="card", card_url=..., card_json=...) — 저장된 카드의 URL
+        StreamEvent(type="done", session_id=..., hint=..., card_url=...)
         StreamEvent(type="error", chunk=...)
     """
     if MOCK_CLAUDE:
         ts = int(time.time() * 1000)
-        mock_game_id = f"game_{ts}"
+        mock_card_id = f"card_{ts}"
         for line in _MOCK_RESPONSE.splitlines(keepends=True):
             yield StreamEvent(type="text", chunk=line)
-        html_match = _HTML_RE.search(_MOCK_RESPONSE)
-        game_url = ""
-        if html_match:
-            html_content = html_match.group(1).strip()
-            _save_game_html(html_content, child_id, session_id, mock_game_id)
-            game_url = f"{BACKEND_BASE_URL}/games/{child_id}/{session_id}/{mock_game_id}"
-            yield StreamEvent(type="game", game_url=game_url, html=html_content)
+        json_match = _JSON_CARD_RE.search(_MOCK_RESPONSE)
+        card_url = ""
+        card_json_content = ""
+        if json_match:
+            card_json_content = json_match.group(1).strip()
+            _save_card_json(card_json_content, child_id, session_id, mock_card_id)
+            card_url = f"{BACKEND_BASE_URL}/cards/{child_id}/{session_id}/{mock_card_id}"
+            yield StreamEvent(type="card", card_url=card_url, card_json=card_json_content)
         yield StreamEvent(
             type="done",
             session_id="mock-session",
             hint=_extract_hint(_MOCK_RESPONSE),
-            game_url=game_url,
+            card_url=card_url,
         )
         return
 
@@ -258,22 +234,23 @@ async def stream_claude(prompt: str, child_id: str, session_id: str):
             storage.set_claude_session_id(session_id, new_claude_session_id)
             logger.info("[%s::%s] 세션 저장: %s", child_id, session_id, new_claude_session_id)
 
-        # 게임 HTML 추출 및 저장
-        game_url = ""
-        html_match = _HTML_RE.search(full_text)
-        if html_match:
-            html_content = html_match.group(1).strip()
-            game_id = f"game_{int(time.time() * 1000)}"
-            logger.info("[%s::%s] 게임 HTML 크기: %d bytes", child_id, session_id, len(html_content))
-            _save_game_html(html_content, child_id, session_id, game_id)
-            game_url = f"{BACKEND_BASE_URL}/games/{child_id}/{session_id}/{game_id}"
-            yield StreamEvent(type="game", game_url=game_url, html=html_content)
+        # 카드 JSON 추출 및 저장
+        card_url = ""
+        card_json_content = ""
+        json_match = _JSON_CARD_RE.search(full_text)
+        if json_match:
+            card_json_content = json_match.group(1).strip()
+            card_id = f"card_{int(time.time() * 1000)}"
+            logger.info("[%s::%s] 카드 JSON 크기: %d bytes", child_id, session_id, len(card_json_content))
+            _save_card_json(card_json_content, child_id, session_id, card_id)
+            card_url = f"{BACKEND_BASE_URL}/cards/{child_id}/{session_id}/{card_id}"
+            yield StreamEvent(type="card", card_url=card_url, card_json=card_json_content)
 
         yield StreamEvent(
             type="done",
             session_id=new_claude_session_id,
             hint=_extract_hint(full_text),
-            game_url=game_url,
+            card_url=card_url,
         )
 
     except subprocess.TimeoutExpired:
