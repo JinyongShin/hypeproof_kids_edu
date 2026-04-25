@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 interface CardData {
   card_type: "character" | "world" | "title";
   name: string;
@@ -11,11 +13,8 @@ interface CardData {
 }
 
 interface CardPreviewProps {
-  /** 저장된 카드의 URL. 빈 문자열이면 대기 화면 표시. */
   cardUrl: string;
-  /** 카드 JSON 문자열. 있으면 직접 렌더링. */
   cardJson?: string;
-  /** 새 카드 생성 중 여부 */
   isLoading?: boolean;
 }
 
@@ -43,6 +42,28 @@ function CardTypeLabel({ type }: { type: CardData["card_type"] }) {
 
 export default function CardPreview({ cardUrl, cardJson, isLoading = false }: CardPreviewProps) {
   const card = cardJson ? parseCardJson(cardJson) : null;
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [imageLoading, setImageLoading] = useState(false);
+
+  // image_prompt 있으면 프론트엔드에서 이미지 API 호출
+  useEffect(() => {
+    if (card?.image_prompt && !imageUrl) {
+      setImageLoading(true);
+      fetch("http://localhost:8000/generate-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image_prompt: card.image_prompt }),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.image_base64) {
+            setImageUrl(`data:${data.mime_type};base64,${data.image_base64}`);
+          }
+        })
+        .catch(() => {})
+        .finally(() => setImageLoading(false));
+    }
+  }, [card?.image_prompt]);
 
   if (!cardUrl && !cardJson) {
     return (
@@ -69,12 +90,21 @@ export default function CardPreview({ cardUrl, cardJson, isLoading = false }: Ca
       <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-violet-50 to-sky-50 p-6">
         {/* 카드 컨테이너 */}
         <div className="w-full max-w-sm bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
-          {/* 카드 헤더 - 그라데이션 배경 */}
-          <div className="bg-gradient-to-r from-violet-400 to-sky-400 px-6 py-8 text-center">
-            <div className="text-6xl mb-2">
-              {card.card_type === "character" ? "🦸" : card.card_type === "world" ? "🌍" : "✨"}
-            </div>
-            <h2 className="text-2xl font-bold text-white drop-shadow-sm">{card.name}</h2>
+          {/* 카드 헤더 - 이미지 또는 이모지 */}
+          <div className="bg-gradient-to-r from-violet-400 to-sky-400 px-6 py-8 text-center relative">
+            {imageLoading ? (
+              <div className="flex flex-col items-center gap-2">
+                <div className="h-10 w-10 animate-spin rounded-full border-4 border-white/30 border-t-white" />
+                <p className="text-sm text-white/70">이미지 만드는 중...</p>
+              </div>
+            ) : imageUrl ? (
+              <img src={imageUrl} alt={card.name} className="w-full h-40 object-contain rounded-xl" />
+            ) : (
+              <div className="text-6xl mb-2">
+                {card.card_type === "character" ? "🦸" : card.card_type === "world" ? "🌍" : "✨"}
+              </div>
+            )}
+            <h2 className="text-2xl font-bold text-white drop-shadow-sm mt-2">{card.name}</h2>
           </div>
 
           {/* 카드 바디 */}

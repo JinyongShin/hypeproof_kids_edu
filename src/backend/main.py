@@ -19,6 +19,7 @@ from fastapi.responses import FileResponse, Response
 
 import storage
 from claude_runner import StreamEvent, _DATA_DIR, reset_session, stream_claude
+from genai_runner import generate_card, generate_image
 from qr_generator import generate_qr_png
 
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "root")
@@ -258,6 +259,21 @@ async def gallery():
     return result
 
 
+@app.post("/generate-image")
+async def generate_image_endpoint(body: dict):
+    """프론트엔드에서 image_prompt로 이미지 생성 요청."""
+    image_prompt = body.get("image_prompt", "").strip()
+    if not image_prompt:
+        raise HTTPException(status_code=400, detail="image_prompt가 필요해요")
+    try:
+        image_bytes, mime_type = await generate_image(image_prompt)
+        import base64
+        return {"image_base64": base64.b64encode(image_bytes).decode("utf-8"), "mime_type": mime_type}
+    except Exception as e:
+        logger.exception("이미지 생성 오류: %s", e)
+        raise HTTPException(status_code=500, detail="이미지 생성에 실패했어요")
+
+
 # ---------------------------------------------------------------------------
 # Game file serving
 # ---------------------------------------------------------------------------
@@ -326,27 +342,27 @@ async def chat_ws(websocket: WebSocket, child_id: str):
 
             # 기존 게임이 있으면 파일 경로를 프롬프트에 주입 — Claude가 Read 도구로 읽어서 수정
             prompt = original_prompt
-            games = await asyncio.to_thread(storage.list_games, session_id)
-            if games:
-                latest_path = Path(games[-1]["file_path"])
-                if latest_path.exists():
-                    prompt = (
-                        f"{original_prompt}\n\n"
-                        f"---\n"
-                        f"현재 게임 파일: {latest_path}\n"
-                        f"수정 요청이면 Read 도구로 읽어서 고쳐줘. 완전히 새 게임 요청이면 무시하고 새로 만들어."
-                    )
+            # cards 기반으로 전환: 이전 카드 참고 필요하면 주입
+            cards = await asyncio.to_thread(storage.list_cards, session_id)
+            if cards:
+                latest_card = cards[-1]
+                prompt = (
+                    f"{original_prompt}\n\n"
+                    f"---\n"
+                    f"이전 카드: {latest_card['card_json']}\n"
+                    f"수정 요청이면 이 카드를 기반으로 고쳐줘. 완전히 새 카드 요청이면 무시하고 새로 만들어."
+                )
 
             assistant_text = ""
             try:
-                async for event in stream_claude(prompt, child_id, session_id):
+                async for event in generate_card(prompt, child_id, session_id):
                     payload: dict = {"type": event.type}
                     if event.type == "text":
                         assistant_text += event.chunk or ""
                         payload["chunk"] = event.chunk
-                    elif event.type == "game":
-                        payload["game_url"] = event.game_url
-                        payload["game_html"] = event.html
+                    elif event.type == "card":
+                        payload["card_json"] = event.card_json
+                        payload["card_url"] = event.card_url
                     elif event.type == "done":
                         payload["hint"] = event.hint
                         payload["session_id"] = event.session_id
