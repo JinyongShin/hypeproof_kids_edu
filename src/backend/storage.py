@@ -41,6 +41,17 @@ CREATE TABLE IF NOT EXISTS games (
     created_at  TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
 );
 
+CREATE TABLE IF NOT EXISTS cards (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id  TEXT NOT NULL,
+    child_id    TEXT NOT NULL,
+    card_id     TEXT NOT NULL,
+    card_type   TEXT NOT NULL CHECK(card_type IN ('character','world','title')),
+    card_json   TEXT NOT NULL,
+    url         TEXT NOT NULL DEFAULT '',
+    created_at  TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+
 CREATE VIRTUAL TABLE IF NOT EXISTS messages_fts
     USING fts5(content, content='messages', content_rowid='id');
 
@@ -234,3 +245,52 @@ def reset_all_claude_sessions(child_id: str) -> int:
             (child_id,),
         )
         return result.rowcount
+
+
+# ---------------------------------------------------------------------------
+# Cards
+# ---------------------------------------------------------------------------
+
+def add_card(session_id: str, child_id: str, card_id: str, card_type: str, card_json: str, url: str = "") -> None:
+    with _connect() as conn:
+        conn.execute(
+            "INSERT INTO cards (session_id, child_id, card_id, card_type, card_json, url) VALUES (?,?,?,?,?,?)",
+            (session_id, child_id, card_id, card_type, card_json, url),
+        )
+
+
+def list_cards(session_id: str) -> list[dict]:
+    with _connect() as conn:
+        rows = conn.execute(
+            "SELECT card_id, card_type, card_json, url, created_at FROM cards WHERE session_id=? ORDER BY created_at ASC",
+            (session_id,),
+        ).fetchall()
+    return [dict(r) for r in rows]
+
+
+def get_latest_card(session_id: str) -> dict | None:
+    with _connect() as conn:
+        row = conn.execute(
+            "SELECT card_id, card_type, card_json, url FROM cards WHERE session_id=? ORDER BY created_at DESC LIMIT 1",
+            (session_id,),
+        ).fetchone()
+    return dict(row) if row else None
+
+
+def list_all_cards_for_gallery() -> list[dict]:
+    """갤러리 슬라이드쇼용: 전체 카드 조회."""
+    with _connect() as conn:
+        rows = conn.execute(
+            "SELECT c.card_id, c.card_type, c.card_json, c.url, c.created_at, s.name AS child_name "
+            "FROM cards c JOIN sessions s ON c.session_id = s.session_id "
+            "ORDER BY c.created_at ASC"
+        ).fetchall()
+    return [dict(r) for r in rows]
+
+
+def delete_card(session_id: str, card_id: str) -> None:
+    with _connect() as conn:
+        conn.execute(
+            "DELETE FROM cards WHERE session_id=? AND card_id=?",
+            (session_id, card_id),
+        )
