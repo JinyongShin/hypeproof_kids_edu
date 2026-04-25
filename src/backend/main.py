@@ -15,10 +15,11 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 
 import storage
 from claude_runner import StreamEvent, _DATA_DIR, reset_session, stream_claude
+from qr_generator import generate_qr_png
 
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "root")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "0000")
@@ -210,6 +211,51 @@ async def rename_session(child_id: str, session_id: str, body: dict):
 async def get_messages(child_id: str, session_id: str):
     """세션의 채팅 히스토리 반환. 없으면 빈 배열."""
     return await asyncio.to_thread(storage.load_messages, session_id)
+
+
+# ---------------------------------------------------------------------------
+# QR code
+# ---------------------------------------------------------------------------
+
+@app.get("/qr/{child_id}/{session_id}/{card_id}")
+async def get_qr(child_id: str, session_id: str, card_id: str):
+    """카드 URL을 QR PNG로 반환."""
+    card_url = f"{os.getenv('BACKEND_BASE_URL', 'http://localhost:8000')}/cards/{child_id}/{session_id}/{card_id}"
+    png_bytes = await asyncio.to_thread(generate_qr_png, card_url, child_id)
+    return Response(content=png_bytes, media_type="image/png")
+
+
+# ---------------------------------------------------------------------------
+# Cards
+# ---------------------------------------------------------------------------
+
+@app.get("/cards/{child_id}/{session_id}/{card_id}")
+async def get_card(child_id: str, session_id: str, card_id: str):
+    """카드 JSON 데이터 반환."""
+    card = await asyncio.to_thread(storage.get_latest_card, session_id)
+    if card is None or card["card_id"] != card_id:
+        cards = await asyncio.to_thread(storage.list_cards, session_id)
+        card = next((c for c in cards if c["card_id"] == card_id), None)
+    if card is None:
+        raise HTTPException(status_code=404, detail="카드를 찾을 수 없어요")
+    return json.loads(card["card_json"])
+
+
+@app.get("/gallery")
+async def gallery():
+    """갤러리 슬라이드쇼용: 전체 카드 조회."""
+    cards = await asyncio.to_thread(storage.list_all_cards_for_gallery)
+    result = []
+    for c in cards:
+        try:
+            card_data = json.loads(c["card_json"])
+            card_data["child_name"] = c["child_name"]
+            card_data["card_id"] = c["card_id"]
+            card_data["created_at"] = c["created_at"]
+            result.append(card_data)
+        except (json.JSONDecodeError, KeyError):
+            continue
+    return result
 
 
 # ---------------------------------------------------------------------------
