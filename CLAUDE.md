@@ -96,4 +96,5 @@
 - **Quick tunnel URL은 cloudflared 재시작마다 바뀜** — `_backend.js` / `BACKEND_BASE_URL` 갱신 필요.
 - **맥 절전 들어가면 외부 접속 끊김** — 파일럿 당일은 절전 OFF 필수.
 - **어카운트리스 정책** — 트래픽 패턴에 따라 Cloudflare가 차단할 수 있음 (40명 동시 접속은 검증 필요).
+- **LLM 동시 처리 한계** — 현재 GLM-5 단독으로는 ~5~10명. 40명 부하 대응 전략은 [[llm-provider-scaling]] (ADR) + [[llm-scaling-test-plan]] (페이즈별 테스트).
 - **정식 운영용 권장**: Cloudflare Named Tunnel + 본인 도메인. 파일럿 D-day 전에 전환 검토.

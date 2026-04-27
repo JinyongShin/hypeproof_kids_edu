@@ -280,8 +280,38 @@ uv run pytest -v
 
 ## 기술 선택 근거
 
-- **FastAPI + Claude CLI subprocess**: 빠른 스프린트(1주)에서 검증된 CLI 재사용. WebSocket 스트리밍이 HTTP polling보다 아이 경험에 자연스럽다.
+- **FastAPI + Claude CLI subprocess**: 빠른 스프린트(1주)에서 검증된 CLI 재사용. WebSocket 스트리밍이 HTTP polling보다 아이 경험에 자연스럽다. *(Phase 4 이후 GLM-5/Pollinations로 전환됨, 추후 Gemini + Claude API로 재전환 예정 — 아래 스케일링 섹션 참조)*
 - **iframe `srcdoc` + `sandbox="allow-scripts"`**: WebContainers·Docker 대비 설치 없음, 병원 네트워크 외부 차단 무관, XSS 격리.
 - **순수 HTML+Canvas 게임**: CDN 의존 없음. 병원 내부망에서도 동작.
 - **TDD (backend)**: 테스트가 곧 문서. 나중에 코드를 처음 보는 사람도 `test_claude_runner.py`만 읽으면 동작 파악 가능.
 - **uv**: pip 대비 의존성 설치 속도 10x, lock 파일로 재현 가능한 환경.
+
+---
+
+## 배포 & 스케일링
+
+### 현재 배포 (개발·QA)
+- 운영자 맥북에 `uvicorn` + `next dev` 직접 실행, 외부 노출은 **Cloudflare Quick Tunnel** 2개.
+- 자동 배포: `claude` 안에서 `/pilot-deploy` 슬래시 커맨드 (`.claude/skills/pilot-deploy/SKILL.md`).
+- 수동 절차 + 트러블슈팅: [`kids_edu_vault/wiki/runbooks/deployment.md`](kids_edu_vault/wiki/runbooks/deployment.md).
+
+### 파일럿 D-day(2026-05-05) 스케일링 — TODO
+40명 동시 부하 대응 계획. 현재 GLM-5 단독으로는 ~5–10명에서 한계. 페이즈별 검증 필요:
+
+- **결정 (ADR)**: [`kids_edu_vault/wiki/decisions/llm-provider-scaling.md`](kids_edu_vault/wiki/decisions/llm-provider-scaling.md)
+- **테스트 계획**: [`kids_edu_vault/wiki/specs/llm-scaling-test-plan.md`](kids_edu_vault/wiki/specs/llm-scaling-test-plan.md)
+
+요약:
+1. **1차 = Gemini 2.x Flash 4-키 풀** (sticky-by-session 라운드로빈) — 기본 운영 모드
+2. **2차 = Claude Sonnet 4.6 API** (prompt caching, 별도 빌링) — 품질·신뢰 폴백
+3. **3차·4차 = GLM(현재) → Pollinations** — 코드 그대로 유지
+4. **5차 = 정적 폴백 카드 / `game_template.py`** — R4(완성 보장) 안전망
+
+**Claude Max 20x 구독 4개는 풀로 사용하지 않음** — TOS·디버깅·운영 부채 모두 부담. 1개만 dev/QA 전용으로 사용.
+
+페이즈 0~5 (베이스라인 → 단일 키 → 풀 → Claude 옵션 → 체인 통합 → 드레스 리허설) 순서로 진행. 합격 기준: **p95 < 8s @ 40 concurrent + 에러율 < 5%**.
+
+### 정식 운영 권장
+- 파일럿 당일은 Cloudflare quick tunnel 대신 **Named Tunnel + 본인 도메인** 권장 (URL 영구 고정).
+- 맥 절전 OFF 필수 (`caffeinate -d`).
+- SQLite는 40명 동시 처리 가능하지만 D-1 부하테스트로 검증 필요.
