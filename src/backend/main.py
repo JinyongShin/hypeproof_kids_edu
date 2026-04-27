@@ -327,6 +327,7 @@ async def chat_ws(websocket: WebSocket, child_id: str):
 
             original_prompt = data.get("prompt", "").strip()
             if not original_prompt:
+                await websocket.send_json({"type": "error", "chunk": "뭐라고 말하고 싶은지 입력해줘!"})
                 continue
 
             # 이모지만 입력 또는 의미 없는 입력 차단 (한글/영문 최소 2자)
