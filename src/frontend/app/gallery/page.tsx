@@ -1,49 +1,47 @@
-"use client";
+"use client"
+import { BACKEND_HTTP_URL } from "@/lib/backendUrl";
 
 import { useEffect, useState } from "react";
 
-interface CardData {
-  card_id: string;
-  card_type: "character" | "world" | "title";
-  name: string;
-  description: string;
-  traits: string[];
-  world: string;
-  image_prompt: string;
-  child_name: string;
+interface SavedGame {
+  game_id: string;
+  url: string;
+  session_id: string;
+  child_id: string;
+  session_name: string;
   created_at: string;
 }
 
 export default function GalleryPage() {
-  const [cards, setCards] = useState<CardData[]>([]);
+  const [games, setGames] = useState<SavedGame[]>([]);
   const [current, setCurrent] = useState(0);
   const [autoPlay, setAutoPlay] = useState(true);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_HTTP_URL ?? "http://localhost:8000"}/gallery`)
+    fetch(`${BACKEND_HTTP_URL}/gallery`)
       .then((r) => r.json())
       .then((data) => {
-        setCards(data);
+        setGames(Array.isArray(data) ? data : []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
   }, []);
 
   useEffect(() => {
-    if (!autoPlay || cards.length === 0) return;
+    if (!autoPlay || games.length <= 1) return;
     const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % cards.length);
-    }, 5000);
+      setCurrent((prev) => (prev + 1) % games.length);
+    }, 12_000); // 게임 재생 시간 — 카드보다 길게
     return () => clearInterval(timer);
-  }, [autoPlay, cards.length]);
+  }, [autoPlay, games.length]);
 
   const prev = () => {
-    setCurrent((c) => (c - 1 + cards.length) % cards.length);
+    setCurrent((c) => (c - 1 + games.length) % games.length);
     setAutoPlay(false);
   };
   const next = () => {
-    setCurrent((c) => (c + 1) % cards.length);
+    setCurrent((c) => (c + 1) % games.length);
     setAutoPlay(false);
   };
 
@@ -55,88 +53,84 @@ export default function GalleryPage() {
     );
   }
 
-  if (cards.length === 0) {
+  if (games.length === 0) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-violet-50 to-sky-50">
-        <p className="text-2xl text-gray-500">아직 만들어진 카드가 없어요 🎴</p>
+      <div className="flex h-screen flex-col items-center justify-center gap-4 bg-gradient-to-br from-violet-50 to-sky-50">
+        <p className="text-2xl text-gray-600">아직 저장된 게임이 없어요 🎮</p>
+        <p className="text-sm text-gray-500">
+          마스터 개발자 단계에서 💾 저장 버튼을 눌러야 여기에 나타나요!
+        </p>
       </div>
     );
   }
 
-  const card = cards[current];
-  const typeEmoji = card.card_type === "character" ? "🦸" : card.card_type === "world" ? "🌍" : "✨";
+  const game = games[current];
 
   return (
-    <div className="flex h-screen flex-col items-center justify-center bg-gradient-to-br from-violet-50 to-sky-50 p-8">
+    <div className="flex h-screen flex-col items-center justify-center bg-gradient-to-br from-violet-50 to-sky-50 p-4 md:p-6">
       {/* 진행 표시 */}
-      <div className="mb-4 text-lg text-gray-400">
-        {current + 1} / {cards.length}
+      <div className="mb-3 flex items-center gap-3 text-sm text-gray-500">
+        <span>
+          {current + 1} / {games.length}
+        </span>
         <button
           onClick={() => setAutoPlay(!autoPlay)}
-          className="ml-4 rounded-full px-3 py-1 text-sm bg-violet-100 text-violet-600 hover:bg-violet-200"
+          className="rounded-full px-3 py-1 text-xs bg-violet-100 text-violet-600 hover:bg-violet-200"
         >
           {autoPlay ? "⏸ 자동" : "▶ 자동"}
         </button>
+        <span className="text-xs text-gray-400 hidden md:inline">
+          개발자: {game.child_id} · {game.session_name || "세션"}
+        </span>
       </div>
 
-      {/* 카드 */}
-      <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden transition-all duration-500">
-        <div className="bg-gradient-to-r from-violet-400 to-sky-400 px-8 py-10 text-center">
-          <div className="text-7xl mb-3">{typeEmoji}</div>
-          <h2 className="text-3xl font-bold text-white drop-shadow-sm">{card.name}</h2>
-        </div>
+      {/* 게임 iframe (런칭쇼 메인) */}
+      <div className="w-full max-w-3xl flex-1 max-h-[70vh] bg-gray-900 rounded-2xl shadow-2xl overflow-hidden border-4 border-white">
+        <iframe
+          key={game.game_id}
+          src={game.url}
+          className="w-full h-full border-0"
+          sandbox="allow-scripts"
+          title={`Game ${game.game_id}`}
+        />
+      </div>
 
-        <div className="px-8 py-6 space-y-5">
-          {/* 개발자 이름 */}
-          <p className="text-center text-sm text-violet-500 font-medium">개발자: {card.child_name}</p>
-
-          {/* 설명 */}
-          <p className="text-gray-700 text-center text-lg leading-relaxed">{card.description}</p>
-
-          {/* 특성 태그 */}
-          {card.traits && card.traits.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-2">
-              {card.traits.map((trait, i) => (
-                <span key={i} className="px-4 py-1.5 bg-violet-50 text-violet-600 rounded-full text-sm font-medium">
-                  {trait}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {/* 세계 설명 */}
-          {card.world && (
-            <div className="bg-sky-50 rounded-2xl px-5 py-4 text-center">
-              <p className="text-sm text-gray-500 mb-1">🌍 세계</p>
-              <p className="text-sky-700 text-lg">{card.world}</p>
-            </div>
-          )}
-        </div>
+      {/* 게임 정보 */}
+      <div className="mt-3 text-center">
+        <p className="text-lg font-semibold text-gray-700">
+          🎮 {game.session_name || `게임 ${current + 1}`}
+        </p>
+        <p className="text-xs text-gray-400 md:hidden">개발자: {game.child_id}</p>
       </div>
 
       {/* 네비게이션 */}
-      <div className="mt-6 flex gap-4">
+      <div className="mt-4 flex gap-3">
         <button
           onClick={prev}
-          className="rounded-full bg-white px-6 py-3 text-lg shadow-md hover:shadow-lg transition-shadow"
+          className="rounded-full bg-white px-5 py-2 text-base shadow-md hover:shadow-lg transition-shadow"
         >
           ◀ 이전
         </button>
         <button
           onClick={next}
-          className="rounded-full bg-white px-6 py-3 text-lg shadow-md hover:shadow-lg transition-shadow"
+          className="rounded-full bg-white px-5 py-2 text-base shadow-md hover:shadow-lg transition-shadow"
         >
           다음 ▶
         </button>
       </div>
 
       {/* 도트 인디케이터 */}
-      <div className="mt-4 flex gap-1.5">
-        {cards.map((_, i) => (
+      <div className="mt-3 flex gap-1.5 max-w-full overflow-x-auto px-2">
+        {games.map((_, i) => (
           <button
             key={i}
-            onClick={() => { setCurrent(i); setAutoPlay(false); }}
-            className={`h-2 rounded-full transition-all ${i === current ? "w-6 bg-violet-500" : "w-2 bg-gray-300"}`}
+            onClick={() => {
+              setCurrent(i);
+              setAutoPlay(false);
+            }}
+            className={`h-2 rounded-full transition-all flex-shrink-0 ${
+              i === current ? "w-6 bg-violet-500" : "w-2 bg-gray-300"
+            }`}
           />
         ))}
       </div>

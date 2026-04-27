@@ -244,19 +244,8 @@ async def get_card(child_id: str, session_id: str, card_id: str):
 
 @app.get("/gallery")
 async def gallery():
-    """갤러리 슬라이드쇼용: 전체 카드 조회."""
-    cards = await asyncio.to_thread(storage.list_all_cards_for_gallery)
-    result = []
-    for c in cards:
-        try:
-            card_data = json.loads(c["card_json"])
-            card_data["child_name"] = c["child_name"]
-            card_data["card_id"] = c["card_id"]
-            card_data["created_at"] = c["created_at"]
-            result.append(card_data)
-        except (json.JSONDecodeError, KeyError):
-            continue
-    return result
+    """런칭쇼: 저장된(saved=1) 게임 목록. 각 항목 = {game_id, url, session_name, child_id, created_at, session_id}."""
+    return await asyncio.to_thread(storage.list_saved_games)
 
 
 @app.post("/generate-image")
@@ -288,6 +277,17 @@ async def serve_game(child_id: str, session_id: str, game_id: str):
     if not game_path.exists():
         raise HTTPException(status_code=404, detail="게임 파일을 찾을 수 없어요")
     return FileResponse(str(game_path), media_type="text/html")
+
+
+@app.post("/games/{child_id}/{session_id}/{game_id}/save")
+async def save_game(child_id: str, session_id: str, game_id: str):
+    """게임을 갤러리(런칭쇼)에 등록.
+    동일 세션의 기존 저장 게임이 있으면 자동 덮어쓰기 (saved=0 → 새 게임 saved=1)."""
+    ok = await asyncio.to_thread(storage.mark_game_saved, session_id, game_id)
+    if not ok:
+        raise HTTPException(status_code=404, detail="해당 게임을 찾을 수 없어요")
+    logger.info("[%s::%s] 게임 저장(런칭쇼 등록): %s", child_id, session_id, game_id)
+    return {"saved": True}
 
 
 # ---------------------------------------------------------------------------
@@ -348,17 +348,81 @@ async def chat_ws(websocket: WebSocket, child_id: str):
                 auto_name = original_prompt[:15].strip()
                 await asyncio.to_thread(storage.update_session_name, session_id, auto_name)
 
-            # 기존 게임이 있으면 파일 경로를 프롬프트에 주입 — Claude가 Read 도구로 읽어서 수정
+            # 게임 요청 감지 → AI가 템플릿 파라미터 결정 → 빌드
+            game_keywords = ['게임 만들', '게임 시작', '플레이', '놀자', '게임해', '시작해줘']
+            is_game_request = any(kw in original_prompt for kw in game_keywords)
+            if is_game_request:
+                cards = await asyncio.to_thread(storage.list_cards, session_id)
+                card_jsons = [c['card_json'] for c in cards] if cards else []
+                card_summary = ""
+                if card_jsons:
+                    card_summary = "이전 카드 정보: " + ", ".join(card_jsons[-2:])
+                # AI에게 파라미터만 물어보기 (매우 짧은 응답)
+                param_prompt = (
+                    f"아이가 이렇게 말했어: \"{original_prompt}\"\n"
+                    f"{card_summary}\n\n"
+                    f"다음 JSON만 출력해 (다른 텍스트 절대 금지):\n"
+                    f'{{"game_type":"collect|dodge|friend","char_emoji":"이모지1개","item_emoji":"이모지1개",'
+                    f'"bg_theme":"우주|바다|숲|불|마을|하늘","item_name":"모을거1이름"}}'
+                )
+                import asyncio as _a
+                game_params = {}
+                try:
+                    async for event in generate_card(param_prompt, child_id + "_params", session_id):
+                        if event.type == "text" and event.chunk:
+                            import re as _re
+                            jm = _re.search(r'\{[^}]+\}', event.chunk)
+                            if jm:
+                                game_params = json.loads(jm.group())
+                                break
+                        elif event.type == "done":
+                            break
+                except:
+                    pass
+                # 파라미터로 게임 빌드
+                from game_template import build_game_with_params
+                game_html = await asyncio.to_thread(build_game_with_params, card_jsons, game_params, original_prompt)
+                import time as _time
+                game_id = f"game_{int(_time.time() * 1000)}"
+                game_dir = (_DATA_DIR / "games" / child_id / session_id).resolve()
+                games_base = (_DATA_DIR / "games").resolve()
+                game_url = ""
+                if game_dir.is_relative_to(games_base):
+                    game_dir.mkdir(parents=True, exist_ok=True)
+                    game_file = game_dir / f"{game_id}.html"
+                    game_file.write_text(game_html, encoding="utf-8")
+                    game_url = f"{os.getenv('BACKEND_BASE_URL', 'http://localhost:8000')}/games/{child_id}/{session_id}/{game_id}"
+                    # 게임 메타를 DB에 등록 (saved=0). 저장 버튼 클릭 시 saved=1로 갱신.
+                    try:
+                        await asyncio.to_thread(
+                            storage.add_game, session_id, child_id, game_id, str(game_file), game_url
+                        )
+                    except Exception:
+                        logger.exception("[%s::%s] 게임 메타 DB 등록 실패", child_id, session_id)
+                item = game_params.get("item_name", game_params.get("item_emoji", "⭐"))
+                await websocket.send_json({"type": "text", "chunk": f"와, 게임을 만들었어! 🎮\n\n방향키나 WASD로 움직이고, {item}을(를) 모아봐!\n\n45초 안에 최대한 많이 모아보자!"})
+                await websocket.send_json({"type": "game", "html": game_html, "game_url": game_url})
+                await websocket.send_json({"type": "done", "hint": "게임을 해보고, 다음엔 '배경을 더 예쁘게 해줘'라고 해봐!"})
+                continue
+
+            # 캐릭터·세계 카드 컨텍스트 동시 주입 — 세계 구축 단계에서 캐릭터 SVG를 보존·수정하도록.
             prompt = original_prompt
-            # cards 기반으로 전환: 이전 카드 참고 필요하면 주입
-            cards = await asyncio.to_thread(storage.list_cards, session_id)
-            if cards:
-                latest_card = cards[-1]
+            latest_character = await asyncio.to_thread(
+                storage.get_latest_card_by_type, session_id, "character"
+            )
+            latest_world = await asyncio.to_thread(
+                storage.get_latest_card_by_type, session_id, "world"
+            )
+            context_lines = []
+            if latest_character:
+                context_lines.append(f"이전 캐릭터: {latest_character['card_json']}")
+            if latest_world:
+                context_lines.append(f"이전 세계: {latest_world['card_json']}")
+            if context_lines:
                 prompt = (
-                    f"{original_prompt}\n\n"
-                    f"---\n"
-                    f"이전 카드: {latest_card['card_json']}\n"
-                    f"수정 요청이면 이 카드를 기반으로 고쳐줘. 완전히 새 카드 요청이면 무시하고 새로 만들어."
+                    f"{original_prompt}\n\n---\n"
+                    + "\n".join(context_lines)
+                    + "\n수정 요청이면 위 카드를 기반으로 고쳐줘. 완전히 새 카드 요청이면 무시하고 새로 만들어."
                 )
 
             assistant_text = ""
@@ -371,6 +435,9 @@ async def chat_ws(websocket: WebSocket, child_id: str):
                     elif event.type == "card":
                         payload["card_json"] = event.card_json
                         payload["card_url"] = event.card_url
+                    elif event.type == "game":
+                        payload["html"] = event.html
+                        payload["game_url"] = event.game_url
                     elif event.type == "done":
                         payload["hint"] = event.hint
                         payload["session_id"] = event.session_id

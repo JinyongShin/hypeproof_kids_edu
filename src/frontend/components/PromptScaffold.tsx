@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { getScaffold } from "@/lib/scaffoldData";
 

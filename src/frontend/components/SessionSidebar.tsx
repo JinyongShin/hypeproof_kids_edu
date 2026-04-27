@@ -1,9 +1,8 @@
-"use client";
-
+"use client"
+import { BACKEND_HTTP_URL, BACKEND_WS_URL } from "@/lib/backendUrl";
 import { useEffect, useState } from "react";
 
-const BACKEND_HTTP_URL =
-  process.env.NEXT_PUBLIC_BACKEND_HTTP_URL ?? "http://localhost:8000";
+
 
 interface SessionItem {
   session_id: string;
@@ -125,14 +124,22 @@ export default function SessionSidebar({
         ))}
       </div>
 
-      {/* 새 세션 버튼 */}
-      <div className="border-t border-gray-800 p-3">
+      {/* 새 세션 + 갤러리 버튼 */}
+      <div className="border-t border-gray-800 p-3 space-y-2">
         <button
           onClick={handleNewSession}
           className="w-full rounded-lg bg-indigo-700 py-2 text-xs font-medium text-white transition-colors hover:bg-indigo-600"
         >
           + 새 세션
         </button>
+        <a
+          href="/gallery"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block w-full rounded-lg bg-amber-600 py-2 text-center text-xs font-medium text-white transition-colors hover:bg-amber-500"
+        >
+          🎮 갤러리 (런칭쇼)
+        </a>
       </div>
     </div>
   );

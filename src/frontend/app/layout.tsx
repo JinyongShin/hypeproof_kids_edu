@@ -18,6 +18,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className="h-full">
+      <head>
+        <script src="/_backend.js" />
+      </head>
       <body className="h-full bg-gradient-to-br from-violet-50 to-sky-50">{children}</body>
     </html>
   );

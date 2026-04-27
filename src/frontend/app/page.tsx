@@ -1,4 +1,5 @@
-"use client";
+"use client"
+import { BACKEND_HTTP_URL, BACKEND_WS_URL } from "@/lib/backendUrl";
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -7,8 +8,6 @@ import CardPreview from "@/components/GamePreview";
 import SessionSidebar from "@/components/SessionSidebar";
 import { useSwipe } from "@/hooks/useSwipe";
 
-const BACKEND_HTTP_URL =
-  process.env.NEXT_PUBLIC_BACKEND_HTTP_URL ?? "http://localhost:8000";
 
 export default function Home() {
   const router = useRouter();
@@ -17,6 +16,8 @@ export default function Home() {
   const [cardUrl, setCardUrl] = useState("");
   const [cardJson, setCardJson] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [gameHtml, setGameHtml] = useState("");
+  const [gameUrl, setGameUrl] = useState("");
   const [currentBlock, setCurrentBlock] = useState(0);
   const [activePane, setActivePane] = useState<"chat" | "card">("chat");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -67,6 +68,8 @@ export default function Home() {
     sessionStorage.setItem("active_session_id", sessionId);
     setCardUrl(lastCardUrl);
     setCardJson(""); // 세션 전환 시 JSON 초기화
+    setGameHtml(""); // 게임도 초기화
+    setGameUrl("");
   }, []);
 
   const handleLogout = useCallback(() => {
@@ -74,9 +77,14 @@ export default function Home() {
     router.replace("/login");
   }, [router]);
 
-  const handleCardReady = useCallback((url: string, json: string) => {
-    setCardUrl(url);
-    setCardJson(json);
+  const handleCardReady = useCallback((url: string, json: string, html?: string, gUrl?: string) => {
+    if (html) {
+      setGameHtml(html);
+      if (gUrl) setGameUrl(gUrl);
+    } else {
+      setCardUrl(url);
+      setCardJson(json);
+    }
     setSessionRefreshToken((t) => t + 1);
   }, []);
 
@@ -157,7 +165,15 @@ export default function Home() {
 
           {/* 카드 프리뷰 영역: 모바일 50%(=100vw) / 데스크탑 flex-1 */}
           <div className="relative w-1/2 md:flex-1 h-full">
-            <CardPreview cardUrl={cardUrl} cardJson={cardJson} isLoading={isLoading} />
+            <CardPreview
+              cardUrl={cardUrl}
+              cardJson={cardJson}
+              isLoading={isLoading}
+              gameHtml={gameHtml}
+              gameUrl={gameUrl}
+              childId={childId}
+              sessionId={activeSessionId}
+            />
 
             {/* 좌측 에지 스와이프 캡처 존 */}
             <div

@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { useEffect, useRef, useState } from "react";
 import { useChat } from "@/hooks/useChat";
@@ -8,7 +8,7 @@ import { SCAFFOLD_DATA } from "@/lib/scaffoldData";
 interface ChatPaneProps {
   childId: string;
   sessionId: string;
-  onCardReady: (cardUrl: string, cardJson: string) => void;
+  onCardReady: (cardUrl: string, cardJson: string, gameHtml?: string, gameUrl?: string) => void;
   onLoadingChange?: (loading: boolean) => void;
   currentBlock: number;
   onBlockChange: (block: number) => void;
@@ -22,7 +22,7 @@ export default function ChatPane({
   currentBlock,
   onBlockChange,
 }: ChatPaneProps) {
-  const { messages, cardUrl, cardJson, hint, isLoading, wsStatus, send, stop, getLastUserMessage } = useChat(
+  const { messages, cardUrl, cardJson, hint, isLoading, wsStatus, send, stop, getLastUserMessage, gameHtml, gameUrl } = useChat(
     childId,
     sessionId
   );
@@ -30,10 +30,15 @@ export default function ChatPane({
   const [waitingMessage, setWaitingMessage] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // 카드 URL/JSON 변경 시 부모에 전달
+  // 카드 URL/JSON 또는 게임 HTML 변경 시 부모에 전달
   useEffect(() => {
     if (cardUrl) onCardReady(cardUrl, cardJson);
   }, [cardUrl, cardJson, onCardReady]);
+
+  // 게임 데이터 전달
+  useEffect(() => {
+    if (gameHtml) onCardReady("", "", gameHtml, gameUrl);
+  }, [gameHtml, gameUrl, onCardReady]);
 
   // 로딩 상태 변경 시 부모에 전달
   useEffect(() => {
@@ -199,6 +204,15 @@ export default function ChatPane({
               </button>
             );
           })()}
+        {/* 🎮 게임 생성 유도 — 카드가 있고 로딩 중이 아닐 때 */}
+        {!hint && !isLoading && cardUrl && (
+          <button
+            onClick={() => handleQuickSend("게임 만들어줘")}
+            className="mx-auto block rounded-full border border-amber-200 bg-amber-50 px-4 py-1.5 text-center text-sm text-amber-700 hover:bg-amber-100 font-medium"
+          >
+            🎮 게임 만들기
+          </button>
+        )}
         <div ref={messagesEndRef} />
       </div>
 

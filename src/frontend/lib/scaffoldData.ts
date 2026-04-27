@@ -20,13 +20,6 @@ export interface ScaffoldBlock {
 export const SCAFFOLD_DATA: ScaffoldBlock[] = [
   {
     block: 0,
-    skill: "지휘관의 선언",
-    skillDesc: "오프닝 — AI에게 만들 것을 선언한다",
-    // 오프닝 블록 — 카드 없음
-    prompts: [],
-  },
-  {
-    block: 1,
     skill: "아바타 소환",
     skillDesc: "캐릭터를 묘사해서 소환한다",
     prompts: [
@@ -37,7 +30,7 @@ export const SCAFFOLD_DATA: ScaffoldBlock[] = [
     ],
   },
   {
-    block: 2,
+    block: 1,
     skill: "세계 구축",
     skillDesc: "캐릭터가 살 세계를 묘사한다",
     prompts: [
@@ -48,22 +41,15 @@ export const SCAFFOLD_DATA: ScaffoldBlock[] = [
     ],
   },
   {
-    block: 3,
+    block: 2,
     skill: "마스터 개발자",
-    skillDesc: "카드를 꾸미고 효과를 추가한다",
+    skillDesc: "본격적으로 게임을 만든다",
     prompts: [
-      "반짝이 효과 추가해줘",
-      "무지개 배경으로 바꿔줘",
-      "캐릭터에 왕관 씌워줘",
-      "별가루 효과 넣어줘",
+      "이 캐릭터로 게임 만들어줘",
+      "별 모으기 게임 만들어줘",
+      "친구 찾기 게임 만들어줘",
+      "구름 타는 게임 만들어줘",
     ],
-  },
-  {
-    block: 4,
-    skill: "런칭쇼",
-    skillDesc: "완성된 카드를 발표한다",
-    // 발표 블록 — 카드 없음
-    prompts: [],
   },
 ];
 

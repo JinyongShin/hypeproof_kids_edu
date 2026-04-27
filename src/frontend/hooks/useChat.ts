@@ -1,4 +1,5 @@
-"use client";
+"use client"
+import { BACKEND_HTTP_URL, BACKEND_WS_URL } from "../lib/backendUrl";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -18,12 +19,10 @@ interface UseChatReturn {
   send: (prompt: string) => void;
   stop: () => void;
   getLastUserMessage: () => string;
+  gameHtml: string;
+  gameUrl: string;
 }
 
-const BACKEND_WS_URL =
-  process.env.NEXT_PUBLIC_BACKEND_WS_URL ?? "ws://localhost:8000";
-const BACKEND_HTTP_URL =
-  process.env.NEXT_PUBLIC_BACKEND_HTTP_URL ?? "http://localhost:8000";
 
 export function useChat(childId: string, sessionId: string): UseChatReturn {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -32,6 +31,8 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
   const [hint, setHint] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [wsStatus, setWsStatus] = useState<"connected" | "reconnecting" | "disconnected">("connected");
+  const [gameHtml, setGameHtml] = useState("");
+  const [gameUrl, setGameUrl] = useState("");
 
   const wsRef = useRef<WebSocket | null>(null);
 
@@ -42,6 +43,8 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
     setCardUrl("");
     setCardJson("");
     setHint("");
+    setGameHtml("");
+    setGameUrl("");
     setMessages([]);
     fetch(`${BACKEND_HTTP_URL}/sessions/${childId}/${sessionId}/messages`)
       .then((r) => (r.ok ? r.json() : []))
@@ -73,10 +76,12 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
         retryCount = 0; // 메시지 수신 시 재시도 카운트 초기화
         setWsStatus("connected");
         const data = JSON.parse(event.data) as {
-          type: "text" | "card" | "done" | "error";
+          type: "text" | "card" | "game" | "done" | "error";
           chunk?: string;
           card_url?: string;
           card_json?: string;
+          html?: string;
+          game_url?: string;
           hint?: string;
           session_id?: string;
         };
@@ -98,6 +103,9 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
         } else if (data.type === "card" && data.card_url) {
           setCardUrl(data.card_url);
           if (data.card_json) setCardJson(data.card_json);
+        } else if (data.type === "game") {
+          if (data.html) setGameHtml(data.html);
+          if (data.game_url) setGameUrl(data.game_url);
         } else if (data.type === "done") {
           setMessages((prev) => {
             const last = prev[prev.length - 1];
@@ -108,6 +116,7 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
           });
           if (data.hint) setHint(data.hint);
           if (data.card_url) setCardUrl(data.card_url);
+          if (data.game_url) setGameUrl(data.game_url);
           setIsLoading(false);
         } else if (data.type === "error") {
           setMessages((prev) => [
@@ -185,5 +194,5 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
     return "";
   }, [messages]);
 
-  return { messages, cardUrl, cardJson, hint, isLoading, wsStatus, send, stop, getLastUserMessage };
+  return { messages, cardUrl, cardJson, hint, isLoading, wsStatus, send, stop, getLastUserMessage, gameHtml, gameUrl };
 }
