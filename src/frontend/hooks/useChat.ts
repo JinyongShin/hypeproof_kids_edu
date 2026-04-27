@@ -16,6 +16,8 @@ interface UseChatReturn {
   isLoading: boolean;
   wsStatus: "connected" | "reconnecting" | "disconnected";
   send: (prompt: string) => void;
+  stop: () => void;
+  getLastUserMessage: () => string;
 }
 
 const BACKEND_WS_URL =
@@ -171,5 +173,17 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
     [isLoading]
   );
 
-  return { messages, cardUrl, cardJson, hint, isLoading, wsStatus, send };
+  const stop = useCallback(() => {
+    wsRef.current?.close();
+    setIsLoading(false);
+  }, []);
+
+  const getLastUserMessage = useCallback(() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === "user") return messages[i].text;
+    }
+    return "";
+  }, [messages]);
+
+  return { messages, cardUrl, cardJson, hint, isLoading, wsStatus, send, stop, getLastUserMessage };
 }

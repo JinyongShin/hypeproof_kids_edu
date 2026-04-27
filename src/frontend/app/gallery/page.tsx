@@ -21,7 +21,7 @@ export default function GalleryPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:8000/gallery")
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_HTTP_URL ?? "http://localhost:8000"}/gallery`)
       .then((r) => r.json())
       .then((data) => {
         setCards(data);

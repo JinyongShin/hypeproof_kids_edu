@@ -123,7 +123,7 @@ def update_session_name(session_id: str, name: str) -> None:
         )
 
 
-def get_claude_session_id(session_id: str) -> str | None:
+def get_claude_session_id(session_id: str):
     with _connect() as conn:
         row = conn.execute(
             "SELECT claude_session_id FROM sessions WHERE session_id=?",
@@ -268,7 +268,7 @@ def list_cards(session_id: str) -> list[dict]:
     return [dict(r) for r in rows]
 
 
-def get_latest_card(session_id: str) -> dict | None:
+def get_latest_card(session_id: str):
     with _connect() as conn:
         row = conn.execute(
             "SELECT card_id, card_type, card_json, url FROM cards WHERE session_id=? ORDER BY created_at DESC LIMIT 1",

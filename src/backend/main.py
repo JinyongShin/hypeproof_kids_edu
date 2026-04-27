@@ -115,7 +115,7 @@ app = FastAPI(title="Kids Edu Backend", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://hypeproof-ai.xyz"],
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -327,6 +327,13 @@ async def chat_ws(websocket: WebSocket, child_id: str):
 
             original_prompt = data.get("prompt", "").strip()
             if not original_prompt:
+                continue
+
+            # 이모지만 입력 또는 의미 없는 입력 차단 (한글/영문 최소 2자)
+            import re as _re
+            alpha_count = len(_re.sub(r'[^가-힣a-zA-Z0-9]', '', original_prompt))
+            if alpha_count < 2:
+                await websocket.send_json({"type": "error", "chunk": "조금 더 자세히 말해줄래? 어떤 캐릭터를 만들고 싶은지 알려줘!"})
                 continue
 
             logger.info("[%s::%s] 프롬프트 수신: %s", child_id, session_id, original_prompt[:60])

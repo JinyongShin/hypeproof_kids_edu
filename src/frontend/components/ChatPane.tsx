@@ -22,7 +22,7 @@ export default function ChatPane({
   currentBlock,
   onBlockChange,
 }: ChatPaneProps) {
-  const { messages, cardUrl, cardJson, hint, isLoading, wsStatus, send } = useChat(
+  const { messages, cardUrl, cardJson, hint, isLoading, wsStatus, send, stop, getLastUserMessage } = useChat(
     childId,
     sessionId
   );
@@ -143,9 +143,13 @@ export default function ChatPane({
             <div
               className={`max-w-[85%] rounded-2xl px-4 py-2 text-sm ${
                 msg.role === "user"
-                  ? "bg-violet-500 text-white"
+                  ? "bg-violet-500 text-white cursor-pointer hover:bg-violet-600 transition-colors"
                   : "bg-white text-gray-800 border border-gray-100 shadow-sm"
               } ${msg.isStreaming ? "animate-pulse" : ""}`}
+              title={msg.role === "user" && !isLoading ? "클릭하면 수정해서 다시 보낼 수 있어!" : undefined}
+              onClick={() => {
+                if (msg.role === "user" && !isLoading) setInput(msg.text);
+              }}
             >
               {/* 카드 JSON 제외하고 텍스트만 표시 */}
               {msg.text
@@ -210,13 +214,33 @@ export default function ChatPane({
             rows={2}
             className="flex-1 resize-none rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 outline-none focus:border-violet-400 focus:bg-white disabled:opacity-50"
           />
-          <button
-            onClick={handleSend}
-            disabled={isLoading || !input.trim()}
-            className="self-end rounded-xl bg-violet-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-violet-600 disabled:opacity-40"
-          >
-            {isLoading ? "..." : "▶"}
-          </button>
+          {isLoading ? (
+            <button
+              onClick={stop}
+              className="self-end rounded-xl bg-red-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-600"
+            >
+              ⏹ 중지
+            </button>
+          ) : (
+            <div className="flex flex-col gap-1 self-end">
+              <button
+                onClick={handleSend}
+                disabled={!input.trim()}
+                className="rounded-xl bg-violet-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-violet-600 disabled:opacity-40"
+              >
+                ▶
+              </button>
+              {getLastUserMessage() && !input.trim() && (
+                <button
+                  onClick={() => setInput(getLastUserMessage())}
+                  className="rounded-lg bg-gray-100 px-2 py-1 text-[10px] text-gray-500 hover:bg-gray-200"
+                  title="직전 입력 다시 불러오기"
+                >
+                  ↩ 재전송
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

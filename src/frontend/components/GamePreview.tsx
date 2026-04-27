@@ -49,7 +49,7 @@ export default function CardPreview({ cardUrl, cardJson, isLoading = false }: Ca
   useEffect(() => {
     if (card?.image_prompt && !imageUrl) {
       setImageLoading(true);
-      fetch("http://localhost:8000/generate-image", {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_HTTP_URL ?? "http://localhost:8000"}/generate-image`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ image_prompt: card.image_prompt }),

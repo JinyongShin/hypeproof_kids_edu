@@ -17,6 +17,7 @@ import tempfile
 import time
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Optional, Tuple
 
 import storage
 
@@ -64,7 +65,7 @@ class StreamEvent:
     type: str          # "text" | "card" | "done" | "error"
     chunk: str = ""
     card_json: str = ""
-    session_id: str | None = None
+    session_id: Optional[str] = None
     hint: str = ""
     card_url: str = ""
 
@@ -189,7 +190,7 @@ async def stream_claude(prompt: str, child_id: str, session_id: str):
         return
 
     full_text = ""
-    new_claude_session_id: str | None = None
+    new_claude_session_id: Optional[str] = None
 
     try:
         for raw_line in proc.stdout:  # type: ignore[union-attr]
@@ -263,7 +264,7 @@ async def stream_claude(prompt: str, child_id: str, session_id: str):
         yield StreamEvent(type="error", chunk=_friendly_error("generic"))
 
 
-def reset_session(child_id: str, session_id: str | None = None) -> bool:
+def reset_session(child_id: str, session_id: Optional[str] = None) -> bool:
     """child_id (+ 선택적 session_id) claude 세션 초기화 (운영자용)."""
     if session_id is not None:
         existing = storage.get_claude_session_id(session_id)

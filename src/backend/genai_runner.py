@@ -7,6 +7,7 @@ import json
 import logging
 import os
 import time
+import asyncio
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -20,7 +21,7 @@ _DATA_DIR = _BACKEND_ROOT / "data"
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GEMINI_TEXT_MODEL = os.getenv("GEMINI_TEXT_MODEL", "gemini-2.5-flash")
-GEMINI_IMAGE_MODEL = os.getenv("GEMINI_IMAGE_MODEL", "gemini-2.0-flash-exp")
+GEMINI_IMAGE_MODEL = os.getenv("GEMINI_IMAGE_MODEL", "gemini-2.5-flash-image")
 MOCK_MODE = os.getenv("MOCK_GENAI", "0") == "1"
 
 _MAX_CARDS_PER_SESSION = 10
@@ -43,6 +44,8 @@ class StreamEvent:
     image_url: str = ""
     image_data: bytes = b""
     hint: str = ""
+    session_id: str = ""
+    game_url: str = ""
 
 
 def _load_persona() -> str:
@@ -60,7 +63,7 @@ def _extract_hint(text: str) -> str:
     return ""
 
 
-def _extract_card_json(text: str) -> str | None:
+def _extract_card_json(text: str) -> "str | None":
     """JSON 코드블록에서 카드 JSON 추출."""
     import re
     match = re.search(r"```json\s*([\s\S]*?)```", text, re.IGNORECASE)
@@ -130,95 +133,127 @@ async def generate_card(prompt: str, child_id: str, session_id: str):
         yield StreamEvent(type="done", hint=_extract_hint(_MOCK_CARD_RESPONSE), card_url=card_url)
         return
 
-    try:
-        from google import genai
-    except ImportError:
-        logger.error("google-genai 패키지 미설치. pip install google-genai")
-        yield StreamEvent(type="error", chunk=_friendly_error("not_found"))
-        return
+    # --- GLM (z.ai) 텍스트 생성 ---
+    ZAI_API_KEY = os.getenv("ZAI_API_KEY", "1edec351dba64a08a4838bd5993a9322.r7Z6EBjcZJxmpKNL")
+    ZAI_BASE_URL = os.getenv("ZAI_BASE_URL", "https://api.z.ai/api/coding/paas/v4/chat/completions")
+    ZAI_MODEL = os.getenv("ZAI_MODEL", "glm-5")
 
-    if not GEMINI_API_KEY:
-        logger.error("GEMINI_API_KEY 미설정")
-        yield StreamEvent(type="error", chunk=_friendly_error("not_found"))
-        return
-
-    client = genai.Client(api_key=GEMINI_API_KEY)
     persona = _load_persona()
-
     full_text = ""
-    try:
-        # 프롬프트 구성
-        system_prompt = persona if persona else ""
-        contents = prompt
 
-        response = await _run_async(
-            client.models.generate_content,
-            model=GEMINI_TEXT_MODEL,
-            contents=contents,
-            config=genai.types.GenerateContentConfig(
-                system_instruction=system_prompt if system_prompt else None,
-                temperature=0.9,
-            )
+    import urllib.parse
+    import urllib.request
+
+    def _glm_chat(api_key, base_url, model, system_prompt, user_prompt):
+        import json as _json
+        messages = []
+        if system_prompt:
+            messages.append({"role": "system", "content": system_prompt})
+        messages.append({"role": "user", "content": user_prompt})
+        body = _json.dumps({
+            "model": model,
+            "messages": messages,
+            "temperature": 0.9,
+        }).encode("utf-8")
+        req = urllib.request.Request(
+            base_url,
+            data=body,
+            headers={"Content-Type": "application/json", "Authorization": f"Bearer {api_key}"},
         )
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            data = _json.loads(resp.read().decode("utf-8"))
+            return data["choices"][0]["message"]["content"]
 
-        if response.text:
-            full_text = response.text
+    def _pollinations_chat(system_prompt, user_prompt):
+        import json as _json
+        messages = []
+        if system_prompt:
+            messages.append({"role": "system", "content": system_prompt})
+        messages.append({"role": "user", "content": user_prompt})
+        body = _json.dumps({
+            "messages": messages,
+            "model": "openai",
+            "seed": int(time.time())
+        }).encode("utf-8")
+        req = urllib.request.Request(
+            "https://text.pollinations.ai/",
+            data=body,
+            headers={"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"},
+        )
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            return resp.read().decode("utf-8")
+
+    system_prompt = persona if persona else ""
+    try:
+        # 1차: GLM (z.ai) 시도
+        response_text = await asyncio.to_thread(_glm_chat, ZAI_API_KEY, ZAI_BASE_URL, ZAI_MODEL, system_prompt, prompt)
+
+        if response_text:
+            full_text = response_text
             yield StreamEvent(type="text", chunk=full_text)
+    except Exception as glm_err:
+        logger.warning("[%s::%s] GLM 실패, Pollinations 폴백: %s", child_id, session_id, glm_err)
+        # 2차: Pollinations.ai 폴백
+        try:
+            response_text = await asyncio.to_thread(_pollinations_chat, system_prompt, prompt)
+            if response_text:
+                full_text = response_text
+                yield StreamEvent(type="text", chunk=full_text)
+        except Exception as poll_err:
+            logger.error("[%s::%s] Pollinations도 실패: %s", child_id, session_id, poll_err)
 
-        # 카드 JSON 추출
+    # 카드 JSON 추출 + done 이벤트 (성공/실패 공통)
+    try:
         card_json_str = _extract_card_json(full_text)
-        card_url = ""
-        if card_json_str:
+    except Exception:
+        card_json_str = None
+    card_url = ""
+    if card_json_str:
+        try:
             card_id = f"card_{int(time.time() * 1000)}"
             card_url = _save_card(card_id, child_id, session_id, card_json_str)
-            yield StreamEvent(type="card", card_json=card_json_str, card_url=card_url)
+        except Exception as save_err:
+            logger.exception("[%s::%s] 카드 저장 실패 (텍스트는 정상): %s", child_id, session_id, save_err)
+        yield StreamEvent(type="card", card_json=card_json_str, card_url=card_url)
 
+    if full_text:
         yield StreamEvent(
             type="done",
             hint=_extract_hint(full_text),
             card_url=card_url,
         )
-
-    except Exception as e:
-        logger.exception("[%s::%s] generate_card 오류: %s", child_id, session_id, e)
+    else:
         yield StreamEvent(type="error", chunk=_friendly_error("generic"))
 
 
-async def generate_image(image_prompt: str) -> tuple[bytes, str]:
+async def generate_image(image_prompt: str):
     """
-    Nano Banana로 이미지 생성.
+    Pollinations.ai로 이미지 생성 (무료, API 키 불필요).
     Returns: (image_bytes, mime_type)
     """
+    import asyncio
+    import base64
+    import urllib.parse
+    import urllib.request
+
     if MOCK_MODE:
-        # Mock: 1x1 투명 PNG
-        import base64
         mock_png = base64.b64decode(
             "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPj/HwADBwIAMCbHYQAAAABJRU5ErkJggg=="
         )
         return mock_png, "image/png"
 
-    try:
-        from google import genai
-    except ImportError:
-        raise RuntimeError("google-genai 패키지 미설치")
+    prompt = f"cute, child-friendly illustration, chibi style, soft pastel colors, magical, wholesome: {image_prompt}"
+    url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote(prompt)}?width=512&height=512&nologo=true"
 
-    client = genai.Client(api_key=GEMINI_API_KEY)
+    def _fetch():
+        req = urllib.request.Request(url, headers={"User-Agent": "KidsEdu/1.0"})
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            return resp.read()
 
-    response = await _run_async(
-        client.models.generate_content,
-        model=GEMINI_IMAGE_MODEL,
-        contents=f"Create a cute, child-friendly illustration: {image_prompt}. Style: chibi, soft pastel colors, magical, wholesome.",
-        config=genai.types.GenerateContentConfig(
-            response_modalities=["IMAGE", "TEXT"],
-            temperature=1.0,
-        )
-    )
-
-    for part in response.candidates[0].content.parts:
-        if part.inline_data is not None:
-            return part.inline_data.data, part.inline_data.mime_type
-
-    raise RuntimeError("이미지 생성 실패: 응답에 이미지 없음")
+    image_bytes = await asyncio.to_thread(_fetch)
+    if image_bytes and len(image_bytes) > 1000:
+        return image_bytes, "image/png"
+    raise RuntimeError("이미지 생성 실패: 응답 없음")
 
 
 async def _run_async(func, **kwargs):
