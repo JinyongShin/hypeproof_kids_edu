@@ -19,7 +19,7 @@ from fastapi.responses import FileResponse, Response
 
 import storage
 from claude_runner import StreamEvent, _DATA_DIR, reset_session, stream_claude
-from genai_runner import generate_card, generate_image
+from genai_runner import generate_card, generate_image, generate_spec
 from qr_generator import generate_qr_png
 
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "root")
@@ -337,6 +337,57 @@ async def preview_game(
     return Response(content=html, media_type="text/html")
 
 
+@app.get("/preview-spec")
+async def preview_spec(spec: str = "", preset: str = ""):
+    """Spec composition 엔진 dev 미리보기.
+    spec= 쿼리에 JSON 문자열, 또는 preset= 으로 사전 정의된 케이스 4종(collect/dodge/chase/jump).
+
+    예시:
+      /preview-spec?preset=jump
+      /preview-spec?preset=monkey  (사용자 원숭이 케이스: 좌우 줄넘기 + 바닥 목화)
+      /preview-spec?spec={"player":{"movement":"jump"},"spawns":[...]}
+    """
+    from game_engine import (
+        build_game_with_spec, spec_for_collect, spec_for_dodge,
+        spec_for_chase, spec_for_jump,
+    )
+    if preset:
+        if preset == "collect":
+            spec_obj = spec_for_collect("⭐")
+        elif preset == "dodge":
+            spec_obj = spec_for_dodge("⭐", "💀")
+        elif preset == "chase":
+            spec_obj = spec_for_chase("🐰")
+        elif preset == "jump":
+            spec_obj = spec_for_jump("⭐", "🌵")
+        elif preset == "monkey":
+            # 사용자 원숭이 케이스: 좌우 줄넘기 점프 피하기 + 바닥 목화 모으기
+            spec_obj = {
+                "player": {"movement": "jump"},
+                "spawns": [
+                    {"role": "hazard", "from": "alternating_lr",
+                     "motion": "horizontal", "sprite": "🪢",
+                     "rate": 0.025, "speed": 3},
+                    {"role": "item", "from": "static_grid_bottom",
+                     "motion": "static", "sprite": "☁️",
+                     "score_delta": 1, "respawn_on_collect": False},
+                ],
+                "world": {"scroll": "none"},
+                "goal": {"time_limit": 45, "target_score": 0},
+            }
+        else:
+            raise HTTPException(status_code=400, detail="알 수 없는 preset")
+    else:
+        if not spec:
+            raise HTTPException(status_code=400, detail="spec 또는 preset 필요")
+        try:
+            spec_obj = json.loads(spec)
+        except json.JSONDecodeError:
+            raise HTTPException(status_code=400, detail="spec JSON 파싱 실패")
+    html = await asyncio.to_thread(build_game_with_spec, spec_obj, None, None)
+    return Response(content=html, media_type="text/html")
+
+
 # ---------------------------------------------------------------------------
 # WebSocket chat
 # ---------------------------------------------------------------------------
@@ -407,49 +458,89 @@ async def chat_ws(websocket: WebSocket, child_id: str):
                 if has_existing_game and any(kw in original_prompt for kw in mechanic_keywords):
                     is_game_request = True
             if is_game_request:
+                # === Spec composition 방식 ===
+                # LLM에게 spec JSON을 emit하게 함. 4 메카닉 enumeration 대신
+                # 부품(player movement, spawns[], world, goal)을 자유롭게 조합.
                 cards = await asyncio.to_thread(storage.list_cards, session_id)
-                card_jsons = [c['card_json'] for c in cards] if cards else []
-                card_summary = ""
-                if card_jsons:
-                    card_summary = "이전 카드 정보: " + ", ".join(card_jsons[-2:])
-                # AI에게 파라미터만 물어보기 (매우 짧은 응답)
-                param_prompt = (
-                    f"아이가 이렇게 말했어: \"{original_prompt}\"\n"
-                    f"{card_summary}\n\n"
-                    f"게임 메카닉 선택:\n"
-                    f"- collect: 위에서 떨어지는 아이템 모으기 (기본, 평화로운)\n"
-                    f"- dodge: 위험은 피하고 안전한 것만 모음 (스릴, '피하기/위험/조심' 키워드)\n"
-                    f"- chase: 떠다니는 친구 따라잡아 손잡기 (사회적, '친구/같이/만나' 키워드)\n"
-                    f"- jump: 횡스크롤 점프 — 장애물 뛰어넘고 공중 아이템 줍기 (액션, '점프/횡이동/횡스크롤/달리기/장애물' 키워드)\n"
-                    f"입력에 명확한 키워드 없으면 collect. 의도 변경 요청('바꿔줘')이면 새 키워드를 우선.\n\n"
-                    f"빠르기·시간·목표는 아이의 분위기/요청에서 추정:\n"
-                    f"- pace_scale: 0.5 (느긋) ~ 1.0 (기본) ~ 1.8 (스릴/폭우/빠르게).\n"
-                    f"  '천천히/여유롭게/쉽게'→0.7, '빠르게/스릴/어렵게/폭우'→1.4~1.6.\n"
-                    f"- time_limit: 20~90 (기본 45). '짧게'→25, '오래/길게'→75.\n"
-                    f"- target_score: 0~30. 0=시간만 카운트(무제한 점수). chase는 기본 5(친구 명수). 다른 게임도 '5개 모으면 끝' 같은 명시적 목표 있으면 N. 없으면 0.\n\n"
-                    f"다음 JSON만 출력해 (다른 텍스트 절대 금지):\n"
-                    f'{{"game_type":"collect|dodge|chase|jump","char_emoji":"이모지1개","item_emoji":"모을것이모지1개",'
-                    f'"hazard_emoji":"피할것이모지(dodge/jump용,선택)","friend_emoji":"친구이모지(chase용,선택)",'
-                    f'"bg_theme":"우주|바다|숲|불|마을|하늘","item_name":"모을거이름",'
-                    f'"pace_scale":1.0,"time_limit":45,"target_score":0}}'
+                latest_char = await asyncio.to_thread(
+                    storage.get_latest_card_by_type, session_id, "character"
                 )
-                import asyncio as _a
-                game_params = {}
+                latest_world = await asyncio.to_thread(
+                    storage.get_latest_card_by_type, session_id, "world"
+                )
+                char_card_obj = {}
+                world_card_obj = {}
+                if latest_char:
+                    try:
+                        char_card_obj = json.loads(latest_char["card_json"])
+                    except Exception:
+                        pass
+                if latest_world:
+                    try:
+                        world_card_obj = json.loads(latest_world["card_json"])
+                    except Exception:
+                        pass
+                card_summary = ""
+                if char_card_obj:
+                    card_summary += f"\n캐릭터: {char_card_obj.get('name', '?')} — {char_card_obj.get('description', '')}"
+                if world_card_obj:
+                    card_summary += f"\n세계: {world_card_obj.get('name', '?')} — {world_card_obj.get('description', '')}"
+
+                # spec emitter prompt — 부품 라이브러리를 LLM에 전달
+                spec_prompt = (
+                    f'아이가 이렇게 말했어: "{original_prompt}"\n'
+                    f'{card_summary}\n\n'
+                    f'다음 JSON spec만 출력해 (다른 텍스트·마크다운 금지). 부품 조합으로 게임을 정의:\n\n'
+                    f'## player.movement (캐릭터 이동 방식)\n'
+                    f'- "free": WASD/화살표 4방향 자유 이동 (기본)\n'
+                    f'- "x_fixed": x 고정, y만 이동 (수직 점프 게임)\n'
+                    f'- "jump": 좌우 + 점프(스페이스). 중력 적용. 횡스크롤 점프 게임 ("점프/횡이동" 단어)\n'
+                    f'- "swim": 4방향 + 중력 0 (떠다님)\n\n'
+                    f'## spawns[] (등장 객체. 0~6개 자유)\n'
+                    f'각 spawn = {{role, sprite, from, motion, rate, speed, score_delta, respawn_on_collect}}\n'
+                    f'- role: "item"(모음+1), "hazard"(피함-1), "friend"(만남+1, respawn 추천)\n'
+                    f'- sprite: 이모지 1개 (없으면 자동)\n'
+                    f'- from: "top"(위에서) "bottom"(아래에서) "left"(좌측에서) "right"(우측에서) '
+                    f'"alternating_lr"(좌우 번갈아) "static_grid_bottom"(바닥에 줄지어) "wandering"(임의)\n'
+                    f'- motion: "fall" "rise" "horizontal" "sine" "static" "wandering"\n'
+                    f'- rate: 0.005~0.08 (분당 spawn 빈도). static_*은 무시.\n'
+                    f'- speed: 0.5~5\n\n'
+                    f'## world\n'
+                    f'- scroll: "none" | "horizontal" | "parallax" (점프 게임은 horizontal 추천)\n\n'
+                    f'## goal\n'
+                    f'- time_limit: 20~90 (초). 기본 45.\n'
+                    f'- target_score: 0~30. 0=무제한, N=N점이면 조기 성공.\n\n'
+                    f'## 예시 매핑\n'
+                    f'- "별 모으기 게임" → free + spawns[item from=top motion=fall sprite=⭐]\n'
+                    f'- "위험 피하면서 보석" → free + spawns[item from=top, hazard from=top]\n'
+                    f'- "친구 5명 찾기" → free + spawns[friend wandering, respawn] + goal.target_score=5\n'
+                    f'- "장애물 점프 게임" → jump + spawns[hazard from=right horizontal] + scroll=horizontal\n'
+                    f'- "좌우에서 줄넘기 피하면서 바닥 목화" → jump + spawns[hazard alternating_lr horizontal, item static_grid_bottom static]\n\n'
+                    f'아이의 의도를 부품 조합으로 옮겨. JSON만 출력:\n'
+                    f'{{"player":{{"movement":"..."}},"spawns":[...],"world":{{"scroll":"none"}},"goal":{{"time_limit":45,"target_score":0}}}}'
+                )
+                # generate_spec() — TUTOR.md 카드 페르소나 안 쓰고 spec 전용 system prompt만 사용
+                spec_raw = {}
                 try:
-                    async for event in generate_card(param_prompt, child_id + "_params", session_id):
-                        if event.type == "text" and event.chunk:
-                            import re as _re
-                            jm = _re.search(r'\{[^}]+\}', event.chunk)
-                            if jm:
-                                game_params = json.loads(jm.group())
-                                break
-                        elif event.type == "done":
-                            break
-                except:
-                    pass
-                # 파라미터로 게임 빌드
-                from game_template import build_game_with_params
-                game_html = await asyncio.to_thread(build_game_with_params, card_jsons, game_params, original_prompt)
+                    spec_text = await generate_spec(spec_prompt)
+                    if spec_text:
+                        # 가장 큰 JSON 객체 매치 (LLM이 마크다운/설명을 섞어 보내도 추출)
+                        jm = _re.search(r'\{[\s\S]*\}', spec_text)
+                        if jm:
+                            try:
+                                spec_raw = json.loads(jm.group())
+                            except json.JSONDecodeError:
+                                logger.warning("[%s::%s] spec JSON 파싱 실패, 폴백 사용",
+                                               child_id, session_id)
+                except Exception:
+                    logger.exception("[%s::%s] spec emit 실패", child_id, session_id)
+
+                # spec 빌드 (검증·default 채움은 game_engine 내부에서)
+                from game_engine import build_game_with_spec
+                game_html = await asyncio.to_thread(
+                    build_game_with_spec, spec_raw, char_card_obj, world_card_obj
+                )
+
                 import time as _time
                 game_id = f"game_{int(_time.time() * 1000)}"
                 game_dir = (_DATA_DIR / "games" / child_id / session_id).resolve()
@@ -460,70 +551,28 @@ async def chat_ws(websocket: WebSocket, child_id: str):
                     game_file = game_dir / f"{game_id}.html"
                     game_file.write_text(game_html, encoding="utf-8")
                     game_url = f"{os.getenv('BACKEND_BASE_URL', 'http://localhost:8000')}/games/{child_id}/{session_id}/{game_id}"
-                    # 게임 메타를 DB에 등록 (saved=0). 저장 버튼 클릭 시 saved=1로 갱신.
                     try:
                         await asyncio.to_thread(
                             storage.add_game, session_id, child_id, game_id, str(game_file), game_url
                         )
                     except Exception:
                         logger.exception("[%s::%s] 게임 메타 DB 등록 실패", child_id, session_id)
-                item = game_params.get("item_name", game_params.get("item_emoji", "⭐"))
-                game_type = game_params.get("game_type", "collect")
-                # 분위기·시간·목표를 인트로에 자연스럽게 녹임
-                try:
-                    pace = float(game_params.get("pace_scale", 1.0))
-                except (TypeError, ValueError):
-                    pace = 1.0
-                try:
-                    tlim = int(float(game_params.get("time_limit", 45)))
-                except (TypeError, ValueError):
-                    tlim = 45
-                try:
-                    tgt = int(float(game_params.get("target_score", 0)))
-                except (TypeError, ValueError):
-                    tgt = 0
-                if pace >= 1.4:
-                    pace_word = "빠르게 쏟아지니까"
-                elif pace <= 0.75:
-                    pace_word = "느긋하게"
-                else:
-                    pace_word = ""
-                goal_phrase = f"{tlim}초 안에 "
-                if tgt > 0:
-                    goal_phrase += f"{tgt}개 모으면 끝!"
-                else:
-                    goal_phrase += "최대한 많이!"
 
-                if game_type == "dodge":
-                    hazard = game_params.get("hazard_emoji", "💧")
-                    intro = (
-                        f"와, 피하기 게임을 만들었어! 🎮\n\n"
-                        f"방향키나 WASD로 움직이고, {hazard}는 피하면서 {item}만 {pace_word} 모아봐!\n\n"
-                        f"{goal_phrase}"
-                    )
-                elif game_type == "chase":
-                    friend = game_params.get("friend_emoji", "🐰")
-                    intro = (
-                        f"와, 친구 찾기 게임을 만들었어! 🎮\n\n"
-                        f"방향키나 WASD로 움직여서 떠다니는 {friend}한테 {pace_word} 다가가봐!\n\n"
-                        f"{goal_phrase}"
-                    )
-                elif game_type == "jump":
-                    hazard = game_params.get("hazard_emoji", "🌵")
-                    intro = (
-                        f"와, 횡스크롤 점프 게임을 만들었어! 🎮\n\n"
-                        f"스페이스/↑/탭으로 점프! {hazard}는 뛰어넘고, 공중의 {item}을(를) {pace_word} 잡아봐!\n\n"
-                        f"{goal_phrase}"
-                    )
-                else:
-                    intro = (
-                        f"와, 게임을 만들었어! 🎮\n\n"
-                        f"방향키나 WASD로 움직이고, {item}을(를) {pace_word} 모아봐!\n\n"
-                        f"{goal_phrase}"
-                    )
+                # 인트로 — spec에서 추출된 정보 기반
+                from game_engine import validate_spec as _vs
+                validated = _vs(spec_raw, char_svg=char_card_obj.get("image_svg", ""),
+                                world_svg=world_card_obj.get("image_svg", ""),
+                                char_name=char_card_obj.get("name", "모험가"))
+                mv = validated["player"]["movement"]
+                tlim = validated["goal"]["time_limit"]
+                tgt = validated["goal"]["target_score"]
+                control_hint = "스페이스/↑/탭 = 점프, ←→ = 좌우" if mv == "jump" else "방향키나 WASD로 움직여"
+                goal_msg = f"{tlim}초 안에 " + (f"{tgt}점 모으면 끝!" if tgt > 0 else "최대한 많이!") if tlim > 0 else (f"{tgt}점 모으면 끝!" if tgt > 0 else "마음껏!")
+                intro = f"와, 게임을 만들었어! 🎮\n\n{control_hint}\n\n{goal_msg}"
+
                 await websocket.send_json({"type": "text", "chunk": intro})
                 await websocket.send_json({"type": "game", "html": game_html, "game_url": game_url})
-                await websocket.send_json({"type": "done", "hint": "게임을 해보고, 다음엔 '배경을 더 예쁘게 해줘'라고 해봐!"})
+                await websocket.send_json({"type": "done", "hint": "게임을 해보고, 다음엔 '더 빠르게 해줘' 같이 바꿔봐!"})
                 continue
 
             # 캐릭터·세계 카드 컨텍스트 동시 주입 — 세계 구축 단계에서 캐릭터 SVG를 보존·수정하도록.
