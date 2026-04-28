@@ -19,7 +19,7 @@ from fastapi.responses import FileResponse, Response
 
 import storage
 from claude_runner import StreamEvent, _DATA_DIR, reset_session, stream_claude
-from genai_runner import generate_card, generate_image
+from genai_runner import generate_card, generate_image, generate_spec
 from qr_generator import generate_qr_png
 
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "root")
@@ -519,31 +519,19 @@ async def chat_ws(websocket: WebSocket, child_id: str):
                     f'아이의 의도를 부품 조합으로 옮겨. JSON만 출력:\n'
                     f'{{"player":{{"movement":"..."}},"spawns":[...],"world":{{"scroll":"none"}},"goal":{{"time_limit":45,"target_score":0}}}}'
                 )
+                # generate_spec() — TUTOR.md 카드 페르소나 안 쓰고 spec 전용 system prompt만 사용
                 spec_raw = {}
-                spec_text_collected = ""
                 try:
-                    async for event in generate_card(spec_prompt, child_id + "_spec", session_id):
-                        if event.type == "text" and event.chunk:
-                            spec_text_collected += event.chunk
-                            # 가장 큰 JSON 객체 매치 시도 (greedy)
-                            jm = _re.search(r'\{[\s\S]*\}', spec_text_collected)
-                            if jm:
-                                try:
-                                    spec_raw = json.loads(jm.group())
-                                    if isinstance(spec_raw, dict) and "spawns" in spec_raw:
-                                        break  # spawns가 있으면 valid spec으로 간주
-                                except json.JSONDecodeError:
-                                    continue  # 더 받아야 함
-                        elif event.type == "done":
-                            # 마지막에 한 번 더 시도
-                            if not spec_raw:
-                                jm = _re.search(r'\{[\s\S]*\}', spec_text_collected)
-                                if jm:
-                                    try:
-                                        spec_raw = json.loads(jm.group())
-                                    except json.JSONDecodeError:
-                                        pass
-                            break
+                    spec_text = await generate_spec(spec_prompt)
+                    if spec_text:
+                        # 가장 큰 JSON 객체 매치 (LLM이 마크다운/설명을 섞어 보내도 추출)
+                        jm = _re.search(r'\{[\s\S]*\}', spec_text)
+                        if jm:
+                            try:
+                                spec_raw = json.loads(jm.group())
+                            except json.JSONDecodeError:
+                                logger.warning("[%s::%s] spec JSON 파싱 실패, 폴백 사용",
+                                               child_id, session_id)
                 except Exception:
                     logger.exception("[%s::%s] spec emit 실패", child_id, session_id)
 
