@@ -395,19 +395,42 @@ async def chat_ws(websocket: WebSocket, child_id: str):
                 auto_name = original_prompt[:15].strip()
                 await asyncio.to_thread(storage.update_session_name, session_id, auto_name)
 
-            # 게임 요청 감지 → AI가 템플릿 파라미터 결정 → 빌드
-            # 1차: "게임" / "플레이" / "놀자" / "레이싱" 등 강한 의도 단어 — 위치 무관
-            #    예: "우주선 장애물레이싱 게임!" / "이 게임 빠르게" / "게임만들어줘" 모두 매치
+            # block 정보 (frontend에서 사이드바 블록 클릭 → soft routing default)
+            #   0=아바타, 1=세계, 2=마스터(게임). None/없음 = 자동 추론.
+            try:
+                client_block = int(data.get("block")) if data.get("block") is not None else None
+            except (TypeError, ValueError):
+                client_block = None
+
+            # 명시적 의도 키워드 검사 (block 강제 우회 트리거)
             game_intent_re = _re.compile(r'게임|플레이|놀자|레이싱|레이스')
-            is_game_request = bool(game_intent_re.search(original_prompt))
-            # 2차: 이미 게임이 있는 세션에서 "게임" 단어 없이도 메카닉 변경 의도
-            #    예: "더 빠르게" / "점프로 바꿔줘". 첫 게임 만들기는 1차에서 잡힘.
+            char_intent_re = _re.compile(r'캐릭터|아바타|주인공')
+            world_intent_re = _re.compile(r'세계|배경|어디서|사는 곳')
+            game_intent = bool(game_intent_re.search(original_prompt))
+            char_intent = bool(char_intent_re.search(original_prompt))
+            world_intent = bool(world_intent_re.search(original_prompt))
+
+            # 1차: 명시적 게임 의도 → game 빌드
+            is_game_request = game_intent
+            # 2차: 게임 있는 세션 + 메카닉 키워드 → game 재빌드
             mechanic_keywords = ['점프', '횡이동', '횡스크롤', '달리기', '장애물',
                                  '피하', '친구 찾', '같이 놀']
             if not is_game_request:
                 has_existing_game = bool(await asyncio.to_thread(storage.list_games, session_id))
                 if has_existing_game and any(kw in original_prompt for kw in mechanic_keywords):
                     is_game_request = True
+
+            # 3차: block soft routing — 명시적 의도가 다른 블록을 가리키지 않는 한 block default 적용
+            forced_card_type: "str | None" = None
+            if client_block == 2 and not (char_intent or world_intent):
+                # 마스터 블록 default = 게임 빌드 (regex 안 잡혀도 강제)
+                is_game_request = True
+            elif client_block == 0 and not (world_intent or game_intent):
+                # 아바타 블록 default = character. world/game 단어 명시되면 우회.
+                forced_card_type = "character"
+            elif client_block == 1 and not (char_intent or game_intent):
+                # 세계 블록 default = world. character/game 단어 명시되면 우회.
+                forced_card_type = "world"
             if is_game_request:
                 cards = await asyncio.to_thread(storage.list_cards, session_id)
                 card_jsons = [c['card_json'] for c in cards] if cards else []
@@ -546,6 +569,14 @@ async def chat_ws(websocket: WebSocket, child_id: str):
                     f"{original_prompt}\n\n---\n"
                     + "\n".join(context_lines)
                     + "\n수정 요청이면 위 카드를 기반으로 고쳐줘. 완전히 새 카드 요청이면 무시하고 새로 만들어."
+                )
+
+            # block soft routing — forced_card_type 명시되면 LLM에 강제 지시 주입
+            if forced_card_type:
+                prompt = (
+                    f"{prompt}\n\n## 모드 강제\n"
+                    f"이 응답은 반드시 card_type='{forced_card_type}' 카드만 만들어. "
+                    f"다른 타입(character/world/title) 절대 금지. JSON에서 card_type 필드는 정확히 '{forced_card_type}'."
                 )
 
             assistant_text = ""

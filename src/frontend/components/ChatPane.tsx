@@ -24,7 +24,8 @@ export default function ChatPane({
 }: ChatPaneProps) {
   const { messages, cardUrl, cardJson, hint, isLoading, wsStatus, send, stop, getLastUserMessage, gameHtml, gameUrl } = useChat(
     childId,
-    sessionId
+    sessionId,
+    currentBlock
   );
   const [input, setInput] = useState("");
   const [waitingMessage, setWaitingMessage] = useState<string | null>(null);

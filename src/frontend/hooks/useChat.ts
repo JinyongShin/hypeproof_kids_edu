@@ -24,7 +24,7 @@ interface UseChatReturn {
 }
 
 
-export function useChat(childId: string, sessionId: string): UseChatReturn {
+export function useChat(childId: string, sessionId: string, currentBlock: number = 0): UseChatReturn {
   const [messages, setMessages] = useState<Message[]>([]);
   const [cardUrl, setCardUrl] = useState("");
   const [cardJson, setCardJson] = useState("");
@@ -177,9 +177,10 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
       setHint("");
       setIsLoading(true);
 
-      wsRef.current.send(JSON.stringify({ prompt }));
+      // block 정보 같이 전송 — 백엔드가 soft routing에 사용
+      wsRef.current.send(JSON.stringify({ prompt, block: currentBlock }));
     },
-    [isLoading]
+    [isLoading, currentBlock]
   );
 
   const stop = useCallback(() => {
