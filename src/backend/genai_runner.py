@@ -24,6 +24,11 @@ GEMINI_TEXT_MODEL = os.getenv("GEMINI_TEXT_MODEL", "gemini-2.5-flash")
 GEMINI_IMAGE_MODEL = os.getenv("GEMINI_IMAGE_MODEL", "gemini-2.5-flash-image")
 MOCK_MODE = os.getenv("MOCK_GENAI", "0") == "1"
 
+# 동시 LLM 요청 상한 — 40명 동시접속 시 키 1장으로 호출 폭주 방지.
+# 초과 요청은 큐잉되어 순차 처리됨.
+LLM_CONCURRENCY = int(os.getenv("LLM_CONCURRENCY", "8"))
+_llm_semaphore = asyncio.Semaphore(LLM_CONCURRENCY)
+
 _MAX_CARDS_PER_SESSION = 10
 
 _MOCK_CARD_RESPONSE = '''와, 토끼 전사 캐릭터를 만들었어! 귀도 쫑긋하고 너무 귀엽다!
@@ -226,23 +231,24 @@ async def generate_card(prompt: str, child_id: str, session_id: str):
             return resp.read().decode("utf-8")
 
     system_prompt = persona if persona else ""
-    try:
-        # 1차: GLM (z.ai) 시도
-        response_text = await asyncio.to_thread(_glm_chat, ZAI_API_KEY, ZAI_BASE_URL, ZAI_MODEL, system_prompt, prompt)
-
-        if response_text:
-            full_text = response_text
-            yield StreamEvent(type="text", chunk=full_text)
-    except Exception as glm_err:
-        logger.warning("[%s::%s] GLM 실패, Pollinations 폴백: %s", child_id, session_id, glm_err)
-        # 2차: Pollinations.ai 폴백
+    async with _llm_semaphore:
         try:
-            response_text = await asyncio.to_thread(_pollinations_chat, system_prompt, prompt)
+            # 1차: GLM (z.ai) 시도
+            response_text = await asyncio.to_thread(_glm_chat, ZAI_API_KEY, ZAI_BASE_URL, ZAI_MODEL, system_prompt, prompt)
+
             if response_text:
                 full_text = response_text
                 yield StreamEvent(type="text", chunk=full_text)
-        except Exception as poll_err:
-            logger.error("[%s::%s] Pollinations도 실패: %s", child_id, session_id, poll_err)
+        except Exception as glm_err:
+            logger.warning("[%s::%s] GLM 실패, Pollinations 폴백: %s", child_id, session_id, glm_err)
+            # 2차: Pollinations.ai 폴백
+            try:
+                response_text = await asyncio.to_thread(_pollinations_chat, system_prompt, prompt)
+                if response_text:
+                    full_text = response_text
+                    yield StreamEvent(type="text", chunk=full_text)
+            except Exception as poll_err:
+                logger.error("[%s::%s] Pollinations도 실패: %s", child_id, session_id, poll_err)
 
     # 카드 JSON 또는 게임 HTML 추출
     try:
