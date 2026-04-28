@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import storage
+from svg_sanitizer import sanitize_card_json
 
 logger = logging.getLogger(__name__)
 
@@ -133,13 +134,16 @@ def _save_card(card_id: str, child_id: str, session_id: str, card_json: str) -> 
         old_path.unlink(missing_ok=True)
         storage.delete_card(session_id, old_card_id)
 
+    # SVG 소독을 입구에서 1회 — 디스크/DB/렌더 경로 모두에 적용
+    sanitized_json = sanitize_card_json(card_json)
+
     card_path = card_dir / f"{card_id}.json"
-    card_path.write_text(card_json, encoding="utf-8")
+    card_path.write_text(sanitized_json, encoding="utf-8")
 
     url = f"{os.getenv('BACKEND_BASE_URL', 'http://localhost:8000')}/cards/{child_id}/{session_id}/{card_id}"
-    
-    data = json.loads(card_json)
-    storage.add_card(session_id, child_id, card_id, data.get("card_type", "character"), card_json, url)
+
+    data = json.loads(sanitized_json)
+    storage.add_card(session_id, child_id, card_id, data.get("card_type", "character"), sanitized_json, url)
 
     return url
 
