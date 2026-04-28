@@ -156,10 +156,14 @@ export default function ChatPane({
                 if (msg.role === "user" && !isLoading) setInput(msg.text);
               }}
             >
-              {/* 카드 JSON 제외하고 텍스트만 표시 */}
+              {/* 카드 JSON·게임 코드 등 모든 코드 블록 제거 — 아이에게 코드 노출 금지 (R5) */}
               {msg.text
-                .replace(/```json[\s\S]*?```/gi, "")   // JSON 코드블록 제거
-                .replace(/\n*💡[^\n]*$/m, "")           // 마지막 💡 힌트 줄 제거 (별도 버튼으로 표시)
+                .replace(/```[\w-]*\s*[\s\S]*?```/g, "")  // 모든 ``` 코드블록 제거 (json/html/js/css 등)
+                .replace(/```[\s\S]*$/g, "")              // 닫히지 않은 스트리밍 중 코드블록 제거
+                .replace(/<!DOCTYPE[\s\S]*$/gi, "")        // 코드블록 없이 raw HTML로 흘러나오는 경우 차단
+                .replace(/<html[\s\S]*$/gi, "")
+                .replace(/<script[\s\S]*$/gi, "")
+                .replace(/\n*💡[^\n]*$/m, "")              // 마지막 💡 힌트 줄 제거 (별도 버튼으로 표시)
                 .trim() ||
                 (msg.isStreaming ? "..." : "")}
             </div>
