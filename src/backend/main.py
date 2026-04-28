@@ -13,9 +13,12 @@ from contextlib import asynccontextmanager
 from datetime import datetime
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+import secrets
+
+from fastapi import Depends, FastAPI, HTTPException, WebSocket, WebSocketDisconnect, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, Response
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 import storage
 from claude_runner import StreamEvent, _DATA_DIR, reset_session, stream_claude
@@ -24,6 +27,21 @@ from qr_generator import generate_qr_png
 
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "root")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "0000")
+
+_admin_security = HTTPBasic()
+
+
+def _require_admin(credentials: HTTPBasicCredentials = Depends(_admin_security)) -> str:
+    """관리자용 엔드포인트 가드. 타이밍 공격 방지를 위해 secrets.compare_digest 사용."""
+    user_ok = secrets.compare_digest(credentials.username.encode(), ADMIN_USERNAME.encode())
+    pass_ok = secrets.compare_digest(credentials.password.encode(), ADMIN_PASSWORD.encode())
+    if not (user_ok and pass_ok):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="관리자 인증 실패",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return credentials.username
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
 logger = logging.getLogger(__name__)
@@ -603,7 +621,7 @@ async def chat_ws(websocket: WebSocket, child_id: str):
 # ---------------------------------------------------------------------------
 
 @app.post("/admin/reset/{child_id}")
-async def admin_reset(child_id: str):
+async def admin_reset(child_id: str, _: str = Depends(_require_admin)):
     """운영자용 child_id 전체 세션 리셋."""
     ok = reset_session(child_id)
     return {"reset": ok, "child_id": child_id}

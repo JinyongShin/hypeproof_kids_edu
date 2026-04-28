@@ -9,6 +9,8 @@ AI 파라미터(이모지·테마)는 SVG가 없을 때의 폴백.
 import json
 from string import Template
 
+from svg_sanitizer import sanitize_svg
+
 # ----------------------------------------------------------------------------
 # 게임 1 — collect: 떨어지는 아이템 모으기 (기본, 평화로운)
 # ----------------------------------------------------------------------------
@@ -428,11 +430,11 @@ def build_game_with_params(card_jsons: list, params: dict, user_prompt: str = ""
     world_card = _find_latest_by_type(card_jsons, "world")
 
     char_name = char_card.get("name", "모험가") or "모험가"
-    char_svg = char_card.get("image_svg", "") or ""
+    char_svg = sanitize_svg(char_card.get("image_svg", "") or "")
     world_name = world_card.get("name", "") or ""
     world_desc = (world_card.get("world", "") or "") + " " + (world_card.get("description", "") or "")
     world_combined = (world_name + " " + world_desc).strip()
-    world_svg = world_card.get("image_svg", "") or ""
+    world_svg = sanitize_svg(world_card.get("image_svg", "") or "")
 
     ai_emoji = (params or {}).get("char_emoji", "")
     emoji = ai_emoji.strip() if isinstance(ai_emoji, str) else ""

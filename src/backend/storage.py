@@ -64,10 +64,12 @@ CREATE TRIGGER IF NOT EXISTS messages_fts_ai
 
 
 def _connect() -> sqlite3.Connection:
-    conn = sqlite3.connect(str(_DB_PATH))
+    conn = sqlite3.connect(str(_DB_PATH), timeout=10.0)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA foreign_keys=ON")
+    # WAL에서도 동시 writer 1명 — 짧은 락 충돌은 5초까지 자동 재시도
+    conn.execute("PRAGMA busy_timeout=5000")
     return conn
 
 

@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import storage
+from svg_sanitizer import sanitize_card_json
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +24,11 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GEMINI_TEXT_MODEL = os.getenv("GEMINI_TEXT_MODEL", "gemini-2.5-flash")
 GEMINI_IMAGE_MODEL = os.getenv("GEMINI_IMAGE_MODEL", "gemini-2.5-flash-image")
 MOCK_MODE = os.getenv("MOCK_GENAI", "0") == "1"
+
+# 동시 LLM 요청 상한 — 40명 동시접속 시 키 1장으로 호출 폭주 방지.
+# 초과 요청은 큐잉되어 순차 처리됨.
+LLM_CONCURRENCY = int(os.getenv("LLM_CONCURRENCY", "8"))
+_llm_semaphore = asyncio.Semaphore(LLM_CONCURRENCY)
 
 _MAX_CARDS_PER_SESSION = 10
 
@@ -128,13 +134,16 @@ def _save_card(card_id: str, child_id: str, session_id: str, card_json: str) -> 
         old_path.unlink(missing_ok=True)
         storage.delete_card(session_id, old_card_id)
 
+    # SVG 소독을 입구에서 1회 — 디스크/DB/렌더 경로 모두에 적용
+    sanitized_json = sanitize_card_json(card_json)
+
     card_path = card_dir / f"{card_id}.json"
-    card_path.write_text(card_json, encoding="utf-8")
+    card_path.write_text(sanitized_json, encoding="utf-8")
 
     url = f"{os.getenv('BACKEND_BASE_URL', 'http://localhost:8000')}/cards/{child_id}/{session_id}/{card_id}"
-    
-    data = json.loads(card_json)
-    storage.add_card(session_id, child_id, card_id, data.get("card_type", "character"), card_json, url)
+
+    data = json.loads(sanitized_json)
+    storage.add_card(session_id, child_id, card_id, data.get("card_type", "character"), sanitized_json, url)
 
     return url
 
@@ -159,9 +168,13 @@ async def generate_card(prompt: str, child_id: str, session_id: str):
         return
 
     # --- GLM (z.ai) 텍스트 생성 ---
-    ZAI_API_KEY = os.getenv("ZAI_API_KEY", "1edec351dba64a08a4838bd5993a9322.r7Z6EBjcZJxmpKNL")
+    ZAI_API_KEY = os.getenv("ZAI_API_KEY", "")
     ZAI_BASE_URL = os.getenv("ZAI_BASE_URL", "https://api.z.ai/api/coding/paas/v4/chat/completions")
     ZAI_MODEL = os.getenv("ZAI_MODEL", "glm-5")
+    if not ZAI_API_KEY:
+        logger.error("[%s::%s] ZAI_API_KEY 미설정 — .env에 키 등록 필요", child_id, session_id)
+        yield StreamEvent(type="error", chunk=_friendly_error("not_found"))
+        return
 
     persona = _load_persona()
     full_text = ""
@@ -222,23 +235,24 @@ async def generate_card(prompt: str, child_id: str, session_id: str):
             return resp.read().decode("utf-8")
 
     system_prompt = persona if persona else ""
-    try:
-        # 1차: GLM (z.ai) 시도
-        response_text = await asyncio.to_thread(_glm_chat, ZAI_API_KEY, ZAI_BASE_URL, ZAI_MODEL, system_prompt, prompt)
-
-        if response_text:
-            full_text = response_text
-            yield StreamEvent(type="text", chunk=full_text)
-    except Exception as glm_err:
-        logger.warning("[%s::%s] GLM 실패, Pollinations 폴백: %s", child_id, session_id, glm_err)
-        # 2차: Pollinations.ai 폴백
+    async with _llm_semaphore:
         try:
-            response_text = await asyncio.to_thread(_pollinations_chat, system_prompt, prompt)
+            # 1차: GLM (z.ai) 시도
+            response_text = await asyncio.to_thread(_glm_chat, ZAI_API_KEY, ZAI_BASE_URL, ZAI_MODEL, system_prompt, prompt)
+
             if response_text:
                 full_text = response_text
                 yield StreamEvent(type="text", chunk=full_text)
-        except Exception as poll_err:
-            logger.error("[%s::%s] Pollinations도 실패: %s", child_id, session_id, poll_err)
+        except Exception as glm_err:
+            logger.warning("[%s::%s] GLM 실패, Pollinations 폴백: %s", child_id, session_id, glm_err)
+            # 2차: Pollinations.ai 폴백
+            try:
+                response_text = await asyncio.to_thread(_pollinations_chat, system_prompt, prompt)
+                if response_text:
+                    full_text = response_text
+                    yield StreamEvent(type="text", chunk=full_text)
+            except Exception as poll_err:
+                logger.error("[%s::%s] Pollinations도 실패: %s", child_id, session_id, poll_err)
 
     # 카드 JSON 또는 게임 HTML 추출
     try:
