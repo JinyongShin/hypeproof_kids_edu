@@ -396,12 +396,14 @@ async def chat_ws(websocket: WebSocket, child_id: str):
                 await asyncio.to_thread(storage.update_session_name, session_id, auto_name)
 
             # 게임 요청 감지 → AI가 템플릿 파라미터 결정 → 빌드
-            # 1차: 명시적 게임 생성 의도
-            game_keywords = ['게임 만들', '게임 시작', '플레이', '놀자', '게임해', '시작해줘']
-            is_game_request = any(kw in original_prompt for kw in game_keywords)
-            # 2차: 이미 게임이 있는 세션에서 메카닉 변경 의도 (새 게임 빌드)
+            # 1차: "게임" / "플레이" / "놀자" / "레이싱" 등 강한 의도 단어 — 위치 무관
+            #    예: "우주선 장애물레이싱 게임!" / "이 게임 빠르게" / "게임만들어줘" 모두 매치
+            game_intent_re = _re.compile(r'게임|플레이|놀자|레이싱|레이스')
+            is_game_request = bool(game_intent_re.search(original_prompt))
+            # 2차: 이미 게임이 있는 세션에서 "게임" 단어 없이도 메카닉 변경 의도
+            #    예: "더 빠르게" / "점프로 바꿔줘". 첫 게임 만들기는 1차에서 잡힘.
             mechanic_keywords = ['점프', '횡이동', '횡스크롤', '달리기', '장애물',
-                                 '피하', '친구 찾', '같이 놀', '바꿔줘', '다른 게임']
+                                 '피하', '친구 찾', '같이 놀']
             if not is_game_request:
                 has_existing_game = bool(await asyncio.to_thread(storage.list_games, session_id))
                 if has_existing_game and any(kw in original_prompt for kw in mechanic_keywords):
