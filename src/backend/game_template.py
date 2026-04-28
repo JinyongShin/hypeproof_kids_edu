@@ -27,7 +27,8 @@ canvas{border-radius:12px;box-shadow:0 0 30px rgba(100,100,255,0.3)}
 <script>
 const canvas=document.getElementById("c"),ctx=canvas.getContext("2d");
 const W=400,H=600;
-let score=0,timeLeft=45,gameOver=false,player={x:200,y:500,w:48,h:48,speed:5};
+const PACE=$pace_scale, TARGET=$target_score;
+let score=0,timeLeft=$time_limit,gameOver=false,player={x:200,y:500,w:48,h:48,speed:5};
 let items=[],particles=[],keys={};
 const CHAR_COLOR="$char_color";
 const CHAR_EMOJI="$char_emoji";
@@ -46,7 +47,7 @@ let touchX=null;
 canvas.addEventListener("touchstart",e=>{touchX=e.touches[0].clientX;e.preventDefault()},{passive:false});
 canvas.addEventListener("touchmove",e=>{touchX=e.touches[0].clientX;e.preventDefault()},{passive:false});
 canvas.addEventListener("touchend",()=>touchX=null);
-function spawnItem(){items.push({x:Math.random()*(W-30)+15,y:-20,speed:1+Math.random()*2,size:18+Math.random()*10,rot:0})}
+function spawnItem(){items.push({x:Math.random()*(W-30)+15,y:-20,speed:(1+Math.random()*2)*PACE,size:18+Math.random()*10,rot:0})}
 function addParticle(x,y,color){for(let i=0;i<5;i++)particles.push({x,y,vx:(Math.random()-0.5)*4,vy:(Math.random()-0.5)*4,life:30,color,size:3+Math.random()*3})}
 function update(){
 if(gameOver)return;
@@ -56,13 +57,14 @@ if(keys.ArrowUp||keys.w)player.y-=player.speed;
 if(keys.ArrowDown||keys.s)player.y+=player.speed;
 if(touchX!==null)player.x+=(touchX-canvas.getBoundingClientRect().left-player.w/2-player.x)*0.1;
 player.x=Math.max(0,Math.min(W-player.w,player.x));player.y=Math.max(0,Math.min(H-player.h,player.y));
-if(Math.random()<0.03)spawnItem();
+if(Math.random()<0.03*PACE)spawnItem();
 for(let i=items.length-1;i>=0;i--){items[i].y+=items[i].speed;items[i].rot+=0.05;
-if(Math.abs(items[i].x-player.x-player.w/2)<32&&Math.abs(items[i].y-player.y-player.h/2)<32){score++;addParticle(items[i].x,items[i].y,"#FFD700");items.splice(i,1)}
+if(Math.abs(items[i].x-player.x-player.w/2)<32&&Math.abs(items[i].y-player.y-player.h/2)<32){score++;addParticle(items[i].x,items[i].y,"#FFD700");items.splice(i,1);
+if(TARGET>0&&score>=TARGET){gameOver=true;document.getElementById("restart").style.display="block"}}
 else if(items[i].y>H+20)items.splice(i,1)}
 for(let i=particles.length-1;i>=0;i--){particles[i].x+=particles[i].vx;particles[i].y+=particles[i].vy;particles[i].life--;if(particles[i].life<=0)particles.splice(i,1)}
 timeLeft-=1/60;if(timeLeft<=0){gameOver=true;document.getElementById("restart").style.display="block"}
-document.getElementById("score").textContent=ITEM_EMOJI+" "+score;
+document.getElementById("score").textContent=ITEM_EMOJI+" "+score+(TARGET>0?"/"+TARGET:"");
 }
 function draw(){
 if(worldImg){ctx.drawImage(worldImg,0,0,W,H);ctx.fillStyle="rgba(0,0,0,0.15)";ctx.fillRect(0,0,W,H)}
@@ -72,9 +74,9 @@ items.forEach(it=>{ctx.save();ctx.translate(it.x,it.y);ctx.rotate(it.rot);ctx.fo
 particles.forEach(p=>{ctx.globalAlpha=p.life/30;ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill()});ctx.globalAlpha=1;
 if(charImg){ctx.save();ctx.shadowColor=CHAR_COLOR;ctx.shadowBlur=18;ctx.drawImage(charImg,player.x,player.y,player.w,player.h);ctx.restore()}
 else{ctx.font="40px serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(CHAR_EMOJI,player.x+player.w/2,player.y+player.h/2);ctx.shadowColor=CHAR_COLOR;ctx.shadowBlur=20;ctx.strokeStyle=CHAR_COLOR;ctx.lineWidth=2;ctx.strokeRect(player.x-2,player.y-2,player.w+4,player.h+4);ctx.shadowBlur=0}
-if(gameOver){ctx.fillStyle="rgba(0,0,0,0.5)";ctx.fillRect(0,0,W,H);ctx.fillStyle="white";ctx.font="bold 36px sans-serif";ctx.textAlign="center";ctx.fillText("시간 끝!",W/2,H/2-30);ctx.font="24px sans-serif";ctx.fillText(ITEM_EMOJI+" "+score+"개 모음!",W/2,H/2+20)}
+if(gameOver){ctx.fillStyle="rgba(0,0,0,0.5)";ctx.fillRect(0,0,W,H);ctx.fillStyle="white";ctx.font="bold 36px sans-serif";ctx.textAlign="center";var label=(TARGET>0&&score>=TARGET)?"성공! 🎉":"시간 끝!";ctx.fillText(label,W/2,H/2-30);ctx.font="24px sans-serif";ctx.fillText(ITEM_EMOJI+" "+score+"개 모음!",W/2,H/2+20)}
 }
-function resetGame(){score=0;timeLeft=45;gameOver=false;items=[];particles=[];player.x=200;player.y=500;document.getElementById("restart").style.display="none"}
+function resetGame(){score=0;timeLeft=$time_limit;gameOver=false;items=[];particles=[];player.x=200;player.y=500;document.getElementById("restart").style.display="none"}
 function loop(){update();draw();requestAnimationFrame(loop)}loop();
 </script></body></html>''')
 
@@ -101,7 +103,8 @@ canvas{border-radius:12px;box-shadow:0 0 30px rgba(100,100,255,0.3)}
 <script>
 const canvas=document.getElementById("c"),ctx=canvas.getContext("2d");
 const W=400,H=600;
-let score=0,timeLeft=45,gameOver=false,player={x:200,y:500,w:48,h:48,speed:5};
+const PACE=$pace_scale, TARGET=$target_score;
+let score=0,timeLeft=$time_limit,gameOver=false,player={x:200,y:500,w:48,h:48,speed:5};
 let items=[],particles=[],keys={};
 const CHAR_COLOR="$char_color";
 const CHAR_EMOJI="$char_emoji";
@@ -121,7 +124,7 @@ let touchX=null;
 canvas.addEventListener("touchstart",e=>{touchX=e.touches[0].clientX;e.preventDefault()},{passive:false});
 canvas.addEventListener("touchmove",e=>{touchX=e.touches[0].clientX;e.preventDefault()},{passive:false});
 canvas.addEventListener("touchend",()=>touchX=null);
-function spawnItem(){var hazard=Math.random()<0.45;items.push({x:Math.random()*(W-30)+15,y:-20,speed:1.5+Math.random()*2.5,size:hazard?28:20,rot:0,hazard:hazard})}
+function spawnItem(){var hazard=Math.random()<0.45;items.push({x:Math.random()*(W-30)+15,y:-20,speed:(1.5+Math.random()*2.5)*PACE,size:hazard?28:20,rot:0,hazard:hazard})}
 function addParticle(x,y,color){for(let i=0;i<6;i++)particles.push({x,y,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:32,color,size:3+Math.random()*3})}
 function showToast(msg,color){var t=document.getElementById("toast");t.textContent=msg;t.style.color=color||"#ffd166";t.classList.add("show");setTimeout(()=>t.classList.remove("show"),700)}
 function update(){
@@ -132,16 +135,17 @@ if(keys.ArrowUp||keys.w)player.y-=player.speed;
 if(keys.ArrowDown||keys.s)player.y+=player.speed;
 if(touchX!==null)player.x+=(touchX-canvas.getBoundingClientRect().left-player.w/2-player.x)*0.1;
 player.x=Math.max(0,Math.min(W-player.w,player.x));player.y=Math.max(0,Math.min(H-player.h,player.y));
-if(Math.random()<0.04)spawnItem();
+if(Math.random()<0.04*PACE)spawnItem();
 for(let i=items.length-1;i>=0;i--){items[i].y+=items[i].speed;items[i].rot+=0.05;
 if(Math.abs(items[i].x-player.x-player.w/2)<32&&Math.abs(items[i].y-player.y-player.h/2)<32){
   if(items[i].hazard){score=Math.max(0,score-1);addParticle(items[i].x,items[i].y,"#ff5566");showToast("앗 조심!","#ff8899")}
-  else{score++;addParticle(items[i].x,items[i].y,"#ffd166");showToast("+1","#ffd166")}
+  else{score++;addParticle(items[i].x,items[i].y,"#ffd166");showToast("+1","#ffd166");
+    if(TARGET>0&&score>=TARGET){gameOver=true;document.getElementById("restart").style.display="block"}}
   items.splice(i,1)}
 else if(items[i].y>H+20)items.splice(i,1)}
 for(let i=particles.length-1;i>=0;i--){particles[i].x+=particles[i].vx;particles[i].y+=particles[i].vy;particles[i].life--;if(particles[i].life<=0)particles.splice(i,1)}
 timeLeft-=1/60;if(timeLeft<=0){gameOver=true;document.getElementById("restart").style.display="block"}
-document.getElementById("score").textContent=ITEM_EMOJI+" "+score;
+document.getElementById("score").textContent=ITEM_EMOJI+" "+score+(TARGET>0?"/"+TARGET:"");
 }
 function draw(){
 if(worldImg){ctx.drawImage(worldImg,0,0,W,H);ctx.fillStyle="rgba(0,0,0,0.2)";ctx.fillRect(0,0,W,H)}
@@ -152,9 +156,9 @@ if(it.hazard){ctx.shadowColor="#ff5566";ctx.shadowBlur=14}ctx.fillText(it.hazard
 particles.forEach(p=>{ctx.globalAlpha=p.life/32;ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill()});ctx.globalAlpha=1;
 if(charImg){ctx.save();ctx.shadowColor=CHAR_COLOR;ctx.shadowBlur=18;ctx.drawImage(charImg,player.x,player.y,player.w,player.h);ctx.restore()}
 else{ctx.font="40px serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(CHAR_EMOJI,player.x+player.w/2,player.y+player.h/2);ctx.shadowColor=CHAR_COLOR;ctx.shadowBlur=20;ctx.strokeStyle=CHAR_COLOR;ctx.lineWidth=2;ctx.strokeRect(player.x-2,player.y-2,player.w+4,player.h+4);ctx.shadowBlur=0}
-if(gameOver){ctx.fillStyle="rgba(0,0,0,0.5)";ctx.fillRect(0,0,W,H);ctx.fillStyle="white";ctx.font="bold 36px sans-serif";ctx.textAlign="center";ctx.fillText("잘 피했어!",W/2,H/2-30);ctx.font="24px sans-serif";ctx.fillText(ITEM_EMOJI+" "+score+"개 모음!",W/2,H/2+20)}
+if(gameOver){ctx.fillStyle="rgba(0,0,0,0.5)";ctx.fillRect(0,0,W,H);ctx.fillStyle="white";ctx.font="bold 36px sans-serif";ctx.textAlign="center";var label=(TARGET>0&&score>=TARGET)?"성공! 🎉":"잘 피했어!";ctx.fillText(label,W/2,H/2-30);ctx.font="24px sans-serif";ctx.fillText(ITEM_EMOJI+" "+score+"개 모음!",W/2,H/2+20)}
 }
-function resetGame(){score=0;timeLeft=45;gameOver=false;items=[];particles=[];player.x=200;player.y=500;document.getElementById("restart").style.display="none"}
+function resetGame(){score=0;timeLeft=$time_limit;gameOver=false;items=[];particles=[];player.x=200;player.y=500;document.getElementById("restart").style.display="none"}
 function loop(){update();draw();requestAnimationFrame(loop)}loop();
 </script></body></html>''')
 
@@ -181,8 +185,9 @@ canvas{border-radius:12px;box-shadow:0 0 30px rgba(100,100,255,0.3)}
 <script>
 const canvas=document.getElementById("c"),ctx=canvas.getContext("2d");
 const W=400,H=600;
-let score=0,timeLeft=45,gameOver=false,player={x:200,y:500,w:48,h:48,speed:5};
-let particles=[],keys={},npc={x:100,y:100,w:42,h:42,vx:1.6,vy:1.2};
+const PACE=$pace_scale;
+let score=0,timeLeft=$time_limit,gameOver=false,player={x:200,y:500,w:48,h:48,speed:5};
+let particles=[],keys={},npc={x:100,y:100,w:42,h:42,vx:1.6*PACE,vy:1.2*PACE};
 const CHAR_COLOR="$char_color";
 const CHAR_EMOJI="$char_emoji";
 const FRIEND_EMOJI="$friend_emoji";
@@ -190,7 +195,7 @@ const BG_TOP="$bg_top";
 const BG_BOT="$bg_bot";
 const CHAR_SVG=$char_svg_json;
 const WORLD_SVG=$world_svg_json;
-const TARGET=5;
+const TARGET=$target_score;
 let charImg=null, worldImg=null;
 function svgToImage(svg, cb){if(!svg) return;const img=new Image();img.onload=()=>cb(img);img.onerror=()=>{};img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)}
 svgToImage(CHAR_SVG, i=>charImg=i);
@@ -201,7 +206,7 @@ let touchX=null;
 canvas.addEventListener("touchstart",e=>{touchX=e.touches[0].clientX;e.preventDefault()},{passive:false});
 canvas.addEventListener("touchmove",e=>{touchX=e.touches[0].clientX;e.preventDefault()},{passive:false});
 canvas.addEventListener("touchend",()=>touchX=null);
-function respawnNpc(){npc.x=Math.random()*(W-100)+50;npc.y=Math.random()*(H-200)+50;var ang=Math.random()*Math.PI*2;var sp=1.5+Math.random()*0.8;npc.vx=Math.cos(ang)*sp;npc.vy=Math.sin(ang)*sp}
+function respawnNpc(){npc.x=Math.random()*(W-100)+50;npc.y=Math.random()*(H-200)+50;var ang=Math.random()*Math.PI*2;var sp=(1.5+Math.random()*0.8)*PACE;npc.vx=Math.cos(ang)*sp;npc.vy=Math.sin(ang)*sp}
 function addParticle(x,y,color){for(let i=0;i<8;i++)particles.push({x,y,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:36,color,size:3+Math.random()*3})}
 function showToast(msg){var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),800)}
 function update(){
@@ -217,11 +222,11 @@ if(npc.x<=0||npc.x>=W-npc.w)npc.vx*=-1;if(npc.y<=0||npc.y>=H-npc.h)npc.vy*=-1;
 npc.x=Math.max(0,Math.min(W-npc.w,npc.x));npc.y=Math.max(0,Math.min(H-npc.h,npc.y));
 var dx=(npc.x+npc.w/2)-(player.x+player.w/2),dy=(npc.y+npc.h/2)-(player.y+player.h/2);
 if(Math.sqrt(dx*dx+dy*dy)<40){score++;addParticle(npc.x+npc.w/2,npc.y+npc.h/2,"#a0e7e5");showToast("친구 +1!");
-  if(score>=TARGET){gameOver=true;document.getElementById("restart").style.display="block"}
+  if(TARGET>0&&score>=TARGET){gameOver=true;document.getElementById("restart").style.display="block"}
   else{respawnNpc()}}
 for(let i=particles.length-1;i>=0;i--){particles[i].x+=particles[i].vx;particles[i].y+=particles[i].vy;particles[i].life--;if(particles[i].life<=0)particles.splice(i,1)}
 timeLeft-=1/60;if(timeLeft<=0){gameOver=true;document.getElementById("restart").style.display="block"}
-document.getElementById("score").textContent=FRIEND_EMOJI+" "+score+"/"+TARGET;
+document.getElementById("score").textContent=FRIEND_EMOJI+" "+score+(TARGET>0?"/"+TARGET:"");
 }
 function draw(){
 if(worldImg){ctx.drawImage(worldImg,0,0,W,H);ctx.fillStyle="rgba(0,0,0,0.15)";ctx.fillRect(0,0,W,H)}
@@ -233,10 +238,10 @@ particles.forEach(p=>{ctx.globalAlpha=p.life/36;ctx.fillStyle=p.color;ctx.beginP
 if(charImg){ctx.save();ctx.shadowColor=CHAR_COLOR;ctx.shadowBlur=18;ctx.drawImage(charImg,player.x,player.y,player.w,player.h);ctx.restore()}
 else{ctx.font="40px serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(CHAR_EMOJI,player.x+player.w/2,player.y+player.h/2);ctx.shadowColor=CHAR_COLOR;ctx.shadowBlur=20;ctx.strokeStyle=CHAR_COLOR;ctx.lineWidth=2;ctx.strokeRect(player.x-2,player.y-2,player.w+4,player.h+4);ctx.shadowBlur=0}
 if(gameOver){ctx.fillStyle="rgba(0,0,0,0.5)";ctx.fillRect(0,0,W,H);ctx.fillStyle="white";ctx.font="bold 36px sans-serif";ctx.textAlign="center";
-var label=score>=TARGET?"모두 만났어! 🎉":"시간 끝!";ctx.fillText(label,W/2,H/2-30);
+var label=(TARGET>0&&score>=TARGET)?"모두 만났어! 🎉":"시간 끝!";ctx.fillText(label,W/2,H/2-30);
 ctx.font="24px sans-serif";ctx.fillText(FRIEND_EMOJI+" "+score+"명 친구",W/2,H/2+20)}
 }
-function resetGame(){score=0;timeLeft=45;gameOver=false;particles=[];player.x=200;player.y=500;respawnNpc();document.getElementById("restart").style.display="none"}
+function resetGame(){score=0;timeLeft=$time_limit;gameOver=false;particles=[];player.x=200;player.y=500;respawnNpc();document.getElementById("restart").style.display="none"}
 function loop(){update();draw();requestAnimationFrame(loop)}loop();
 </script></body></html>''')
 
@@ -264,10 +269,11 @@ canvas{border-radius:12px;box-shadow:0 0 30px rgba(100,100,255,0.3)}
 <script>
 const canvas=document.getElementById("c"),ctx=canvas.getContext("2d");
 const W=400,H=600,GROUND=H-90;
-let score=0,timeLeft=45,gameOver=false;
+const PACE=$pace_scale, TARGET=$target_score;
+let score=0,timeLeft=$time_limit,gameOver=false;
 let player={x:100,y:GROUND-48,vy:0,w:48,h:48,onGround:true};
 let obstacles=[],items=[],particles=[],scrollX=0;
-const GRAVITY=0.7,JUMP_V=-13;
+const GRAVITY=0.7,JUMP_V=-13,SCROLL_SPEED=4*PACE;
 const CHAR_COLOR="$char_color";
 const CHAR_EMOJI="$char_emoji";
 const ITEM_EMOJI="$item_emoji";
@@ -292,21 +298,23 @@ function update(){
 if(gameOver)return;
 player.vy+=GRAVITY;player.y+=player.vy;
 if(player.y>=GROUND-player.h){player.y=GROUND-player.h;player.vy=0;player.onGround=true}
-scrollX+=3;
-if(Math.random()<0.018)spawnObstacle();
-if(Math.random()<0.022)spawnItem();
-for(let i=obstacles.length-1;i>=0;i--){var o=obstacles[i];o.x-=4;
-if(!o.passed&&o.x+o.w<player.x){o.passed=true;score++;addParticle(o.x,GROUND-20,"#a0e7e5")}
+scrollX+=SCROLL_SPEED*0.75;
+if(Math.random()<0.018*PACE)spawnObstacle();
+if(Math.random()<0.022*PACE)spawnItem();
+for(let i=obstacles.length-1;i>=0;i--){var o=obstacles[i];o.x-=SCROLL_SPEED;
+if(!o.passed&&o.x+o.w<player.x){o.passed=true;score++;addParticle(o.x,GROUND-20,"#a0e7e5");
+  if(TARGET>0&&score>=TARGET){gameOver=true;document.getElementById("restart").style.display="block"}}
 if(player.x<o.x+o.w&&player.x+player.w>o.x&&player.y<o.y+o.h&&player.y+player.h>o.y){
   score=Math.max(0,score-1);addParticle(o.x,o.y,"#ff5566");showToast("앗 조심!","#ff8899");obstacles.splice(i,1);continue}
 if(o.x<-50)obstacles.splice(i,1)}
-for(let i=items.length-1;i>=0;i--){var it=items[i];it.x-=4;it.rot+=0.07;
+for(let i=items.length-1;i>=0;i--){var it=items[i];it.x-=SCROLL_SPEED;it.rot+=0.07;
 if(player.x<it.x+it.w&&player.x+player.w>it.x&&player.y<it.y+it.h&&player.y+player.h>it.y){
-  score+=2;addParticle(it.x,it.y,"#ffd166");showToast("+2","#ffd166");items.splice(i,1);continue}
+  score+=2;addParticle(it.x,it.y,"#ffd166");showToast("+2","#ffd166");items.splice(i,1);
+  if(TARGET>0&&score>=TARGET){gameOver=true;document.getElementById("restart").style.display="block"}continue}
 if(it.x<-50)items.splice(i,1)}
 for(let i=particles.length-1;i>=0;i--){var p=particles[i];p.x+=p.vx;p.y+=p.vy;p.life--;if(p.life<=0)particles.splice(i,1)}
 timeLeft-=1/60;if(timeLeft<=0){gameOver=true;document.getElementById("restart").style.display="block"}
-document.getElementById("score").textContent=ITEM_EMOJI+" "+score;
+document.getElementById("score").textContent=ITEM_EMOJI+" "+score+(TARGET>0?"/"+TARGET:"");
 }
 function draw(){
 if(worldImg){ctx.drawImage(worldImg,(-scrollX*0.3)%W,0,W,H);ctx.drawImage(worldImg,(-scrollX*0.3)%W+W,0,W,H);ctx.fillStyle="rgba(0,0,0,0.18)";ctx.fillRect(0,0,W,H)}
@@ -319,9 +327,9 @@ items.forEach(it=>{ctx.save();ctx.translate(it.x+it.w/2,it.y+it.h/2);ctx.rotate(
 particles.forEach(p=>{ctx.globalAlpha=p.life/30;ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill()});ctx.globalAlpha=1;
 if(charImg){ctx.save();ctx.shadowColor=CHAR_COLOR;ctx.shadowBlur=18;ctx.drawImage(charImg,player.x,player.y,player.w,player.h);ctx.restore()}
 else{ctx.font="40px serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(CHAR_EMOJI,player.x+player.w/2,player.y+player.h/2);ctx.shadowColor=CHAR_COLOR;ctx.shadowBlur=20;ctx.strokeStyle=CHAR_COLOR;ctx.lineWidth=2;ctx.strokeRect(player.x-2,player.y-2,player.w+4,player.h+4);ctx.shadowBlur=0}
-if(gameOver){ctx.fillStyle="rgba(0,0,0,0.5)";ctx.fillRect(0,0,W,H);ctx.fillStyle="white";ctx.font="bold 36px sans-serif";ctx.textAlign="center";ctx.fillText("잘 달렸어!",W/2,H/2-30);ctx.font="24px sans-serif";ctx.fillText(ITEM_EMOJI+" "+score+"점!",W/2,H/2+20)}
+if(gameOver){ctx.fillStyle="rgba(0,0,0,0.5)";ctx.fillRect(0,0,W,H);ctx.fillStyle="white";ctx.font="bold 36px sans-serif";ctx.textAlign="center";var label=(TARGET>0&&score>=TARGET)?"성공! 🎉":"잘 달렸어!";ctx.fillText(label,W/2,H/2-30);ctx.font="24px sans-serif";ctx.fillText(ITEM_EMOJI+" "+score+"점!",W/2,H/2+20)}
 }
-function resetGame(){score=0;timeLeft=45;gameOver=false;obstacles=[];items=[];particles=[];player.y=GROUND-48;player.vy=0;player.onGround=true;document.getElementById("restart").style.display="none"}
+function resetGame(){score=0;timeLeft=$time_limit;gameOver=false;obstacles=[];items=[];particles=[];player.y=GROUND-48;player.vy=0;player.onGround=true;document.getElementById("restart").style.display="none"}
 function loop(){update();draw();requestAnimationFrame(loop)}loop();
 </script></body></html>''')
 
@@ -460,6 +468,25 @@ def build_game_with_params(card_jsons: list, params: dict, user_prompt: str = ""
         else:
             item_emoji = "⭐"
 
+    # 3축 difficulty 파라미터 — 안전 범위로 클램프
+    def _clamp(v, lo, hi, default):
+        try:
+            x = float(v)
+        except (TypeError, ValueError):
+            return default
+        return max(lo, min(hi, x))
+
+    pace_scale = _clamp((params or {}).get("pace_scale"), 0.5, 1.8, 1.0)
+    time_limit = int(_clamp((params or {}).get("time_limit"), 20, 90, 45))
+
+    game_type = (params or {}).get("game_type", "collect")
+    # chase는 기본 목표 5, 다른 게임은 0(무제한 시간만)
+    default_target = 5 if game_type == "chase" else 0
+    target_score = int(_clamp((params or {}).get("target_score"), 0, 30, default_target))
+    # chase는 target_score=0이면 영원히 안 끝나므로 항상 ≥1로 보정
+    if game_type == "chase" and target_score <= 0:
+        target_score = 5
+
     ctx = dict(
         char_name=char_name,
         char_emoji=emoji,
@@ -469,6 +496,9 @@ def build_game_with_params(card_jsons: list, params: dict, user_prompt: str = ""
         item_emoji=item_emoji,
         bg_top=bg_top,
         bg_bot=bg_bot,
+        pace_scale=pace_scale,
+        time_limit=time_limit,
+        target_score=target_score,
     )
 
     # AI가 hazard / friend emoji 직접 지정 가능
@@ -479,7 +509,6 @@ def build_game_with_params(card_jsons: list, params: dict, user_prompt: str = ""
     if isinstance(ai_friend, str) and ai_friend.strip():
         ctx["friend_emoji"] = ai_friend.strip()
 
-    game_type = (params or {}).get("game_type", "collect")
     fn = TEMPLATES.get(game_type, TEMPLATES["collect"])
     return fn(**ctx)
 

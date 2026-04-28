@@ -299,6 +299,9 @@ async def preview_game(
     hazard_emoji: str = "💧",
     friend_emoji: str = "🐰",
     bg_theme: str = "우주",
+    pace: float = 1.0,
+    time: int = 45,
+    target: int = 0,
 ):
     """개발자용 빠른 미리보기. 채팅·세션·LLM 흐름 우회. 쿼리스트링으로 파라미터 전달.
     예: /preview-game?type=dodge&char_emoji=🤖&item_emoji=⭐&hazard_emoji=💀
@@ -326,6 +329,9 @@ async def preview_game(
         "hazard_emoji": hazard_emoji,
         "friend_emoji": friend_emoji,
         "bg_theme": bg_theme,
+        "pace_scale": pace,
+        "time_limit": time,
+        "target_score": target,
     }
     html = await asyncio.to_thread(build_game_with_params, fake_cards, params, "")
     return Response(content=html, media_type="text/html")
@@ -416,10 +422,16 @@ async def chat_ws(websocket: WebSocket, child_id: str):
                     f"- chase: 떠다니는 친구 따라잡아 손잡기 (사회적, '친구/같이/만나' 키워드)\n"
                     f"- jump: 횡스크롤 점프 — 장애물 뛰어넘고 공중 아이템 줍기 (액션, '점프/횡이동/횡스크롤/달리기/장애물' 키워드)\n"
                     f"입력에 명확한 키워드 없으면 collect. 의도 변경 요청('바꿔줘')이면 새 키워드를 우선.\n\n"
+                    f"빠르기·시간·목표는 아이의 분위기/요청에서 추정:\n"
+                    f"- pace_scale: 0.5 (느긋) ~ 1.0 (기본) ~ 1.8 (스릴/폭우/빠르게).\n"
+                    f"  '천천히/여유롭게/쉽게'→0.7, '빠르게/스릴/어렵게/폭우'→1.4~1.6.\n"
+                    f"- time_limit: 20~90 (기본 45). '짧게'→25, '오래/길게'→75.\n"
+                    f"- target_score: 0~30. 0=시간만 카운트(무제한 점수). chase는 기본 5(친구 명수). 다른 게임도 '5개 모으면 끝' 같은 명시적 목표 있으면 N. 없으면 0.\n\n"
                     f"다음 JSON만 출력해 (다른 텍스트 절대 금지):\n"
                     f'{{"game_type":"collect|dodge|chase|jump","char_emoji":"이모지1개","item_emoji":"모을것이모지1개",'
                     f'"hazard_emoji":"피할것이모지(dodge/jump용,선택)","friend_emoji":"친구이모지(chase용,선택)",'
-                    f'"bg_theme":"우주|바다|숲|불|마을|하늘","item_name":"모을거이름"}}'
+                    f'"bg_theme":"우주|바다|숲|불|마을|하늘","item_name":"모을거이름",'
+                    f'"pace_scale":1.0,"time_limit":45,"target_score":0}}'
                 )
                 import asyncio as _a
                 game_params = {}
@@ -457,32 +469,57 @@ async def chat_ws(websocket: WebSocket, child_id: str):
                         logger.exception("[%s::%s] 게임 메타 DB 등록 실패", child_id, session_id)
                 item = game_params.get("item_name", game_params.get("item_emoji", "⭐"))
                 game_type = game_params.get("game_type", "collect")
+                # 분위기·시간·목표를 인트로에 자연스럽게 녹임
+                try:
+                    pace = float(game_params.get("pace_scale", 1.0))
+                except (TypeError, ValueError):
+                    pace = 1.0
+                try:
+                    tlim = int(float(game_params.get("time_limit", 45)))
+                except (TypeError, ValueError):
+                    tlim = 45
+                try:
+                    tgt = int(float(game_params.get("target_score", 0)))
+                except (TypeError, ValueError):
+                    tgt = 0
+                if pace >= 1.4:
+                    pace_word = "빠르게 쏟아지니까"
+                elif pace <= 0.75:
+                    pace_word = "느긋하게"
+                else:
+                    pace_word = ""
+                goal_phrase = f"{tlim}초 안에 "
+                if tgt > 0:
+                    goal_phrase += f"{tgt}개 모으면 끝!"
+                else:
+                    goal_phrase += "최대한 많이!"
+
                 if game_type == "dodge":
                     hazard = game_params.get("hazard_emoji", "💧")
                     intro = (
                         f"와, 피하기 게임을 만들었어! 🎮\n\n"
-                        f"방향키나 WASD로 움직이고, {hazard}는 피하면서 {item}만 모아봐!\n\n"
-                        f"45초 안에 잘 피해보자!"
+                        f"방향키나 WASD로 움직이고, {hazard}는 피하면서 {item}만 {pace_word} 모아봐!\n\n"
+                        f"{goal_phrase}"
                     )
                 elif game_type == "chase":
                     friend = game_params.get("friend_emoji", "🐰")
                     intro = (
                         f"와, 친구 찾기 게임을 만들었어! 🎮\n\n"
-                        f"방향키나 WASD로 움직여서 떠다니는 {friend}한테 다가가봐!\n\n"
-                        f"45초 안에 친구 5명 모으면 성공!"
+                        f"방향키나 WASD로 움직여서 떠다니는 {friend}한테 {pace_word} 다가가봐!\n\n"
+                        f"{goal_phrase}"
                     )
                 elif game_type == "jump":
                     hazard = game_params.get("hazard_emoji", "🌵")
                     intro = (
                         f"와, 횡스크롤 점프 게임을 만들었어! 🎮\n\n"
-                        f"스페이스/↑/탭으로 점프! {hazard}는 뛰어넘고, 공중의 {item}을(를) 잡아봐!\n\n"
-                        f"45초 안에 최대한 많이 모아보자!"
+                        f"스페이스/↑/탭으로 점프! {hazard}는 뛰어넘고, 공중의 {item}을(를) {pace_word} 잡아봐!\n\n"
+                        f"{goal_phrase}"
                     )
                 else:
                     intro = (
                         f"와, 게임을 만들었어! 🎮\n\n"
-                        f"방향키나 WASD로 움직이고, {item}을(를) 모아봐!\n\n"
-                        f"45초 안에 최대한 많이 모아보자!"
+                        f"방향키나 WASD로 움직이고, {item}을(를) {pace_word} 모아봐!\n\n"
+                        f"{goal_phrase}"
                     )
                 await websocket.send_json({"type": "text", "chunk": intro})
                 await websocket.send_json({"type": "game", "html": game_html, "game_url": game_url})

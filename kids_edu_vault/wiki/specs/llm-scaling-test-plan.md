@@ -204,3 +204,38 @@ Day 5 (D-day):    파일럿 실행
 - ANTHROPIC_API_KEY 발급 (페이즈 4 실행 전)
 - Gemini API 키 4개 정보 정리 (페이즈 1 실행 전)
 - `load_test.py` 확장 (현재는 단일 시나리오만) — Day 0 필수
+
+---
+
+## 향후 방향: 메가 템플릿 / Spec Generator (TODO, 파일럿 후)
+
+현재 게임 생성은 **enumeration** 방식 — `game_type ∈ {collect, dodge, chase, jump}` 4종 + 3축 파라미터(pace_scale, time_limit, target_score). 자유도 12+ × ∞ 시각변주.
+
+**한계 — 무한 자유도 체감 불가:**
+- 새 메카닉 = 새 함수 + 새 Template 문자열. 유한 메뉴.
+- "스페이스 누르면 화면이 뒤집히는 게임" 같은 비전형 요청 처리 불가.
+
+**다음 사이클 검토 옵션:**
+
+### Option C — 메가 템플릿 (1개 generator + flag 조합)
+- 4 템플릿 → 1개 합성 템플릿. 모든 행동을 flag로:
+  - `movement ∈ {free, jump, fixed_x, orbit}`
+  - `item_motion ∈ {fall, sine, flee, orbital}`
+  - `scroll ∈ {none, horizontal}`
+  - `gravity_scale`, `hazard_count`, `npc_count`, `win_mode`
+- LLM이 flag 조합 자유롭게 생성 → 사실상 무한 자유도
+- 비용: 3~5시간 재작성, 디버그 어려움
+- R4 보장 유지 (모든 flag 조합 검증된 안전 범위 안)
+
+### Option D — LLM이 게임 HTML 통째 생성 + 폴백
+- Claude API + prompt caching. spec/template 폴백 안전망.
+- 진짜 무한. Cloudflare 100s 한계는 prompt caching + Sonnet의 ~5s 응답으로 회피 가능.
+- 비용: ANTHROPIC_API_KEY + ~$1~3/파일럿. spec generator 없이도 가능.
+
+### 결정 게이트
+- 파일럿 후 사용자 피드백으로 결정.
+- Option C는 enumeration의 자연스런 진화 (현재 코드의 generalization).
+- Option D는 [[llm-provider-scaling]]의 Phase 2 이후 자연스럽게 가능 (Claude API 통합 후).
+- 둘 다 안 해도 됨 — 4 템플릿 × 3축 파라미터 × ∞ SVG로도 워크샵 1회는 충분.
+
+**기록 이유:** 파일럿 직전엔 R4·속도가 최우선이라 enumeration 유지가 맞다. 하지만 "왜 메뉴식인가?"의 답을 미래의 누군가가 다시 묻지 않게 박아둠.
