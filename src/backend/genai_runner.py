@@ -159,9 +159,13 @@ async def generate_card(prompt: str, child_id: str, session_id: str):
         return
 
     # --- GLM (z.ai) 텍스트 생성 ---
-    ZAI_API_KEY = os.getenv("ZAI_API_KEY", "1edec351dba64a08a4838bd5993a9322.r7Z6EBjcZJxmpKNL")
+    ZAI_API_KEY = os.getenv("ZAI_API_KEY", "")
     ZAI_BASE_URL = os.getenv("ZAI_BASE_URL", "https://api.z.ai/api/coding/paas/v4/chat/completions")
     ZAI_MODEL = os.getenv("ZAI_MODEL", "glm-5")
+    if not ZAI_API_KEY:
+        logger.error("[%s::%s] ZAI_API_KEY 미설정 — .env에 키 등록 필요", child_id, session_id)
+        yield StreamEvent(type="error", chunk=_friendly_error("not_found"))
+        return
 
     persona = _load_persona()
     full_text = ""
