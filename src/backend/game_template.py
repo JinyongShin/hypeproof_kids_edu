@@ -2,11 +2,17 @@
 
 캐릭터·세계 카드의 SVG를 게임 캔버스에 그대로 그려 넣는다.
 AI 파라미터(이모지·테마)는 SVG가 없을 때의 폴백.
+
+게임 타입별 함수를 register 데코레이터로 TEMPLATES dict에 등록.
+새 게임 추가 = 함수 1개 + 템플릿 문자열 1개. 다른 인프라 없음.
 """
 import json
 from string import Template
 
-GAME_TMPL = Template('''<!DOCTYPE html>
+# ----------------------------------------------------------------------------
+# 게임 1 — collect: 떨어지는 아이템 모으기 (기본, 평화로운)
+# ----------------------------------------------------------------------------
+COLLECT_TMPL = Template('''<!DOCTYPE html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <style>*{margin:0;padding:0;box-sizing:border-box}body{background:#1a1a2e;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:sans-serif}
 canvas{border-radius:12px;box-shadow:0 0 30px rgba(100,100,255,0.3)}
@@ -31,13 +37,7 @@ const BG_BOT="$bg_bot";
 const CHAR_SVG=$char_svg_json;
 const WORLD_SVG=$world_svg_json;
 let charImg=null, worldImg=null;
-function svgToImage(svg, cb){
-  if(!svg) return;
-  const img=new Image();
-  img.onload=()=>cb(img);
-  img.onerror=()=>{};
-  img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
-}
+function svgToImage(svg, cb){if(!svg) return;const img=new Image();img.onload=()=>cb(img);img.onerror=()=>{};img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)}
 svgToImage(CHAR_SVG, i=>charImg=i);
 svgToImage(WORLD_SVG, i=>worldImg=i);
 document.addEventListener("keydown",e=>keys[e.key]=true);
@@ -55,8 +55,7 @@ if(keys.ArrowRight||keys.d)player.x+=player.speed;
 if(keys.ArrowUp||keys.w)player.y-=player.speed;
 if(keys.ArrowDown||keys.s)player.y+=player.speed;
 if(touchX!==null)player.x+=(touchX-canvas.getBoundingClientRect().left-player.w/2-player.x)*0.1;
-player.x=Math.max(0,Math.min(W-player.w,player.x));
-player.y=Math.max(0,Math.min(H-player.h,player.y));
+player.x=Math.max(0,Math.min(W-player.w,player.x));player.y=Math.max(0,Math.min(H-player.h,player.y));
 if(Math.random()<0.03)spawnItem();
 for(let i=items.length-1;i>=0;i--){items[i].y+=items[i].speed;items[i].rot+=0.05;
 if(Math.abs(items[i].x-player.x-player.w/2)<32&&Math.abs(items[i].y-player.y-player.h/2)<32){score++;addParticle(items[i].x,items[i].y,"#FFD700");items.splice(i,1)}
@@ -80,7 +79,201 @@ function loop(){update();draw();requestAnimationFrame(loop)}loop();
 </script></body></html>''')
 
 
-# 캐릭터 이름 키워드 → 이모지 폴백 (SVG 없을 때만 사용)
+# ----------------------------------------------------------------------------
+# 게임 2 — dodge: 위험은 피하고 안전한 것만 모으기 (스릴, 협력적)
+# 위험에 닿으면 점수만 -1 (최소 0). 죽지 않음.
+# ----------------------------------------------------------------------------
+DODGE_TMPL = Template('''<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#1a1a2e;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:sans-serif}
+canvas{border-radius:12px;box-shadow:0 0 30px rgba(100,100,255,0.3)}
+#ui{position:fixed;top:20px;left:50%;transform:translateX(-50%);color:white;text-align:center;z-index:10}
+#score{font-size:24px;font-weight:bold;text-shadow:0 0 10px rgba(255,255,255,0.5)}
+#msg{font-size:16px;margin-top:5px;opacity:0.8}
+#toast{position:fixed;top:90px;left:50%;transform:translateX(-50%);color:#ffd166;font-weight:bold;font-size:22px;text-shadow:0 0 8px rgba(0,0,0,0.7);opacity:0;transition:opacity 0.18s;pointer-events:none;z-index:11}
+#toast.show{opacity:1}
+#restart{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(255,255,255,0.2);color:white;border:2px solid white;padding:15px 30px;font-size:20px;border-radius:10px;cursor:pointer;backdrop-filter:blur(5px)}
+</style></head><body>
+<div id="ui"><div id="score">$item_emoji 0</div><div id="msg">$char_name이 위험을 피한다!</div></div>
+<div id="toast"></div>
+<canvas id="c" width="400" height="600"></canvas>
+<button id="restart" onclick="resetGame()">다시 하기! &#x1f504;</button>
+<script>
+const canvas=document.getElementById("c"),ctx=canvas.getContext("2d");
+const W=400,H=600;
+let score=0,timeLeft=45,gameOver=false,player={x:200,y:500,w:48,h:48,speed:5};
+let items=[],particles=[],keys={};
+const CHAR_COLOR="$char_color";
+const CHAR_EMOJI="$char_emoji";
+const ITEM_EMOJI="$item_emoji";
+const HAZARD_EMOJI="$hazard_emoji";
+const BG_TOP="$bg_top";
+const BG_BOT="$bg_bot";
+const CHAR_SVG=$char_svg_json;
+const WORLD_SVG=$world_svg_json;
+let charImg=null, worldImg=null;
+function svgToImage(svg, cb){if(!svg) return;const img=new Image();img.onload=()=>cb(img);img.onerror=()=>{};img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)}
+svgToImage(CHAR_SVG, i=>charImg=i);
+svgToImage(WORLD_SVG, i=>worldImg=i);
+document.addEventListener("keydown",e=>keys[e.key]=true);
+document.addEventListener("keyup",e=>keys[e.key]=false);
+let touchX=null;
+canvas.addEventListener("touchstart",e=>{touchX=e.touches[0].clientX;e.preventDefault()},{passive:false});
+canvas.addEventListener("touchmove",e=>{touchX=e.touches[0].clientX;e.preventDefault()},{passive:false});
+canvas.addEventListener("touchend",()=>touchX=null);
+function spawnItem(){var hazard=Math.random()<0.45;items.push({x:Math.random()*(W-30)+15,y:-20,speed:1.5+Math.random()*2.5,size:hazard?28:20,rot:0,hazard:hazard})}
+function addParticle(x,y,color){for(let i=0;i<6;i++)particles.push({x,y,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:32,color,size:3+Math.random()*3})}
+function showToast(msg,color){var t=document.getElementById("toast");t.textContent=msg;t.style.color=color||"#ffd166";t.classList.add("show");setTimeout(()=>t.classList.remove("show"),700)}
+function update(){
+if(gameOver)return;
+if(keys.ArrowLeft||keys.a)player.x-=player.speed;
+if(keys.ArrowRight||keys.d)player.x+=player.speed;
+if(keys.ArrowUp||keys.w)player.y-=player.speed;
+if(keys.ArrowDown||keys.s)player.y+=player.speed;
+if(touchX!==null)player.x+=(touchX-canvas.getBoundingClientRect().left-player.w/2-player.x)*0.1;
+player.x=Math.max(0,Math.min(W-player.w,player.x));player.y=Math.max(0,Math.min(H-player.h,player.y));
+if(Math.random()<0.04)spawnItem();
+for(let i=items.length-1;i>=0;i--){items[i].y+=items[i].speed;items[i].rot+=0.05;
+if(Math.abs(items[i].x-player.x-player.w/2)<32&&Math.abs(items[i].y-player.y-player.h/2)<32){
+  if(items[i].hazard){score=Math.max(0,score-1);addParticle(items[i].x,items[i].y,"#ff5566");showToast("앗 조심!","#ff8899")}
+  else{score++;addParticle(items[i].x,items[i].y,"#ffd166");showToast("+1","#ffd166")}
+  items.splice(i,1)}
+else if(items[i].y>H+20)items.splice(i,1)}
+for(let i=particles.length-1;i>=0;i--){particles[i].x+=particles[i].vx;particles[i].y+=particles[i].vy;particles[i].life--;if(particles[i].life<=0)particles.splice(i,1)}
+timeLeft-=1/60;if(timeLeft<=0){gameOver=true;document.getElementById("restart").style.display="block"}
+document.getElementById("score").textContent=ITEM_EMOJI+" "+score;
+}
+function draw(){
+if(worldImg){ctx.drawImage(worldImg,0,0,W,H);ctx.fillStyle="rgba(0,0,0,0.2)";ctx.fillRect(0,0,W,H)}
+else{let grd=ctx.createLinearGradient(0,0,0,H);grd.addColorStop(0,BG_TOP);grd.addColorStop(1,BG_BOT);ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);
+ctx.fillStyle="rgba(255,255,255,0.25)";for(let i=0;i<40;i++){let sx=(i*137+50)%W,sy=(i*97+30)%H;ctx.beginPath();ctx.arc(sx,sy,(i%3)+1,0,Math.PI*2);ctx.fill()}}
+items.forEach(it=>{ctx.save();ctx.translate(it.x,it.y);ctx.rotate(it.rot);ctx.font=it.size+"px serif";ctx.textAlign="center";ctx.textBaseline="middle";
+if(it.hazard){ctx.shadowColor="#ff5566";ctx.shadowBlur=14}ctx.fillText(it.hazard?HAZARD_EMOJI:ITEM_EMOJI,0,0);ctx.restore()});
+particles.forEach(p=>{ctx.globalAlpha=p.life/32;ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill()});ctx.globalAlpha=1;
+if(charImg){ctx.save();ctx.shadowColor=CHAR_COLOR;ctx.shadowBlur=18;ctx.drawImage(charImg,player.x,player.y,player.w,player.h);ctx.restore()}
+else{ctx.font="40px serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(CHAR_EMOJI,player.x+player.w/2,player.y+player.h/2);ctx.shadowColor=CHAR_COLOR;ctx.shadowBlur=20;ctx.strokeStyle=CHAR_COLOR;ctx.lineWidth=2;ctx.strokeRect(player.x-2,player.y-2,player.w+4,player.h+4);ctx.shadowBlur=0}
+if(gameOver){ctx.fillStyle="rgba(0,0,0,0.5)";ctx.fillRect(0,0,W,H);ctx.fillStyle="white";ctx.font="bold 36px sans-serif";ctx.textAlign="center";ctx.fillText("잘 피했어!",W/2,H/2-30);ctx.font="24px sans-serif";ctx.fillText(ITEM_EMOJI+" "+score+"개 모음!",W/2,H/2+20)}
+}
+function resetGame(){score=0;timeLeft=45;gameOver=false;items=[];particles=[];player.x=200;player.y=500;document.getElementById("restart").style.display="none"}
+function loop(){update();draw();requestAnimationFrame(loop)}loop();
+</script></body></html>''')
+
+
+# ----------------------------------------------------------------------------
+# 게임 3 — chase: 떠다니는 친구 따라잡아 손잡기
+# 5명 친구 모으면 일찍 끝, 협력적 서사
+# ----------------------------------------------------------------------------
+CHASE_TMPL = Template('''<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#1a1a2e;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:sans-serif}
+canvas{border-radius:12px;box-shadow:0 0 30px rgba(100,100,255,0.3)}
+#ui{position:fixed;top:20px;left:50%;transform:translateX(-50%);color:white;text-align:center;z-index:10}
+#score{font-size:24px;font-weight:bold;text-shadow:0 0 10px rgba(255,255,255,0.5)}
+#msg{font-size:16px;margin-top:5px;opacity:0.8}
+#toast{position:fixed;top:90px;left:50%;transform:translateX(-50%);color:#a0e7e5;font-weight:bold;font-size:22px;text-shadow:0 0 8px rgba(0,0,0,0.7);opacity:0;transition:opacity 0.18s;pointer-events:none;z-index:11}
+#toast.show{opacity:1}
+#restart{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(255,255,255,0.2);color:white;border:2px solid white;padding:15px 30px;font-size:20px;border-radius:10px;cursor:pointer;backdrop-filter:blur(5px)}
+</style></head><body>
+<div id="ui"><div id="score">$friend_emoji 0/5</div><div id="msg">$char_name이 친구를 찾아간다!</div></div>
+<div id="toast"></div>
+<canvas id="c" width="400" height="600"></canvas>
+<button id="restart" onclick="resetGame()">다시 하기! &#x1f504;</button>
+<script>
+const canvas=document.getElementById("c"),ctx=canvas.getContext("2d");
+const W=400,H=600;
+let score=0,timeLeft=45,gameOver=false,player={x:200,y:500,w:48,h:48,speed:5};
+let particles=[],keys={},npc={x:100,y:100,w:42,h:42,vx:1.6,vy:1.2};
+const CHAR_COLOR="$char_color";
+const CHAR_EMOJI="$char_emoji";
+const FRIEND_EMOJI="$friend_emoji";
+const BG_TOP="$bg_top";
+const BG_BOT="$bg_bot";
+const CHAR_SVG=$char_svg_json;
+const WORLD_SVG=$world_svg_json;
+const TARGET=5;
+let charImg=null, worldImg=null;
+function svgToImage(svg, cb){if(!svg) return;const img=new Image();img.onload=()=>cb(img);img.onerror=()=>{};img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)}
+svgToImage(CHAR_SVG, i=>charImg=i);
+svgToImage(WORLD_SVG, i=>worldImg=i);
+document.addEventListener("keydown",e=>keys[e.key]=true);
+document.addEventListener("keyup",e=>keys[e.key]=false);
+let touchX=null;
+canvas.addEventListener("touchstart",e=>{touchX=e.touches[0].clientX;e.preventDefault()},{passive:false});
+canvas.addEventListener("touchmove",e=>{touchX=e.touches[0].clientX;e.preventDefault()},{passive:false});
+canvas.addEventListener("touchend",()=>touchX=null);
+function respawnNpc(){npc.x=Math.random()*(W-100)+50;npc.y=Math.random()*(H-200)+50;var ang=Math.random()*Math.PI*2;var sp=1.5+Math.random()*0.8;npc.vx=Math.cos(ang)*sp;npc.vy=Math.sin(ang)*sp}
+function addParticle(x,y,color){for(let i=0;i<8;i++)particles.push({x,y,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:36,color,size:3+Math.random()*3})}
+function showToast(msg){var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),800)}
+function update(){
+if(gameOver)return;
+if(keys.ArrowLeft||keys.a)player.x-=player.speed;
+if(keys.ArrowRight||keys.d)player.x+=player.speed;
+if(keys.ArrowUp||keys.w)player.y-=player.speed;
+if(keys.ArrowDown||keys.s)player.y+=player.speed;
+if(touchX!==null)player.x+=(touchX-canvas.getBoundingClientRect().left-player.w/2-player.x)*0.1;
+player.x=Math.max(0,Math.min(W-player.w,player.x));player.y=Math.max(0,Math.min(H-player.h,player.y));
+npc.x+=npc.vx;npc.y+=npc.vy;
+if(npc.x<=0||npc.x>=W-npc.w)npc.vx*=-1;if(npc.y<=0||npc.y>=H-npc.h)npc.vy*=-1;
+npc.x=Math.max(0,Math.min(W-npc.w,npc.x));npc.y=Math.max(0,Math.min(H-npc.h,npc.y));
+var dx=(npc.x+npc.w/2)-(player.x+player.w/2),dy=(npc.y+npc.h/2)-(player.y+player.h/2);
+if(Math.sqrt(dx*dx+dy*dy)<40){score++;addParticle(npc.x+npc.w/2,npc.y+npc.h/2,"#a0e7e5");showToast("친구 +1!");
+  if(score>=TARGET){gameOver=true;document.getElementById("restart").style.display="block"}
+  else{respawnNpc()}}
+for(let i=particles.length-1;i>=0;i--){particles[i].x+=particles[i].vx;particles[i].y+=particles[i].vy;particles[i].life--;if(particles[i].life<=0)particles.splice(i,1)}
+timeLeft-=1/60;if(timeLeft<=0){gameOver=true;document.getElementById("restart").style.display="block"}
+document.getElementById("score").textContent=FRIEND_EMOJI+" "+score+"/"+TARGET;
+}
+function draw(){
+if(worldImg){ctx.drawImage(worldImg,0,0,W,H);ctx.fillStyle="rgba(0,0,0,0.15)";ctx.fillRect(0,0,W,H)}
+else{let grd=ctx.createLinearGradient(0,0,0,H);grd.addColorStop(0,BG_TOP);grd.addColorStop(1,BG_BOT);ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);
+ctx.fillStyle="rgba(255,255,255,0.25)";for(let i=0;i<40;i++){let sx=(i*137+50)%W,sy=(i*97+30)%H;ctx.beginPath();ctx.arc(sx,sy,(i%3)+1,0,Math.PI*2);ctx.fill()}}
+ctx.font="36px serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.shadowColor="#a0e7e5";ctx.shadowBlur=12;
+ctx.fillText(FRIEND_EMOJI,npc.x+npc.w/2,npc.y+npc.h/2);ctx.shadowBlur=0;
+particles.forEach(p=>{ctx.globalAlpha=p.life/36;ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill()});ctx.globalAlpha=1;
+if(charImg){ctx.save();ctx.shadowColor=CHAR_COLOR;ctx.shadowBlur=18;ctx.drawImage(charImg,player.x,player.y,player.w,player.h);ctx.restore()}
+else{ctx.font="40px serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(CHAR_EMOJI,player.x+player.w/2,player.y+player.h/2);ctx.shadowColor=CHAR_COLOR;ctx.shadowBlur=20;ctx.strokeStyle=CHAR_COLOR;ctx.lineWidth=2;ctx.strokeRect(player.x-2,player.y-2,player.w+4,player.h+4);ctx.shadowBlur=0}
+if(gameOver){ctx.fillStyle="rgba(0,0,0,0.5)";ctx.fillRect(0,0,W,H);ctx.fillStyle="white";ctx.font="bold 36px sans-serif";ctx.textAlign="center";
+var label=score>=TARGET?"모두 만났어! 🎉":"시간 끝!";ctx.fillText(label,W/2,H/2-30);
+ctx.font="24px sans-serif";ctx.fillText(FRIEND_EMOJI+" "+score+"명 친구",W/2,H/2+20)}
+}
+function resetGame(){score=0;timeLeft=45;gameOver=false;particles=[];player.x=200;player.y=500;respawnNpc();document.getElementById("restart").style.display="none"}
+function loop(){update();draw();requestAnimationFrame(loop)}loop();
+</script></body></html>''')
+
+
+# ----------------------------------------------------------------------------
+# Registry — game_type → builder 함수
+# ----------------------------------------------------------------------------
+TEMPLATES = {}
+
+
+def register(name):
+    def deco(fn):
+        TEMPLATES[name] = fn
+        return fn
+    return deco
+
+
+@register("collect")
+def _collect_html(**ctx):
+    return COLLECT_TMPL.safe_substitute(**ctx)
+
+
+@register("dodge")
+def _dodge_html(**ctx):
+    ctx.setdefault("hazard_emoji", "💧")
+    return DODGE_TMPL.safe_substitute(**ctx)
+
+
+@register("chase")
+def _chase_html(**ctx):
+    ctx.setdefault("friend_emoji", "🐰")
+    return CHASE_TMPL.safe_substitute(**ctx)
+
+
+# ----------------------------------------------------------------------------
+# 폴백 매핑
+# ----------------------------------------------------------------------------
 EMOJI_MAP = {
     "아이언맨": "🤖", "아이언": "🤖", "iron": "🤖", "로봇": "🤖",
     "히어로": "🦸", "영웅": "🦸", "hero": "🦸", "수호자": "🛡️",
@@ -96,7 +289,6 @@ EMOJI_MAP = {
     "별": "⭐", "star": "⭐",
 }
 
-# 세계 키워드 → 배경 그라데이션 (SVG 없을 때만 사용)
 BG_THEMES = {
     "우주": ("#0a0a2e", "#1a1a4e"), "별": ("#0a0a2e", "#1a1a4e"),
     "밤하늘": ("#0a0a2e", "#1a1a4e"), "은하": ("#0a0a2e", "#1a1a4e"),
@@ -111,7 +303,6 @@ BG_THEMES = {
 
 
 def _parse_card(raw):
-    """문자열 또는 dict 카드를 dict로 정규화."""
     if isinstance(raw, dict):
         return raw
     if isinstance(raw, str):
@@ -123,8 +314,6 @@ def _parse_card(raw):
 
 
 def _find_latest_by_type(cards, card_type):
-    """리스트(시간순 ASC)에서 해당 타입의 최신 카드 1장. 없으면 {}.
-    cards 항목은 JSON 문자열이거나 dict."""
     for raw in reversed(cards or []):
         c = _parse_card(raw)
         if c.get("card_type") == card_type:
@@ -134,9 +323,7 @@ def _find_latest_by_type(cards, card_type):
 
 def build_game_with_params(card_jsons: list, params: dict, user_prompt: str = "") -> str:
     """카드 리스트(시간순) + AI 파라미터로 게임 빌드.
-    - character 카드의 image_svg → 플레이어 스프라이트
-    - world 카드의 image_svg → 게임 배경
-    - SVG가 없으면 emoji + 그라데이션으로 폴백.
+    params['game_type'] in {collect, dodge, chase}. 없거나 모르는 값이면 collect 폴백.
     """
     char_card = _find_latest_by_type(card_jsons, "character")
     world_card = _find_latest_by_type(card_jsons, "world")
@@ -148,7 +335,6 @@ def build_game_with_params(card_jsons: list, params: dict, user_prompt: str = ""
     world_combined = (world_name + " " + world_desc).strip()
     world_svg = world_card.get("image_svg", "") or ""
 
-    # 캐릭터 이모지 폴백 (SVG 없을 때 표시)
     ai_emoji = (params or {}).get("char_emoji", "")
     emoji = ai_emoji.strip() if isinstance(ai_emoji, str) else ""
     if not emoji:
@@ -159,7 +345,6 @@ def build_game_with_params(card_jsons: list, params: dict, user_prompt: str = ""
     if not emoji:
         emoji = "✨"
 
-    # 배경 그라데이션 폴백 (SVG 없을 때 표시)
     ai_bg = (params or {}).get("bg_theme", "")
     bg_top, bg_bot = "#2a1a4e", "#1a1a2e"
     if isinstance(ai_bg, str) and ai_bg in BG_THEMES:
@@ -170,7 +355,6 @@ def build_game_with_params(card_jsons: list, params: dict, user_prompt: str = ""
                 bg_top, bg_bot = v
                 break
 
-    # 아이템 이모지: AI 우선, 그 다음 세계 키워드, 그 다음 기본
     ai_item = (params or {}).get("item_emoji", "")
     item_emoji = ai_item.strip() if isinstance(ai_item, str) else ""
     if not item_emoji:
@@ -185,7 +369,7 @@ def build_game_with_params(card_jsons: list, params: dict, user_prompt: str = ""
         else:
             item_emoji = "⭐"
 
-    return GAME_TMPL.safe_substitute(
+    ctx = dict(
         char_name=char_name,
         char_emoji=emoji,
         char_color="#a78bfa",
@@ -196,8 +380,19 @@ def build_game_with_params(card_jsons: list, params: dict, user_prompt: str = ""
         bg_bot=bg_bot,
     )
 
+    # AI가 hazard / friend emoji 직접 지정 가능
+    ai_hazard = (params or {}).get("hazard_emoji", "")
+    if isinstance(ai_hazard, str) and ai_hazard.strip():
+        ctx["hazard_emoji"] = ai_hazard.strip()
+    ai_friend = (params or {}).get("friend_emoji", "")
+    if isinstance(ai_friend, str) and ai_friend.strip():
+        ctx["friend_emoji"] = ai_friend.strip()
 
-# 하위 호환: 일부 코드가 build_game을 호출할 수 있어 유지.
+    game_type = (params or {}).get("game_type", "collect")
+    fn = TEMPLATES.get(game_type, TEMPLATES["collect"])
+    return fn(**ctx)
+
+
 def build_game(character_cards: list, world_cards: "list | None" = None) -> str:
-    _ = world_cards  # 시그니처 호환을 위해 유지
+    _ = world_cards
     return build_game_with_params(character_cards or [], {}, "")

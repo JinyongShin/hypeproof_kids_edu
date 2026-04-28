@@ -290,6 +290,47 @@ async def save_game(child_id: str, session_id: str, game_id: str):
     return {"saved": True}
 
 
+@app.get("/preview-game")
+async def preview_game(
+    type: str = "collect",
+    char_name: str = "테스트 캐릭터",
+    char_emoji: str = "🐰",
+    item_emoji: str = "⭐",
+    hazard_emoji: str = "💧",
+    friend_emoji: str = "🐰",
+    bg_theme: str = "우주",
+):
+    """개발자용 빠른 미리보기. 채팅·세션·LLM 흐름 우회. 쿼리스트링으로 파라미터 전달.
+    예: /preview-game?type=dodge&char_emoji=🤖&item_emoji=⭐&hazard_emoji=💀
+    SVG 입력은 파라미터 너무 길어 지원 X — 실제 흐름에서만 SVG 검증.
+    """
+    from game_template import build_game_with_params
+    fake_cards = [
+        json.dumps({
+            "card_type": "character",
+            "name": char_name,
+            "image_svg": "",
+        }),
+        json.dumps({
+            "card_type": "world",
+            "name": f"테스트 {bg_theme}",
+            "world": bg_theme,
+            "description": f"{bg_theme} 배경의 세계",
+            "image_svg": "",
+        }),
+    ]
+    params = {
+        "game_type": type,
+        "char_emoji": char_emoji,
+        "item_emoji": item_emoji,
+        "hazard_emoji": hazard_emoji,
+        "friend_emoji": friend_emoji,
+        "bg_theme": bg_theme,
+    }
+    html = await asyncio.to_thread(build_game_with_params, fake_cards, params, "")
+    return Response(content=html, media_type="text/html")
+
+
 # ---------------------------------------------------------------------------
 # WebSocket chat
 # ---------------------------------------------------------------------------
@@ -361,9 +402,15 @@ async def chat_ws(websocket: WebSocket, child_id: str):
                 param_prompt = (
                     f"아이가 이렇게 말했어: \"{original_prompt}\"\n"
                     f"{card_summary}\n\n"
+                    f"게임 메카닉 선택:\n"
+                    f"- collect: 떨어지는 아이템 모으기 (기본, 평화로운 분위기)\n"
+                    f"- dodge: 위험은 피하고 안전한 것만 모으기 (스릴, '피하기/위험/조심' 키워드)\n"
+                    f"- chase: 떠다니는 친구 따라잡아 손잡기 (사회적, '친구/같이/만나/잡기' 키워드)\n"
+                    f"입력에 명확한 키워드 없으면 collect.\n\n"
                     f"다음 JSON만 출력해 (다른 텍스트 절대 금지):\n"
-                    f'{{"game_type":"collect|dodge|friend","char_emoji":"이모지1개","item_emoji":"이모지1개",'
-                    f'"bg_theme":"우주|바다|숲|불|마을|하늘","item_name":"모을거1이름"}}'
+                    f'{{"game_type":"collect|dodge|chase","char_emoji":"이모지1개","item_emoji":"모을것이모지1개",'
+                    f'"hazard_emoji":"피할것이모지(dodge용,선택)","friend_emoji":"친구이모지(chase용,선택)",'
+                    f'"bg_theme":"우주|바다|숲|불|마을|하늘","item_name":"모을거이름"}}'
                 )
                 import asyncio as _a
                 game_params = {}
@@ -400,7 +447,28 @@ async def chat_ws(websocket: WebSocket, child_id: str):
                     except Exception:
                         logger.exception("[%s::%s] 게임 메타 DB 등록 실패", child_id, session_id)
                 item = game_params.get("item_name", game_params.get("item_emoji", "⭐"))
-                await websocket.send_json({"type": "text", "chunk": f"와, 게임을 만들었어! 🎮\n\n방향키나 WASD로 움직이고, {item}을(를) 모아봐!\n\n45초 안에 최대한 많이 모아보자!"})
+                game_type = game_params.get("game_type", "collect")
+                if game_type == "dodge":
+                    hazard = game_params.get("hazard_emoji", "💧")
+                    intro = (
+                        f"와, 피하기 게임을 만들었어! 🎮\n\n"
+                        f"방향키나 WASD로 움직이고, {hazard}는 피하면서 {item}만 모아봐!\n\n"
+                        f"45초 안에 잘 피해보자!"
+                    )
+                elif game_type == "chase":
+                    friend = game_params.get("friend_emoji", "🐰")
+                    intro = (
+                        f"와, 친구 찾기 게임을 만들었어! 🎮\n\n"
+                        f"방향키나 WASD로 움직여서 떠다니는 {friend}한테 다가가봐!\n\n"
+                        f"45초 안에 친구 5명 모으면 성공!"
+                    )
+                else:
+                    intro = (
+                        f"와, 게임을 만들었어! 🎮\n\n"
+                        f"방향키나 WASD로 움직이고, {item}을(를) 모아봐!\n\n"
+                        f"45초 안에 최대한 많이 모아보자!"
+                    )
+                await websocket.send_json({"type": "text", "chunk": intro})
                 await websocket.send_json({"type": "game", "html": game_html, "game_url": game_url})
                 await websocket.send_json({"type": "done", "hint": "게임을 해보고, 다음엔 '배경을 더 예쁘게 해줘'라고 해봐!"})
                 continue
