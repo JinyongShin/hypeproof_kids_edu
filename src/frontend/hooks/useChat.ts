@@ -1,4 +1,5 @@
-"use client";
+"use client"
+import { BACKEND_HTTP_URL, BACKEND_WS_URL } from "../lib/backendUrl";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -10,26 +11,28 @@ export interface Message {
 
 interface UseChatReturn {
   messages: Message[];
-  gameUrl: string;
-  gameHtml: string;
+  cardUrl: string;
+  cardJson: string;
   hint: string;
   isLoading: boolean;
   wsStatus: "connected" | "reconnecting" | "disconnected";
   send: (prompt: string) => void;
+  stop: () => void;
+  getLastUserMessage: () => string;
+  gameHtml: string;
+  gameUrl: string;
 }
 
-const BACKEND_WS_URL =
-  process.env.NEXT_PUBLIC_BACKEND_WS_URL ?? "ws://localhost:8000";
-const BACKEND_HTTP_URL =
-  process.env.NEXT_PUBLIC_BACKEND_HTTP_URL ?? "http://localhost:8000";
 
 export function useChat(childId: string, sessionId: string): UseChatReturn {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [gameUrl, setGameUrl] = useState("");
-  const [gameHtml, setGameHtml] = useState("");
+  const [cardUrl, setCardUrl] = useState("");
+  const [cardJson, setCardJson] = useState("");
   const [hint, setHint] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [wsStatus, setWsStatus] = useState<"connected" | "reconnecting" | "disconnected">("connected");
+  const [gameHtml, setGameHtml] = useState("");
+  const [gameUrl, setGameUrl] = useState("");
 
   const wsRef = useRef<WebSocket | null>(null);
 
@@ -37,9 +40,11 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
   useEffect(() => {
     if (!childId || !sessionId) return;
     setIsLoading(false);
-    setGameUrl("");
-    setGameHtml("");
+    setCardUrl("");
+    setCardJson("");
     setHint("");
+    setGameHtml("");
+    setGameUrl("");
     setMessages([]);
     fetch(`${BACKEND_HTTP_URL}/sessions/${childId}/${sessionId}/messages`)
       .then((r) => (r.ok ? r.json() : []))
@@ -71,10 +76,12 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
         retryCount = 0; // 메시지 수신 시 재시도 카운트 초기화
         setWsStatus("connected");
         const data = JSON.parse(event.data) as {
-          type: "text" | "game" | "done" | "error";
+          type: "text" | "card" | "game" | "done" | "error";
           chunk?: string;
+          card_url?: string;
+          card_json?: string;
+          html?: string;
           game_url?: string;
-          game_html?: string;
           hint?: string;
           session_id?: string;
         };
@@ -93,9 +100,12 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
               { role: "assistant", text: data.chunk!, isStreaming: true },
             ];
           });
-        } else if (data.type === "game" && data.game_url) {
-          setGameUrl(data.game_url);
-          if (data.game_html) setGameHtml(data.game_html);
+        } else if (data.type === "card" && data.card_url) {
+          setCardUrl(data.card_url);
+          if (data.card_json) setCardJson(data.card_json);
+        } else if (data.type === "game") {
+          if (data.html) setGameHtml(data.html);
+          if (data.game_url) setGameUrl(data.game_url);
         } else if (data.type === "done") {
           setMessages((prev) => {
             const last = prev[prev.length - 1];
@@ -105,6 +115,7 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
             return prev;
           });
           if (data.hint) setHint(data.hint);
+          if (data.card_url) setCardUrl(data.card_url);
           if (data.game_url) setGameUrl(data.game_url);
           setIsLoading(false);
         } else if (data.type === "error") {
@@ -171,5 +182,17 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
     [isLoading]
   );
 
-  return { messages, gameUrl, gameHtml, hint, isLoading, wsStatus, send };
+  const stop = useCallback(() => {
+    wsRef.current?.close();
+    setIsLoading(false);
+  }, []);
+
+  const getLastUserMessage = useCallback(() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === "user") return messages[i].text;
+    }
+    return "";
+  }, [messages]);
+
+  return { messages, cardUrl, cardJson, hint, isLoading, wsStatus, send, stop, getLastUserMessage, gameHtml, gameUrl };
 }

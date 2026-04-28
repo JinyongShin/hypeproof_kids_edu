@@ -38,6 +38,18 @@ CREATE TABLE IF NOT EXISTS games (
     game_id     TEXT NOT NULL,
     file_path   TEXT NOT NULL,
     url         TEXT NOT NULL,
+    saved       INTEGER NOT NULL DEFAULT 0,
+    created_at  TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+
+CREATE TABLE IF NOT EXISTS cards (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id  TEXT NOT NULL,
+    child_id    TEXT NOT NULL,
+    card_id     TEXT NOT NULL,
+    card_type   TEXT NOT NULL CHECK(card_type IN ('character','world','title')),
+    card_json   TEXT NOT NULL,
+    url         TEXT NOT NULL DEFAULT '',
     created_at  TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
 );
 
@@ -60,10 +72,15 @@ def _connect() -> sqlite3.Connection:
 
 
 def init_db() -> None:
-    """DB/테이블 생성. 서버 구동 시 1회 호출."""
+    """DB/테이블 생성 + 컬럼 마이그레이션. 서버 구동 시 1회 호출."""
     _DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     with _connect() as conn:
         conn.executescript(_DDL)
+        # games.saved 컬럼 (기존 DB 호환). PRAGMA로 존재 확인 후 추가.
+        cols = [r[1] for r in conn.execute("PRAGMA table_info(games)").fetchall()]
+        if "saved" not in cols:
+            conn.execute("ALTER TABLE games ADD COLUMN saved INTEGER NOT NULL DEFAULT 0")
+            logger.info("games 테이블에 saved 컬럼 추가")
     logger.info("SQLite DB 초기화 완료: %s", _DB_PATH)
 
 
@@ -112,7 +129,7 @@ def update_session_name(session_id: str, name: str) -> None:
         )
 
 
-def get_claude_session_id(session_id: str) -> str | None:
+def get_claude_session_id(session_id: str):
     with _connect() as conn:
         row = conn.execute(
             "SELECT claude_session_id FROM sessions WHERE session_id=?",
@@ -226,6 +243,43 @@ def delete_game(session_id: str, game_id: str) -> None:
         )
 
 
+def mark_game_saved(session_id: str, game_id: str) -> bool:
+    """게임을 갤러리(런칭쇼)에 등록. 동일 세션의 기존 saved=1은 0으로 (자동 덮어쓰기).
+    대상 게임이 없으면 False 반환."""
+    with _connect() as conn:
+        row = conn.execute(
+            "SELECT id FROM games WHERE session_id=? AND game_id=?",
+            (session_id, game_id),
+        ).fetchone()
+        if row is None:
+            return False
+        conn.execute(
+            "UPDATE games SET saved=0 WHERE session_id=? AND saved=1",
+            (session_id,),
+        )
+        conn.execute(
+            "UPDATE games SET saved=1 WHERE session_id=? AND game_id=?",
+            (session_id, game_id),
+        )
+    return True
+
+
+def list_saved_games() -> list[dict]:
+    """런칭쇼(갤러리)용: saved=1 게임 + 세션 이름·자식 이름 join."""
+    with _connect() as conn:
+        rows = conn.execute(
+            """
+            SELECT g.game_id, g.url, g.created_at, g.session_id, g.child_id,
+                   COALESCE(s.name, '') AS session_name
+            FROM games g
+            LEFT JOIN sessions s ON g.session_id = s.session_id
+            WHERE g.saved = 1
+            ORDER BY g.created_at DESC
+            """
+        ).fetchall()
+    return [dict(r) for r in rows]
+
+
 def reset_all_claude_sessions(child_id: str) -> int:
     """child_id의 모든 세션에서 claude_session_id를 초기화. 변경된 행 수 반환."""
     with _connect() as conn:
@@ -234,3 +288,62 @@ def reset_all_claude_sessions(child_id: str) -> int:
             (child_id,),
         )
         return result.rowcount
+
+
+# ---------------------------------------------------------------------------
+# Cards
+# ---------------------------------------------------------------------------
+
+def add_card(session_id: str, child_id: str, card_id: str, card_type: str, card_json: str, url: str = "") -> None:
+    with _connect() as conn:
+        conn.execute(
+            "INSERT INTO cards (session_id, child_id, card_id, card_type, card_json, url) VALUES (?,?,?,?,?,?)",
+            (session_id, child_id, card_id, card_type, card_json, url),
+        )
+
+
+def list_cards(session_id: str) -> list[dict]:
+    with _connect() as conn:
+        rows = conn.execute(
+            "SELECT card_id, card_type, card_json, url, created_at FROM cards WHERE session_id=? ORDER BY created_at ASC",
+            (session_id,),
+        ).fetchall()
+    return [dict(r) for r in rows]
+
+
+def get_latest_card(session_id: str):
+    with _connect() as conn:
+        row = conn.execute(
+            "SELECT card_id, card_type, card_json, url FROM cards WHERE session_id=? ORDER BY created_at DESC LIMIT 1",
+            (session_id,),
+        ).fetchone()
+    return dict(row) if row else None
+
+
+def get_latest_card_by_type(session_id: str, card_type: str):
+    """특정 타입(character/world/title)의 최신 카드 1장. 없으면 None."""
+    with _connect() as conn:
+        row = conn.execute(
+            "SELECT card_id, card_type, card_json, url FROM cards WHERE session_id=? AND card_type=? ORDER BY created_at DESC LIMIT 1",
+            (session_id, card_type),
+        ).fetchone()
+    return dict(row) if row else None
+
+
+def list_all_cards_for_gallery() -> list[dict]:
+    """갤러리 슬라이드쇼용: 전체 카드 조회."""
+    with _connect() as conn:
+        rows = conn.execute(
+            "SELECT c.card_id, c.card_type, c.card_json, c.url, c.created_at, s.name AS child_name "
+            "FROM cards c JOIN sessions s ON c.session_id = s.session_id "
+            "ORDER BY c.created_at ASC"
+        ).fetchall()
+    return [dict(r) for r in rows]
+
+
+def delete_card(session_id: str, card_id: str) -> None:
+    with _connect() as conn:
+        conn.execute(
+            "DELETE FROM cards WHERE session_id=? AND card_id=?",
+            (session_id, card_id),
+        )

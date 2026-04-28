@@ -15,10 +15,12 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 
 import storage
 from claude_runner import StreamEvent, _DATA_DIR, reset_session, stream_claude
+from genai_runner import generate_card, generate_image
+from qr_generator import generate_qr_png
 
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "root")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "0000")
@@ -113,7 +115,7 @@ app = FastAPI(title="Kids Edu Backend", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://hypeproof-ai.xyz"],
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -213,6 +215,55 @@ async def get_messages(child_id: str, session_id: str):
 
 
 # ---------------------------------------------------------------------------
+# QR code
+# ---------------------------------------------------------------------------
+
+@app.get("/qr/{child_id}/{session_id}/{card_id}")
+async def get_qr(child_id: str, session_id: str, card_id: str):
+    """카드 URL을 QR PNG로 반환."""
+    card_url = f"{os.getenv('BACKEND_BASE_URL', 'http://localhost:8000')}/cards/{child_id}/{session_id}/{card_id}"
+    png_bytes = await asyncio.to_thread(generate_qr_png, card_url, child_id)
+    return Response(content=png_bytes, media_type="image/png")
+
+
+# ---------------------------------------------------------------------------
+# Cards
+# ---------------------------------------------------------------------------
+
+@app.get("/cards/{child_id}/{session_id}/{card_id}")
+async def get_card(child_id: str, session_id: str, card_id: str):
+    """카드 JSON 데이터 반환."""
+    card = await asyncio.to_thread(storage.get_latest_card, session_id)
+    if card is None or card["card_id"] != card_id:
+        cards = await asyncio.to_thread(storage.list_cards, session_id)
+        card = next((c for c in cards if c["card_id"] == card_id), None)
+    if card is None:
+        raise HTTPException(status_code=404, detail="카드를 찾을 수 없어요")
+    return json.loads(card["card_json"])
+
+
+@app.get("/gallery")
+async def gallery():
+    """런칭쇼: 저장된(saved=1) 게임 목록. 각 항목 = {game_id, url, session_name, child_id, created_at, session_id}."""
+    return await asyncio.to_thread(storage.list_saved_games)
+
+
+@app.post("/generate-image")
+async def generate_image_endpoint(body: dict):
+    """프론트엔드에서 image_prompt로 이미지 생성 요청."""
+    image_prompt = body.get("image_prompt", "").strip()
+    if not image_prompt:
+        raise HTTPException(status_code=400, detail="image_prompt가 필요해요")
+    try:
+        image_bytes, mime_type = await generate_image(image_prompt)
+        import base64
+        return {"image_base64": base64.b64encode(image_bytes).decode("utf-8"), "mime_type": mime_type}
+    except Exception as e:
+        logger.exception("이미지 생성 오류: %s", e)
+        raise HTTPException(status_code=500, detail="이미지 생성에 실패했어요")
+
+
+# ---------------------------------------------------------------------------
 # Game file serving
 # ---------------------------------------------------------------------------
 
@@ -226,6 +277,64 @@ async def serve_game(child_id: str, session_id: str, game_id: str):
     if not game_path.exists():
         raise HTTPException(status_code=404, detail="게임 파일을 찾을 수 없어요")
     return FileResponse(str(game_path), media_type="text/html")
+
+
+@app.post("/games/{child_id}/{session_id}/{game_id}/save")
+async def save_game(child_id: str, session_id: str, game_id: str):
+    """게임을 갤러리(런칭쇼)에 등록.
+    동일 세션의 기존 저장 게임이 있으면 자동 덮어쓰기 (saved=0 → 새 게임 saved=1)."""
+    ok = await asyncio.to_thread(storage.mark_game_saved, session_id, game_id)
+    if not ok:
+        raise HTTPException(status_code=404, detail="해당 게임을 찾을 수 없어요")
+    logger.info("[%s::%s] 게임 저장(런칭쇼 등록): %s", child_id, session_id, game_id)
+    return {"saved": True}
+
+
+@app.get("/preview-game")
+async def preview_game(
+    type: str = "collect",
+    char_name: str = "테스트 캐릭터",
+    char_emoji: str = "🐰",
+    item_emoji: str = "⭐",
+    hazard_emoji: str = "💧",
+    friend_emoji: str = "🐰",
+    bg_theme: str = "우주",
+    pace: float = 1.0,
+    time: int = 45,
+    target: int = 0,
+):
+    """개발자용 빠른 미리보기. 채팅·세션·LLM 흐름 우회. 쿼리스트링으로 파라미터 전달.
+    예: /preview-game?type=dodge&char_emoji=🤖&item_emoji=⭐&hazard_emoji=💀
+    SVG 입력은 파라미터 너무 길어 지원 X — 실제 흐름에서만 SVG 검증.
+    """
+    from game_template import build_game_with_params
+    fake_cards = [
+        json.dumps({
+            "card_type": "character",
+            "name": char_name,
+            "image_svg": "",
+        }),
+        json.dumps({
+            "card_type": "world",
+            "name": f"테스트 {bg_theme}",
+            "world": bg_theme,
+            "description": f"{bg_theme} 배경의 세계",
+            "image_svg": "",
+        }),
+    ]
+    params = {
+        "game_type": type,
+        "char_emoji": char_emoji,
+        "item_emoji": item_emoji,
+        "hazard_emoji": hazard_emoji,
+        "friend_emoji": friend_emoji,
+        "bg_theme": bg_theme,
+        "pace_scale": pace,
+        "time_limit": time,
+        "target_score": target,
+    }
+    html = await asyncio.to_thread(build_game_with_params, fake_cards, params, "")
+    return Response(content=html, media_type="text/html")
 
 
 # ---------------------------------------------------------------------------
@@ -265,6 +374,14 @@ async def chat_ws(websocket: WebSocket, child_id: str):
 
             original_prompt = data.get("prompt", "").strip()
             if not original_prompt:
+                await websocket.send_json({"type": "error", "chunk": "뭐라고 말하고 싶은지 입력해줘!"})
+                continue
+
+            # 이모지만 입력 또는 의미 없는 입력 차단 (한글/영문 최소 2자)
+            import re as _re
+            alpha_count = len(_re.sub(r'[^가-힣a-zA-Z0-9]', '', original_prompt))
+            if alpha_count < 2:
+                await websocket.send_json({"type": "error", "chunk": "조금 더 자세히 말해줄래? 어떤 캐릭터를 만들고 싶은지 알려줘!"})
                 continue
 
             logger.info("[%s::%s] 프롬프트 수신: %s", child_id, session_id, original_prompt[:60])
@@ -278,29 +395,170 @@ async def chat_ws(websocket: WebSocket, child_id: str):
                 auto_name = original_prompt[:15].strip()
                 await asyncio.to_thread(storage.update_session_name, session_id, auto_name)
 
-            # 기존 게임이 있으면 파일 경로를 프롬프트에 주입 — Claude가 Read 도구로 읽어서 수정
-            prompt = original_prompt
-            games = await asyncio.to_thread(storage.list_games, session_id)
-            if games:
-                latest_path = Path(games[-1]["file_path"])
-                if latest_path.exists():
-                    prompt = (
-                        f"{original_prompt}\n\n"
-                        f"---\n"
-                        f"현재 게임 파일: {latest_path}\n"
-                        f"수정 요청이면 Read 도구로 읽어서 고쳐줘. 완전히 새 게임 요청이면 무시하고 새로 만들어."
+            # 게임 요청 감지 → AI가 템플릿 파라미터 결정 → 빌드
+            # 1차: 명시적 게임 생성 의도
+            game_keywords = ['게임 만들', '게임 시작', '플레이', '놀자', '게임해', '시작해줘']
+            is_game_request = any(kw in original_prompt for kw in game_keywords)
+            # 2차: 이미 게임이 있는 세션에서 메카닉 변경 의도 (새 게임 빌드)
+            mechanic_keywords = ['점프', '횡이동', '횡스크롤', '달리기', '장애물',
+                                 '피하', '친구 찾', '같이 놀', '바꿔줘', '다른 게임']
+            if not is_game_request:
+                has_existing_game = bool(await asyncio.to_thread(storage.list_games, session_id))
+                if has_existing_game and any(kw in original_prompt for kw in mechanic_keywords):
+                    is_game_request = True
+            if is_game_request:
+                cards = await asyncio.to_thread(storage.list_cards, session_id)
+                card_jsons = [c['card_json'] for c in cards] if cards else []
+                card_summary = ""
+                if card_jsons:
+                    card_summary = "이전 카드 정보: " + ", ".join(card_jsons[-2:])
+                # AI에게 파라미터만 물어보기 (매우 짧은 응답)
+                param_prompt = (
+                    f"아이가 이렇게 말했어: \"{original_prompt}\"\n"
+                    f"{card_summary}\n\n"
+                    f"게임 메카닉 선택:\n"
+                    f"- collect: 위에서 떨어지는 아이템 모으기 (기본, 평화로운)\n"
+                    f"- dodge: 위험은 피하고 안전한 것만 모음 (스릴, '피하기/위험/조심' 키워드)\n"
+                    f"- chase: 떠다니는 친구 따라잡아 손잡기 (사회적, '친구/같이/만나' 키워드)\n"
+                    f"- jump: 횡스크롤 점프 — 장애물 뛰어넘고 공중 아이템 줍기 (액션, '점프/횡이동/횡스크롤/달리기/장애물' 키워드)\n"
+                    f"입력에 명확한 키워드 없으면 collect. 의도 변경 요청('바꿔줘')이면 새 키워드를 우선.\n\n"
+                    f"빠르기·시간·목표는 아이의 분위기/요청에서 추정:\n"
+                    f"- pace_scale: 0.5 (느긋) ~ 1.0 (기본) ~ 1.8 (스릴/폭우/빠르게).\n"
+                    f"  '천천히/여유롭게/쉽게'→0.7, '빠르게/스릴/어렵게/폭우'→1.4~1.6.\n"
+                    f"- time_limit: 20~90 (기본 45). '짧게'→25, '오래/길게'→75.\n"
+                    f"- target_score: 0~30. 0=시간만 카운트(무제한 점수). chase는 기본 5(친구 명수). 다른 게임도 '5개 모으면 끝' 같은 명시적 목표 있으면 N. 없으면 0.\n\n"
+                    f"다음 JSON만 출력해 (다른 텍스트 절대 금지):\n"
+                    f'{{"game_type":"collect|dodge|chase|jump","char_emoji":"이모지1개","item_emoji":"모을것이모지1개",'
+                    f'"hazard_emoji":"피할것이모지(dodge/jump용,선택)","friend_emoji":"친구이모지(chase용,선택)",'
+                    f'"bg_theme":"우주|바다|숲|불|마을|하늘","item_name":"모을거이름",'
+                    f'"pace_scale":1.0,"time_limit":45,"target_score":0}}'
+                )
+                import asyncio as _a
+                game_params = {}
+                try:
+                    async for event in generate_card(param_prompt, child_id + "_params", session_id):
+                        if event.type == "text" and event.chunk:
+                            import re as _re
+                            jm = _re.search(r'\{[^}]+\}', event.chunk)
+                            if jm:
+                                game_params = json.loads(jm.group())
+                                break
+                        elif event.type == "done":
+                            break
+                except:
+                    pass
+                # 파라미터로 게임 빌드
+                from game_template import build_game_with_params
+                game_html = await asyncio.to_thread(build_game_with_params, card_jsons, game_params, original_prompt)
+                import time as _time
+                game_id = f"game_{int(_time.time() * 1000)}"
+                game_dir = (_DATA_DIR / "games" / child_id / session_id).resolve()
+                games_base = (_DATA_DIR / "games").resolve()
+                game_url = ""
+                if game_dir.is_relative_to(games_base):
+                    game_dir.mkdir(parents=True, exist_ok=True)
+                    game_file = game_dir / f"{game_id}.html"
+                    game_file.write_text(game_html, encoding="utf-8")
+                    game_url = f"{os.getenv('BACKEND_BASE_URL', 'http://localhost:8000')}/games/{child_id}/{session_id}/{game_id}"
+                    # 게임 메타를 DB에 등록 (saved=0). 저장 버튼 클릭 시 saved=1로 갱신.
+                    try:
+                        await asyncio.to_thread(
+                            storage.add_game, session_id, child_id, game_id, str(game_file), game_url
+                        )
+                    except Exception:
+                        logger.exception("[%s::%s] 게임 메타 DB 등록 실패", child_id, session_id)
+                item = game_params.get("item_name", game_params.get("item_emoji", "⭐"))
+                game_type = game_params.get("game_type", "collect")
+                # 분위기·시간·목표를 인트로에 자연스럽게 녹임
+                try:
+                    pace = float(game_params.get("pace_scale", 1.0))
+                except (TypeError, ValueError):
+                    pace = 1.0
+                try:
+                    tlim = int(float(game_params.get("time_limit", 45)))
+                except (TypeError, ValueError):
+                    tlim = 45
+                try:
+                    tgt = int(float(game_params.get("target_score", 0)))
+                except (TypeError, ValueError):
+                    tgt = 0
+                if pace >= 1.4:
+                    pace_word = "빠르게 쏟아지니까"
+                elif pace <= 0.75:
+                    pace_word = "느긋하게"
+                else:
+                    pace_word = ""
+                goal_phrase = f"{tlim}초 안에 "
+                if tgt > 0:
+                    goal_phrase += f"{tgt}개 모으면 끝!"
+                else:
+                    goal_phrase += "최대한 많이!"
+
+                if game_type == "dodge":
+                    hazard = game_params.get("hazard_emoji", "💧")
+                    intro = (
+                        f"와, 피하기 게임을 만들었어! 🎮\n\n"
+                        f"방향키나 WASD로 움직이고, {hazard}는 피하면서 {item}만 {pace_word} 모아봐!\n\n"
+                        f"{goal_phrase}"
                     )
+                elif game_type == "chase":
+                    friend = game_params.get("friend_emoji", "🐰")
+                    intro = (
+                        f"와, 친구 찾기 게임을 만들었어! 🎮\n\n"
+                        f"방향키나 WASD로 움직여서 떠다니는 {friend}한테 {pace_word} 다가가봐!\n\n"
+                        f"{goal_phrase}"
+                    )
+                elif game_type == "jump":
+                    hazard = game_params.get("hazard_emoji", "🌵")
+                    intro = (
+                        f"와, 횡스크롤 점프 게임을 만들었어! 🎮\n\n"
+                        f"스페이스/↑/탭으로 점프! {hazard}는 뛰어넘고, 공중의 {item}을(를) {pace_word} 잡아봐!\n\n"
+                        f"{goal_phrase}"
+                    )
+                else:
+                    intro = (
+                        f"와, 게임을 만들었어! 🎮\n\n"
+                        f"방향키나 WASD로 움직이고, {item}을(를) {pace_word} 모아봐!\n\n"
+                        f"{goal_phrase}"
+                    )
+                await websocket.send_json({"type": "text", "chunk": intro})
+                await websocket.send_json({"type": "game", "html": game_html, "game_url": game_url})
+                await websocket.send_json({"type": "done", "hint": "게임을 해보고, 다음엔 '배경을 더 예쁘게 해줘'라고 해봐!"})
+                continue
+
+            # 캐릭터·세계 카드 컨텍스트 동시 주입 — 세계 구축 단계에서 캐릭터 SVG를 보존·수정하도록.
+            prompt = original_prompt
+            latest_character = await asyncio.to_thread(
+                storage.get_latest_card_by_type, session_id, "character"
+            )
+            latest_world = await asyncio.to_thread(
+                storage.get_latest_card_by_type, session_id, "world"
+            )
+            context_lines = []
+            if latest_character:
+                context_lines.append(f"이전 캐릭터: {latest_character['card_json']}")
+            if latest_world:
+                context_lines.append(f"이전 세계: {latest_world['card_json']}")
+            if context_lines:
+                prompt = (
+                    f"{original_prompt}\n\n---\n"
+                    + "\n".join(context_lines)
+                    + "\n수정 요청이면 위 카드를 기반으로 고쳐줘. 완전히 새 카드 요청이면 무시하고 새로 만들어."
+                )
 
             assistant_text = ""
             try:
-                async for event in stream_claude(prompt, child_id, session_id):
+                async for event in generate_card(prompt, child_id, session_id):
                     payload: dict = {"type": event.type}
                     if event.type == "text":
                         assistant_text += event.chunk or ""
                         payload["chunk"] = event.chunk
+                    elif event.type == "card":
+                        payload["card_json"] = event.card_json
+                        payload["card_url"] = event.card_url
                     elif event.type == "game":
+                        payload["html"] = event.html
                         payload["game_url"] = event.game_url
-                        payload["game_html"] = event.html
                     elif event.type == "done":
                         payload["hint"] = event.hint
                         payload["session_id"] = event.session_id

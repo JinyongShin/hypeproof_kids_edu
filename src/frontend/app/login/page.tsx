@@ -1,10 +1,9 @@
-"use client";
+"use client"
+import { BACKEND_HTTP_URL, BACKEND_WS_URL } from "@/lib/backendUrl";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-const BACKEND_HTTP_URL =
-  process.env.NEXT_PUBLIC_BACKEND_HTTP_URL ?? "http://localhost:8000";
 
 export default function LoginPage() {
   const router = useRouter();

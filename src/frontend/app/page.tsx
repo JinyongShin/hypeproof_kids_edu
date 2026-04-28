@@ -1,24 +1,25 @@
-"use client";
+"use client"
+import { BACKEND_HTTP_URL, BACKEND_WS_URL } from "@/lib/backendUrl";
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import ChatPane from "@/components/ChatPane";
-import GamePreview from "@/components/GamePreview";
+import CardPreview from "@/components/GamePreview";
 import SessionSidebar from "@/components/SessionSidebar";
 import { useSwipe } from "@/hooks/useSwipe";
 
-const BACKEND_HTTP_URL =
-  process.env.NEXT_PUBLIC_BACKEND_HTTP_URL ?? "http://localhost:8000";
 
 export default function Home() {
   const router = useRouter();
   const [childId, setChildId] = useState("");
   const [activeSessionId, setActiveSessionId] = useState("");
-  const [gameUrl, setGameUrl] = useState("");
-  const [gameHtml, setGameHtml] = useState("");
+  const [cardUrl, setCardUrl] = useState("");
+  const [cardJson, setCardJson] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [gameHtml, setGameHtml] = useState("");
+  const [gameUrl, setGameUrl] = useState("");
   const [currentBlock, setCurrentBlock] = useState(0);
-  const [activePane, setActivePane] = useState<"chat" | "game">("chat");
+  const [activePane, setActivePane] = useState<"chat" | "card">("chat");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [ready, setReady] = useState(false);
   const [sessionRefreshToken, setSessionRefreshToken] = useState(0);
@@ -49,24 +50,26 @@ export default function Home() {
     }
   }, [router]);
 
-  // Fix 3: activeSessionId 변경 시 최신 last_game_url fetch + isLoading 강제 리셋
+  // activeSessionId 변경 시 최신 last_card_url fetch + isLoading 강제 리셋
   useEffect(() => {
     if (!childId || !activeSessionId) return;
     setIsLoading(false);
     fetch(`${BACKEND_HTTP_URL}/sessions/${childId}`)
       .then((r) => r.json())
-      .then((sessions: { session_id: string; last_game_url: string }[]) => {
+      .then((sessions: { session_id: string; last_card_url: string }[]) => {
         const s = sessions.find((x) => x.session_id === activeSessionId);
-        if (s?.last_game_url) setGameUrl(s.last_game_url);
+        if (s?.last_card_url) setCardUrl(s.last_card_url);
       })
       .catch(() => {});
   }, [childId, activeSessionId]);
 
-  const handleSessionChange = useCallback((sessionId: string, lastGameUrl: string) => {
+  const handleSessionChange = useCallback((sessionId: string, lastCardUrl: string) => {
     setActiveSessionId(sessionId);
     sessionStorage.setItem("active_session_id", sessionId);
-    setGameUrl(lastGameUrl);
-    setGameHtml(""); // 세션 전환 시 srcdoc 초기화 → URL 폴백
+    setCardUrl(lastCardUrl);
+    setCardJson(""); // 세션 전환 시 JSON 초기화
+    setGameHtml(""); // 게임도 초기화
+    setGameUrl("");
   }, []);
 
   const handleLogout = useCallback(() => {
@@ -74,27 +77,32 @@ export default function Home() {
     router.replace("/login");
   }, [router]);
 
-  const handleGameReady = useCallback((url: string, html: string) => {
-    setGameUrl(url);
-    setGameHtml(html);
+  const handleCardReady = useCallback((url: string, json: string, html?: string, gUrl?: string) => {
+    if (html) {
+      setGameHtml(html);
+      if (gUrl) setGameUrl(gUrl);
+    } else {
+      setCardUrl(url);
+      setCardJson(json);
+    }
     setSessionRefreshToken((t) => t + 1);
   }, []);
 
   const { onTouchStart, onTouchEnd } = useSwipe({
-    onSwipeLeft: () => setActivePane("game"),
+    onSwipeLeft: () => setActivePane("card"),
     onSwipeRight: () => setActivePane("chat"),
   });
 
   if (!ready || !childId || !activeSessionId) {
     return (
-      <div className="flex h-full items-center justify-center bg-gray-950 text-gray-400">
+      <div className="flex h-full items-center justify-center bg-gradient-to-br from-violet-50 to-sky-50 text-gray-500">
         로딩 중...
       </div>
     );
   }
 
   return (
-    <div className="flex h-full bg-gray-950">
+    <div className="flex h-full bg-gradient-to-br from-violet-50 to-sky-50">
       {/* 사이드바 — 데스크탑 항상 표시, 모바일 오버레이 */}
       <div
         className={`
@@ -106,8 +114,8 @@ export default function Home() {
         <SessionSidebar
           childId={childId}
           activeSessionId={activeSessionId}
-          onSessionChange={(id, lastGameUrl) => {
-            handleSessionChange(id, lastGameUrl);
+          onSessionChange={(id, lastCardUrl) => {
+            handleSessionChange(id, lastCardUrl);
             setSidebarOpen(false);
           }}
           onLogout={handleLogout}
@@ -118,7 +126,7 @@ export default function Home() {
       {/* 모바일 사이드바 오버레이 배경 */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-20 bg-black/50 md:hidden"
+          className="fixed inset-0 z-20 bg-black/30 md:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -127,7 +135,7 @@ export default function Home() {
       <div className="relative flex-1 overflow-hidden">
         {/* 모바일 사이드바 토글 버튼 */}
         <button
-          className="md:hidden absolute top-3 left-3 z-10 rounded-full bg-gray-800/80 px-3 py-1.5 text-xs text-white backdrop-blur-sm"
+          className="md:hidden absolute top-3 left-3 z-10 rounded-full bg-white/90 px-3 py-1.5 text-xs text-gray-700 shadow-sm backdrop-blur-sm border border-gray-200"
           onClick={() => setSidebarOpen(true)}
         >
           ☰
@@ -136,7 +144,7 @@ export default function Home() {
         {/* 슬라이딩 트랙: 모바일 200vw / 데스크탑 100% */}
         <div
           className={`flex h-full transition-transform duration-300 ease-in-out w-[200%] md:w-full ${
-            activePane === "game"
+            activePane === "card"
               ? "-translate-x-1/2 md:translate-x-0"
               : "translate-x-0"
           }`}
@@ -144,22 +152,30 @@ export default function Home() {
           onTouchEnd={onTouchEnd}
         >
           {/* 채팅 영역: 모바일 50%(=100vw) / 데스크탑 40% */}
-          <div className="w-1/2 md:w-2/5 h-full flex flex-col border-r border-gray-800 text-gray-100">
+          <div className="w-1/2 md:w-2/5 h-full flex flex-col border-r border-gray-200 shadow-sm">
             <ChatPane
               childId={childId}
               sessionId={activeSessionId}
-              onGameReady={handleGameReady}
+              onCardReady={handleCardReady}
               onLoadingChange={setIsLoading}
               currentBlock={currentBlock}
               onBlockChange={setCurrentBlock}
             />
           </div>
 
-          {/* 게임 프리뷰 영역: 모바일 50%(=100vw) / 데스크탑 flex-1 */}
+          {/* 카드 프리뷰 영역: 모바일 50%(=100vw) / 데스크탑 flex-1 */}
           <div className="relative w-1/2 md:flex-1 h-full">
-            <GamePreview gameUrl={gameUrl} gameHtml={gameHtml} isLoading={isLoading} />
+            <CardPreview
+              cardUrl={cardUrl}
+              cardJson={cardJson}
+              isLoading={isLoading}
+              gameHtml={gameHtml}
+              gameUrl={gameUrl}
+              childId={childId}
+              sessionId={activeSessionId}
+            />
 
-            {/* 좌측 에지 스와이프 캡처 존 — iframe이 터치 이벤트를 소비하는 문제 우회 */}
+            {/* 좌측 에지 스와이프 캡처 존 */}
             <div
               className="md:hidden absolute inset-y-0 left-0 w-10 z-20"
               onTouchStart={onTouchStart}
@@ -168,7 +184,7 @@ export default function Home() {
 
             {/* 채팅 복귀 버튼 */}
             <button
-              className="md:hidden absolute top-3 left-3 z-20 rounded-full bg-gray-900/70 px-3 py-1.5 text-xs text-white backdrop-blur-sm"
+              className="md:hidden absolute top-3 left-3 z-20 rounded-full bg-white/90 px-3 py-1.5 text-xs text-gray-700 shadow-sm backdrop-blur-sm border border-gray-200"
               onClick={() => setActivePane("chat")}
             >
               ← 채팅
@@ -180,12 +196,12 @@ export default function Home() {
         <div className="md:hidden absolute bottom-3 left-0 right-0 flex justify-center gap-2 z-10 pointer-events-none">
           <div
             className={`w-2 h-2 rounded-full transition-colors duration-200 ${
-              activePane === "chat" ? "bg-indigo-400" : "bg-gray-600"
+              activePane === "chat" ? "bg-violet-500" : "bg-gray-300"
             }`}
           />
           <div
             className={`w-2 h-2 rounded-full transition-colors duration-200 ${
-              activePane === "game" ? "bg-indigo-400" : "bg-gray-600"
+              activePane === "card" ? "bg-violet-500" : "bg-gray-300"
             }`}
           />
         </div>

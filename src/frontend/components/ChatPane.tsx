@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { useEffect, useRef, useState } from "react";
 import { useChat } from "@/hooks/useChat";
@@ -8,7 +8,7 @@ import { SCAFFOLD_DATA } from "@/lib/scaffoldData";
 interface ChatPaneProps {
   childId: string;
   sessionId: string;
-  onGameReady: (gameUrl: string, gameHtml: string) => void;
+  onCardReady: (cardUrl: string, cardJson: string, gameHtml?: string, gameUrl?: string) => void;
   onLoadingChange?: (loading: boolean) => void;
   currentBlock: number;
   onBlockChange: (block: number) => void;
@@ -17,12 +17,12 @@ interface ChatPaneProps {
 export default function ChatPane({
   childId,
   sessionId,
-  onGameReady,
+  onCardReady,
   onLoadingChange,
   currentBlock,
   onBlockChange,
 }: ChatPaneProps) {
-  const { messages, gameUrl, gameHtml, hint, isLoading, wsStatus, send } = useChat(
+  const { messages, cardUrl, cardJson, hint, isLoading, wsStatus, send, stop, getLastUserMessage, gameHtml, gameUrl } = useChat(
     childId,
     sessionId
   );
@@ -30,10 +30,15 @@ export default function ChatPane({
   const [waitingMessage, setWaitingMessage] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // 게임 URL/HTML 변경 시 부모에 전달
+  // 카드 URL/JSON 또는 게임 HTML 변경 시 부모에 전달
   useEffect(() => {
-    if (gameUrl) onGameReady(gameUrl, gameHtml);
-  }, [gameUrl, gameHtml, onGameReady]);
+    if (cardUrl) onCardReady(cardUrl, cardJson);
+  }, [cardUrl, cardJson, onCardReady]);
+
+  // 게임 데이터 전달
+  useEffect(() => {
+    if (gameHtml) onCardReady("", "", gameHtml, gameUrl);
+  }, [gameHtml, gameUrl, onCardReady]);
 
   // 로딩 상태 변경 시 부모에 전달
   useEffect(() => {
@@ -56,7 +61,7 @@ export default function ChatPane({
       15_000
     );
     const t2 = setTimeout(
-      () => setWaitingMessage("거의 다 됐어! 조금만 더 기다려봐 🎮"),
+      () => setWaitingMessage("거의 다 됐어! 조금만 더 기다려봐 🎴"),
       40_000
     );
     return () => {
@@ -84,20 +89,20 @@ export default function ChatPane({
   };
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col bg-white">
       {/* WS 재연결 상태 배너 */}
       {wsStatus !== "connected" && (
         <div
           className={`flex items-center justify-center gap-2 px-3 py-1.5 text-xs font-medium ${
             wsStatus === "reconnecting"
-              ? "bg-yellow-900/80 text-yellow-300"
-              : "bg-red-900/80 text-red-300"
+              ? "bg-amber-50 text-amber-700"
+              : "bg-red-50 text-red-700"
           }`}
         >
           <span
             className={`h-1.5 w-1.5 rounded-full ${
               wsStatus === "reconnecting"
-                ? "bg-yellow-400 animate-pulse"
+                ? "bg-amber-400 animate-pulse"
                 : "bg-red-400"
             }`}
           />
@@ -107,16 +112,16 @@ export default function ChatPane({
         </div>
       )}
       {/* 블록 진행 표시 */}
-      <div className="flex flex-wrap gap-1 border-b border-gray-800 px-4 py-2">
+      <div className="flex flex-wrap gap-1 border-b border-gray-200 bg-gray-50 px-4 py-2">
         {SCAFFOLD_DATA.map(({ block, skill }) => (
           <button
             key={block}
             onClick={() => onBlockChange(block)}
             title={skill}
-            className={`flex-shrink-0 rounded px-2 py-1 text-xs font-medium transition-colors whitespace-nowrap ${
+            className={`flex-shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors whitespace-nowrap ${
               block === currentBlock
-                ? "bg-indigo-600 text-white"
-                : "bg-gray-800 text-gray-400 hover:bg-gray-700"
+                ? "bg-violet-500 text-white shadow-sm"
+                : "bg-white text-gray-600 hover:bg-violet-50 border border-gray-200"
             }`}
           >
             <span className="sm:hidden">{block + 1}</span>
@@ -129,10 +134,10 @@ export default function ChatPane({
       <PromptScaffold currentBlock={currentBlock} onSelect={handleQuickSend} />
 
       {/* 메시지 목록 */}
-      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-gradient-to-b from-white to-violet-50/30">
         {messages.length === 0 && (
-          <p className="text-center text-sm text-gray-600 mt-8">
-            AI에게 만들고 싶은 게임을 말해봐! 👇
+          <p className="text-center text-sm text-gray-500 mt-8">
+            AI에게 만들고 싶은 캐릭터를 말해봐! 👇
           </p>
         )}
         {messages.map((msg, i) => (
@@ -143,13 +148,17 @@ export default function ChatPane({
             <div
               className={`max-w-[85%] rounded-2xl px-4 py-2 text-sm ${
                 msg.role === "user"
-                  ? "bg-indigo-600 text-white"
-                  : "bg-gray-800 text-gray-100"
+                  ? "bg-violet-500 text-white cursor-pointer hover:bg-violet-600 transition-colors"
+                  : "bg-white text-gray-800 border border-gray-100 shadow-sm"
               } ${msg.isStreaming ? "animate-pulse" : ""}`}
+              title={msg.role === "user" && !isLoading ? "클릭하면 수정해서 다시 보낼 수 있어!" : undefined}
+              onClick={() => {
+                if (msg.role === "user" && !isLoading) setInput(msg.text);
+              }}
             >
-              {/* 게임 HTML 제외하고 텍스트만 표시 */}
+              {/* 카드 JSON 제외하고 텍스트만 표시 */}
               {msg.text
-                .replace(/```html[\s\S]*?```/gi, "")   // HTML 코드블록 제거
+                .replace(/```json[\s\S]*?```/gi, "")   // JSON 코드블록 제거
                 .replace(/\n*💡[^\n]*$/m, "")           // 마지막 💡 힌트 줄 제거 (별도 버튼으로 표시)
                 .trim() ||
                 (msg.isStreaming ? "..." : "")}
@@ -159,7 +168,7 @@ export default function ChatPane({
         {/* 대기 피드백 — 15초·40초 후 안심 메시지 */}
         {waitingMessage && isLoading && (
           <div className="flex justify-center">
-            <p className="rounded-full bg-indigo-950 border border-indigo-800 px-4 py-1.5 text-xs text-indigo-300 animate-pulse">
+            <p className="rounded-full bg-violet-50 border border-violet-200 px-4 py-1.5 text-xs text-violet-600 animate-pulse">
               {waitingMessage}
             </p>
           </div>
@@ -167,11 +176,11 @@ export default function ChatPane({
         {/* 생각 중 dots — 로딩 중이고 아직 AI 응답이 없을 때 */}
         {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
           <div className="flex justify-start">
-            <div className="flex items-center gap-1 rounded-2xl bg-gray-800 px-4 py-3">
+            <div className="flex items-center gap-1 rounded-2xl bg-white border border-gray-100 px-4 py-3 shadow-sm">
               {[0, 200, 400].map((delay) => (
                 <span
                   key={delay}
-                  className="h-2 w-2 rounded-full bg-gray-400 animate-bounce"
+                  className="h-2 w-2 rounded-full bg-violet-400 animate-bounce"
                   style={{ animationDelay: `${delay}ms` }}
                 />
               ))}
@@ -189,34 +198,63 @@ export default function ChatPane({
               <button
                 onClick={() => handleQuickSend(sendText)}
                 disabled={isLoading}
-                className="mx-auto block rounded-full border border-indigo-700 px-3 py-1 text-center text-xs text-indigo-400 hover:bg-indigo-950 disabled:opacity-50"
+                className="mx-auto block rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-center text-xs text-violet-600 hover:bg-violet-100 disabled:opacity-50"
               >
                 {hint}
               </button>
             );
           })()}
+        {/* 🎮 게임 생성 유도 — 카드가 있고 로딩 중이 아닐 때 */}
+        {!hint && !isLoading && cardUrl && (
+          <button
+            onClick={() => handleQuickSend("게임 만들어줘")}
+            className="mx-auto block rounded-full border border-amber-200 bg-amber-50 px-4 py-1.5 text-center text-sm text-amber-700 hover:bg-amber-100 font-medium"
+          >
+            🎮 게임 만들기
+          </button>
+        )}
         <div ref={messagesEndRef} />
       </div>
 
       {/* 입력 영역 */}
-      <div className="border-t border-gray-800 p-3">
+      <div className="border-t border-gray-200 bg-white p-3">
         <div className="flex gap-2">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={isLoading ? "AI가 만들고 있어..." : "게임 설명을 입력해봐!"}
+            placeholder={isLoading ? "AI가 만들고 있어..." : "캐릭터 설명을 입력해봐!"}
             disabled={isLoading}
             rows={2}
-            className="flex-1 resize-none rounded-xl border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-gray-100 placeholder-gray-500 outline-none focus:border-indigo-500 disabled:opacity-50"
+            className="flex-1 resize-none rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 outline-none focus:border-violet-400 focus:bg-white disabled:opacity-50"
           />
-          <button
-            onClick={handleSend}
-            disabled={isLoading || !input.trim()}
-            className="self-end rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-500 disabled:opacity-40"
-          >
-            {isLoading ? "..." : "▶"}
-          </button>
+          {isLoading ? (
+            <button
+              onClick={stop}
+              className="self-end rounded-xl bg-red-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-600"
+            >
+              ⏹ 중지
+            </button>
+          ) : (
+            <div className="flex flex-col gap-1 self-end">
+              <button
+                onClick={handleSend}
+                disabled={!input.trim()}
+                className="rounded-xl bg-violet-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-violet-600 disabled:opacity-40"
+              >
+                ▶
+              </button>
+              {getLastUserMessage() && !input.trim() && (
+                <button
+                  onClick={() => setInput(getLastUserMessage())}
+                  className="rounded-lg bg-gray-100 px-2 py-1 text-[10px] text-gray-500 hover:bg-gray-200"
+                  title="직전 입력 다시 불러오기"
+                >
+                  ↩ 재전송
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

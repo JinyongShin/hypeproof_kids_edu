@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "HypeProof Kids Edu",
-  description: "AI와 함께 게임을 만들어요",
+  description: "AI와 함께 타이틀 카드를 만들어요",
 };
 
 export const viewport: Viewport = {
@@ -18,7 +18,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className="h-full">
-      <body className="h-full">{children}</body>
+      <head>
+        <script src="/_backend.js" />
+      </head>
+      <body className="h-full bg-gradient-to-br from-violet-50 to-sky-50">{children}</body>
     </html>
   );
 }
