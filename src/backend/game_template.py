@@ -242,6 +242,91 @@ function loop(){update();draw();requestAnimationFrame(loop)}loop();
 
 
 # ----------------------------------------------------------------------------
+# 게임 4 — jump: 횡스크롤. 장애물 점프 + 공중 아이템 줍기
+# 캐릭터는 x 고정, 좌우에서 다가오는 장애물을 점프로 넘기. 공중 아이템 = 점프 보상.
+# 부딪혀도 점수만 -1 (최소 0). 협력형 — 죽지 않음.
+# ----------------------------------------------------------------------------
+JUMP_TMPL = Template('''<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#1a1a2e;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:sans-serif}
+canvas{border-radius:12px;box-shadow:0 0 30px rgba(100,100,255,0.3)}
+#ui{position:fixed;top:20px;left:50%;transform:translateX(-50%);color:white;text-align:center;z-index:10}
+#score{font-size:24px;font-weight:bold;text-shadow:0 0 10px rgba(255,255,255,0.5)}
+#msg{font-size:16px;margin-top:5px;opacity:0.8}
+#toast{position:fixed;top:90px;left:50%;transform:translateX(-50%);color:#ffd166;font-weight:bold;font-size:22px;text-shadow:0 0 8px rgba(0,0,0,0.7);opacity:0;transition:opacity 0.18s;pointer-events:none;z-index:11}
+#toast.show{opacity:1}
+#restart{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(255,255,255,0.2);color:white;border:2px solid white;padding:15px 30px;font-size:20px;border-radius:10px;cursor:pointer;backdrop-filter:blur(5px)}
+</style></head><body>
+<div id="ui"><div id="score">$item_emoji 0</div><div id="msg">$char_name이 점프! (스페이스/↑/탭)</div></div>
+<div id="toast"></div>
+<canvas id="c" width="400" height="600"></canvas>
+<button id="restart" onclick="resetGame()">다시 하기! &#x1f504;</button>
+<script>
+const canvas=document.getElementById("c"),ctx=canvas.getContext("2d");
+const W=400,H=600,GROUND=H-90;
+let score=0,timeLeft=45,gameOver=false;
+let player={x:100,y:GROUND-48,vy:0,w:48,h:48,onGround:true};
+let obstacles=[],items=[],particles=[],scrollX=0;
+const GRAVITY=0.7,JUMP_V=-13;
+const CHAR_COLOR="$char_color";
+const CHAR_EMOJI="$char_emoji";
+const ITEM_EMOJI="$item_emoji";
+const HAZARD_EMOJI="$hazard_emoji";
+const BG_TOP="$bg_top";
+const BG_BOT="$bg_bot";
+const CHAR_SVG=$char_svg_json;
+const WORLD_SVG=$world_svg_json;
+let charImg=null, worldImg=null;
+function svgToImage(svg, cb){if(!svg) return;const img=new Image();img.onload=()=>cb(img);img.onerror=()=>{};img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)}
+svgToImage(CHAR_SVG, i=>charImg=i);
+svgToImage(WORLD_SVG, i=>worldImg=i);
+function jump(){if(player.onGround){player.vy=JUMP_V;player.onGround=false}}
+document.addEventListener("keydown",e=>{if(e.key===" "||e.key==="ArrowUp"||e.key==="w"||e.key==="W")jump()});
+canvas.addEventListener("touchstart",e=>{jump();e.preventDefault()},{passive:false});
+canvas.addEventListener("mousedown",e=>{jump()});
+function spawnObstacle(){obstacles.push({x:W+30,y:GROUND-32,w:34,h:38,passed:false})}
+function spawnItem(){items.push({x:W+20,y:GROUND-110-Math.random()*60,w:30,h:30,rot:0})}
+function addParticle(x,y,color){for(let i=0;i<6;i++)particles.push({x,y,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:30,color,size:3+Math.random()*3})}
+function showToast(msg,color){var t=document.getElementById("toast");t.textContent=msg;t.style.color=color||"#ffd166";t.classList.add("show");setTimeout(()=>t.classList.remove("show"),700)}
+function update(){
+if(gameOver)return;
+player.vy+=GRAVITY;player.y+=player.vy;
+if(player.y>=GROUND-player.h){player.y=GROUND-player.h;player.vy=0;player.onGround=true}
+scrollX+=3;
+if(Math.random()<0.018)spawnObstacle();
+if(Math.random()<0.022)spawnItem();
+for(let i=obstacles.length-1;i>=0;i--){var o=obstacles[i];o.x-=4;
+if(!o.passed&&o.x+o.w<player.x){o.passed=true;score++;addParticle(o.x,GROUND-20,"#a0e7e5")}
+if(player.x<o.x+o.w&&player.x+player.w>o.x&&player.y<o.y+o.h&&player.y+player.h>o.y){
+  score=Math.max(0,score-1);addParticle(o.x,o.y,"#ff5566");showToast("앗 조심!","#ff8899");obstacles.splice(i,1);continue}
+if(o.x<-50)obstacles.splice(i,1)}
+for(let i=items.length-1;i>=0;i--){var it=items[i];it.x-=4;it.rot+=0.07;
+if(player.x<it.x+it.w&&player.x+player.w>it.x&&player.y<it.y+it.h&&player.y+player.h>it.y){
+  score+=2;addParticle(it.x,it.y,"#ffd166");showToast("+2","#ffd166");items.splice(i,1);continue}
+if(it.x<-50)items.splice(i,1)}
+for(let i=particles.length-1;i>=0;i--){var p=particles[i];p.x+=p.vx;p.y+=p.vy;p.life--;if(p.life<=0)particles.splice(i,1)}
+timeLeft-=1/60;if(timeLeft<=0){gameOver=true;document.getElementById("restart").style.display="block"}
+document.getElementById("score").textContent=ITEM_EMOJI+" "+score;
+}
+function draw(){
+if(worldImg){ctx.drawImage(worldImg,(-scrollX*0.3)%W,0,W,H);ctx.drawImage(worldImg,(-scrollX*0.3)%W+W,0,W,H);ctx.fillStyle="rgba(0,0,0,0.18)";ctx.fillRect(0,0,W,H)}
+else{let grd=ctx.createLinearGradient(0,0,0,H);grd.addColorStop(0,BG_TOP);grd.addColorStop(1,BG_BOT);ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);
+ctx.fillStyle="rgba(255,255,255,0.25)";for(let i=0;i<35;i++){let sx=((i*173-scrollX*0.5)%W+W)%W,sy=(i*97+30)%(H-150);ctx.beginPath();ctx.arc(sx,sy,(i%3)+1,0,Math.PI*2);ctx.fill()}}
+ctx.fillStyle="rgba(80,60,120,0.7)";ctx.fillRect(0,GROUND,W,H-GROUND);
+ctx.fillStyle="rgba(255,255,255,0.15)";for(let i=0;i<8;i++){let gx=((i*73-scrollX)%W+W)%W;ctx.fillRect(gx,GROUND+10,40,4)}
+obstacles.forEach(o=>{ctx.save();ctx.translate(o.x+o.w/2,o.y+o.h/2);ctx.font="32px serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.shadowColor="#ff5566";ctx.shadowBlur=12;ctx.fillText(HAZARD_EMOJI,0,0);ctx.restore()});
+items.forEach(it=>{ctx.save();ctx.translate(it.x+it.w/2,it.y+it.h/2);ctx.rotate(it.rot);ctx.font="28px serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(ITEM_EMOJI,0,0);ctx.restore()});
+particles.forEach(p=>{ctx.globalAlpha=p.life/30;ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill()});ctx.globalAlpha=1;
+if(charImg){ctx.save();ctx.shadowColor=CHAR_COLOR;ctx.shadowBlur=18;ctx.drawImage(charImg,player.x,player.y,player.w,player.h);ctx.restore()}
+else{ctx.font="40px serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(CHAR_EMOJI,player.x+player.w/2,player.y+player.h/2);ctx.shadowColor=CHAR_COLOR;ctx.shadowBlur=20;ctx.strokeStyle=CHAR_COLOR;ctx.lineWidth=2;ctx.strokeRect(player.x-2,player.y-2,player.w+4,player.h+4);ctx.shadowBlur=0}
+if(gameOver){ctx.fillStyle="rgba(0,0,0,0.5)";ctx.fillRect(0,0,W,H);ctx.fillStyle="white";ctx.font="bold 36px sans-serif";ctx.textAlign="center";ctx.fillText("잘 달렸어!",W/2,H/2-30);ctx.font="24px sans-serif";ctx.fillText(ITEM_EMOJI+" "+score+"점!",W/2,H/2+20)}
+}
+function resetGame(){score=0;timeLeft=45;gameOver=false;obstacles=[];items=[];particles=[];player.y=GROUND-48;player.vy=0;player.onGround=true;document.getElementById("restart").style.display="none"}
+function loop(){update();draw();requestAnimationFrame(loop)}loop();
+</script></body></html>''')
+
+
+# ----------------------------------------------------------------------------
 # Registry — game_type → builder 함수
 # ----------------------------------------------------------------------------
 TEMPLATES = {}
@@ -269,6 +354,12 @@ def _dodge_html(**ctx):
 def _chase_html(**ctx):
     ctx.setdefault("friend_emoji", "🐰")
     return CHASE_TMPL.safe_substitute(**ctx)
+
+
+@register("jump")
+def _jump_html(**ctx):
+    ctx.setdefault("hazard_emoji", "🌵")
+    return JUMP_TMPL.safe_substitute(**ctx)
 
 
 # ----------------------------------------------------------------------------

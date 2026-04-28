@@ -390,8 +390,16 @@ async def chat_ws(websocket: WebSocket, child_id: str):
                 await asyncio.to_thread(storage.update_session_name, session_id, auto_name)
 
             # 게임 요청 감지 → AI가 템플릿 파라미터 결정 → 빌드
+            # 1차: 명시적 게임 생성 의도
             game_keywords = ['게임 만들', '게임 시작', '플레이', '놀자', '게임해', '시작해줘']
             is_game_request = any(kw in original_prompt for kw in game_keywords)
+            # 2차: 이미 게임이 있는 세션에서 메카닉 변경 의도 (새 게임 빌드)
+            mechanic_keywords = ['점프', '횡이동', '횡스크롤', '달리기', '장애물',
+                                 '피하', '친구 찾', '같이 놀', '바꿔줘', '다른 게임']
+            if not is_game_request:
+                has_existing_game = bool(await asyncio.to_thread(storage.list_games, session_id))
+                if has_existing_game and any(kw in original_prompt for kw in mechanic_keywords):
+                    is_game_request = True
             if is_game_request:
                 cards = await asyncio.to_thread(storage.list_cards, session_id)
                 card_jsons = [c['card_json'] for c in cards] if cards else []
@@ -403,13 +411,14 @@ async def chat_ws(websocket: WebSocket, child_id: str):
                     f"아이가 이렇게 말했어: \"{original_prompt}\"\n"
                     f"{card_summary}\n\n"
                     f"게임 메카닉 선택:\n"
-                    f"- collect: 떨어지는 아이템 모으기 (기본, 평화로운 분위기)\n"
-                    f"- dodge: 위험은 피하고 안전한 것만 모으기 (스릴, '피하기/위험/조심' 키워드)\n"
-                    f"- chase: 떠다니는 친구 따라잡아 손잡기 (사회적, '친구/같이/만나/잡기' 키워드)\n"
-                    f"입력에 명확한 키워드 없으면 collect.\n\n"
+                    f"- collect: 위에서 떨어지는 아이템 모으기 (기본, 평화로운)\n"
+                    f"- dodge: 위험은 피하고 안전한 것만 모음 (스릴, '피하기/위험/조심' 키워드)\n"
+                    f"- chase: 떠다니는 친구 따라잡아 손잡기 (사회적, '친구/같이/만나' 키워드)\n"
+                    f"- jump: 횡스크롤 점프 — 장애물 뛰어넘고 공중 아이템 줍기 (액션, '점프/횡이동/횡스크롤/달리기/장애물' 키워드)\n"
+                    f"입력에 명확한 키워드 없으면 collect. 의도 변경 요청('바꿔줘')이면 새 키워드를 우선.\n\n"
                     f"다음 JSON만 출력해 (다른 텍스트 절대 금지):\n"
-                    f'{{"game_type":"collect|dodge|chase","char_emoji":"이모지1개","item_emoji":"모을것이모지1개",'
-                    f'"hazard_emoji":"피할것이모지(dodge용,선택)","friend_emoji":"친구이모지(chase용,선택)",'
+                    f'{{"game_type":"collect|dodge|chase|jump","char_emoji":"이모지1개","item_emoji":"모을것이모지1개",'
+                    f'"hazard_emoji":"피할것이모지(dodge/jump용,선택)","friend_emoji":"친구이모지(chase용,선택)",'
                     f'"bg_theme":"우주|바다|숲|불|마을|하늘","item_name":"모을거이름"}}'
                 )
                 import asyncio as _a
@@ -461,6 +470,13 @@ async def chat_ws(websocket: WebSocket, child_id: str):
                         f"와, 친구 찾기 게임을 만들었어! 🎮\n\n"
                         f"방향키나 WASD로 움직여서 떠다니는 {friend}한테 다가가봐!\n\n"
                         f"45초 안에 친구 5명 모으면 성공!"
+                    )
+                elif game_type == "jump":
+                    hazard = game_params.get("hazard_emoji", "🌵")
+                    intro = (
+                        f"와, 횡스크롤 점프 게임을 만들었어! 🎮\n\n"
+                        f"스페이스/↑/탭으로 점프! {hazard}는 뛰어넘고, 공중의 {item}을(를) 잡아봐!\n\n"
+                        f"45초 안에 최대한 많이 모아보자!"
                     )
                 else:
                     intro = (
