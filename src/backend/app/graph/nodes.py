@@ -237,26 +237,6 @@ _SPEC_PARTS_PROMPT = (
     "반드시 player, spawns(1~3개), world, goal 모두 포함할 것."
 )
 
-SPEC_EDIT_SYSTEM = """너는 게임 spec JSON 패처야.
-현재 spec JSON과 아이의 수정 요청이 주어진다.
-요청에 해당하는 필드만 수정하고, 나머지는 그대로 둔다.
-반드시 완전한 spec JSON 객체 하나만 출력한다. 코드 펜스, 설명 텍스트 금지.
-
-수정 가이드:
-- "더 빠르게" / "빠르게" → spawns 각 speed를 1.3~1.5배, player.speed +1~2
-- "더 느리게" / "쉽게" → spawns 각 speed를 0.6~0.8배, player.speed -1
-- "어렵게" → spawn rate 1.3배, time_limit -10
-- "시간 늘려" / "시간 더" → goal.time_limit += 15 (최대 180)
-- "시간 줄여" → goal.time_limit -= 10 (최소 10)
-- "적 추가" / "위험 추가" → spawns에 hazard role spawn 추가
-- "아이템 추가" / "별 더" → spawns에 item role spawn 추가 또는 rate *= 1.4
-- "점프 게임" → player.movement = "jump", gravity = 0.7, jump_v = -13
-- "횡스크롤" → world.scroll = "horizontal"
-- "수영" / "바닷속" → player.movement = "swim"
-
-출력은 반드시 {{ 로 시작해 }} 로 끝나는 단일 JSON."""
-
-
 # ── 4. 새 게임 스펙 생성 ──
 async def generate_spec_node(state: EduSessionState) -> dict:
     from app.llm import get_spec_llm
@@ -550,29 +530,3 @@ def _extract_spec_json(text: str) -> dict:
     return {}
 
 
-def _extract_and_merge_spec(text: str, current_spec: dict) -> dict:
-    patched = _extract_spec_json(text)
-    if not patched:
-        return current_spec
-
-    merged = dict(current_spec)
-
-    # spawns: LLM이 수정한 경우 통째로 교체 (부분 병합 시 순서·타입 충돌 방지)
-    if "spawns" in patched:
-        merged["spawns"] = patched["spawns"]
-
-    # player / goal / world: field-level merge (LLM이 누락한 필드는 원본 유지)
-    for section in ("player", "goal", "world"):
-        if section in patched:
-            base = merged.get(section, {}) if isinstance(merged.get(section), dict) else {}
-            merged[section] = {**base, **patched[section]}
-
-    # 나머지 최상위 키 (char_sprite, title_msg 등 LLM이 포함하지 않은 필드 유지)
-    for k, v in patched.items():
-        if k not in ("spawns", "player", "goal", "world"):
-            merged[k] = v
-
-    # LLM이 패치에 포함하지 않은 최상위 필드는 current_spec에서 그대로 보존됨
-    # (merged = dict(current_spec)으로 시작했으므로)
-
-    return merged
