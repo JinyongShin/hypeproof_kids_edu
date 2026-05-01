@@ -18,7 +18,7 @@ _DATA_DIR = _BACKEND_ROOT / "data"
 _MAX_CARDS_PER_SESSION = 10
 
 # 게임 관련 키워드 (기존 백업 코드에서 이식)
-_GAME_CREATE_KEYWORDS = ["게임 만들", "게임 시작", "플레이", "놀자", "게임해", "시작해줘", "만들어줘"]
+_GAME_CREATE_KEYWORDS = ["게임 만들", "게임 시작", "플레이", "놀자", "게임해", "시작해줘"]
 _GAME_EDIT_KEYWORDS = [
     "더 빠르게", "더 느리게", "어렵게", "쉽게", "적 추가", "아이템 추가",
     "시간 늘려", "시간 줄여", "점프 게임", "횡스크롤",
@@ -252,6 +252,10 @@ async def generate_spec_node(state: EduSessionState) -> dict:
     if world_card:
         card_summary += f"\n세계: {world_card.get('name', '?')} — {world_card.get('description', '')}"
 
+    ctx = state.get("session_context") or ""
+    if ctx:
+        card_summary = f"[세션 요약] {ctx}\n" + card_summary
+
     full_prompt = card_summary + "\n요청: " + user_msg + _SPEC_PARTS_PROMPT
 
     response = await llm.ainvoke([
@@ -344,9 +348,18 @@ async def edit_code_node(state: EduSessionState) -> dict:
         )),
     ]
 
+    input_tokens = 0
+    output_tokens = 0
     try:
         result = await structured_llm.ainvoke(messages)
         new_html = result.html if (result and result.html) else current_html
+        # structured_output은 AIMessage가 아닌 Pydantic 객체를 반환하므로
+        # usage는 with_structured_output 래퍼 내부 raw_response에서 추출 시도
+        raw = getattr(result, "__pydantic_fields_set__", None)
+        if hasattr(result, "_raw_response"):
+            usage = getattr(result._raw_response, "usage_metadata", {}) or {}
+            input_tokens = usage.get("input_tokens", 0)
+            output_tokens = usage.get("output_tokens", 0)
     except Exception as e:
         logger.warning(f"edit_code_node 구조화 출력 실패, 원본 유지: {e}")
         new_html = current_html
@@ -360,7 +373,8 @@ async def edit_code_node(state: EduSessionState) -> dict:
         state.get("child_id", ""),
         state.get("tenant_id", "default"),
         "edit_code",
-        0, 0,  # structured_output은 usage_metadata 미지원
+        input_tokens,
+        output_tokens,
     )
 
     return {"current_game_html": new_html}
