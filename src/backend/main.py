@@ -22,8 +22,6 @@ from claude_runner import StreamEvent, _DATA_DIR, reset_session, stream_claude
 from genai_runner import generate_card, generate_image, generate_spec
 from qr_generator import generate_qr_png
 
-ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "root")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "0000")
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
 logger = logging.getLogger(__name__)
@@ -105,9 +103,14 @@ def _migrate_json_to_sqlite() -> None:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     storage.init_db()
+    from app.auth import ensure_default_admin
+    await ensure_default_admin()
     await asyncio.to_thread(_migrate_json_to_sqlite)
-    logger.info("Kids Edu Backend 시작")
-    yield
+    from app.graph.graph import graph_lifespan
+    async with graph_lifespan() as graph:
+        app.state.graph = graph
+        logger.info("Kids Edu Backend 시작")
+        yield
     logger.info("Kids Edu Backend 종료")
 
 
@@ -136,11 +139,14 @@ async def health():
 
 @app.post("/auth/login")
 async def login(body: dict):
+    from app.auth import authenticate
     username = body.get("username", "")
     password = body.get("password", "")
-    if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
-        return {"child_id": username}
-    raise HTTPException(status_code=401, detail="아이디 또는 비밀번호가 틀렸어요")
+    result = await authenticate(username, password)
+    if result is None:
+        raise HTTPException(status_code=401, detail="아이디 또는 비밀번호가 틀렸어요")
+    # child_id 키 유지 — 프론트엔드 호환
+    return {"child_id": username, **result}
 
 
 # ---------------------------------------------------------------------------
@@ -402,10 +408,14 @@ async def chat_ws(websocket: WebSocket, child_id: str):
     클라이언트 → 서버: {"prompt": "별을 모으는 게임 만들어줘"}
     서버 → 클라이언트:
         {"type": "text",  "chunk": "..."}
-        {"type": "game",  "game_url": "http://..."}
-        {"type": "done",  "hint": "💡 ...", "session_id": "...", "game_url": "http://..."}
+        {"type": "card",  "card_json": "...", "card_url": "..."}
+        {"type": "game",  "html": "...", "game_url": "http://..."}
+        {"type": "done",  "hint": "...", "session_id": "...", "game_url": "http://..."}
         {"type": "error", "chunk": "오류 메시지"}
     """
+    from ws_handler import handle_chat_message
+    import re as _re
+
     session_id = websocket.query_params.get("session_id", "").strip()
     await websocket.accept()
     if not session_id:
@@ -413,7 +423,8 @@ async def chat_ws(websocket: WebSocket, child_id: str):
         return
     logger.info("[%s::%s] WebSocket 연결", child_id, session_id)
 
-    assistant_text = ""
+    graph = app.state.graph
+
     try:
         while True:
             raw = await websocket.receive_text()
@@ -428,8 +439,6 @@ async def chat_ws(websocket: WebSocket, child_id: str):
                 await websocket.send_json({"type": "error", "chunk": "뭐라고 말하고 싶은지 입력해줘!"})
                 continue
 
-            # 이모지만 입력 또는 의미 없는 입력 차단 (한글/영문 최소 2자)
-            import re as _re
             alpha_count = len(_re.sub(r'[^가-힣a-zA-Z0-9]', '', original_prompt))
             if alpha_count < 2:
                 await websocket.send_json({"type": "error", "chunk": "조금 더 자세히 말해줄래? 어떤 캐릭터를 만들고 싶은지 알려줘!"})
@@ -437,233 +446,17 @@ async def chat_ws(websocket: WebSocket, child_id: str):
 
             logger.info("[%s::%s] 프롬프트 수신: %s", child_id, session_id, original_prompt[:60])
 
-            # Fix: user 메시지는 원본 프롬프트로 저장 (주입 전)
             await asyncio.to_thread(storage.append_message, session_id, child_id, "user", original_prompt)
 
-            # 첫 메시지면 세션 이름 자동 갱신
             count = await asyncio.to_thread(storage.message_count, session_id)
             if count == 1:
                 auto_name = original_prompt[:15].strip()
                 await asyncio.to_thread(storage.update_session_name, session_id, auto_name)
 
-            # 게임 요청 감지 → AI가 템플릿 파라미터 결정 → 빌드
-            # 1차: 명시적 게임 생성 의도
-            game_keywords = ['게임 만들', '게임 시작', '플레이', '놀자', '게임해', '시작해줘']
-            is_game_request = any(kw in original_prompt for kw in game_keywords)
-            # 2차: 이미 게임이 있는 세션에서 메카닉 변경 의도 (새 게임 빌드)
-            mechanic_keywords = ['점프', '횡이동', '횡스크롤', '달리기', '장애물',
-                                 '피하', '친구 찾', '같이 놀', '바꿔줘', '다른 게임']
-            if not is_game_request:
-                has_existing_game = bool(await asyncio.to_thread(storage.list_games, session_id))
-                if has_existing_game and any(kw in original_prompt for kw in mechanic_keywords):
-                    is_game_request = True
-            if is_game_request:
-                # === Spec composition 방식 ===
-                # LLM에게 spec JSON을 emit하게 함. 4 메카닉 enumeration 대신
-                # 부품(player movement, spawns[], world, goal)을 자유롭게 조합.
-                cards = await asyncio.to_thread(storage.list_cards, session_id)
-                latest_char = await asyncio.to_thread(
-                    storage.get_latest_card_by_type, session_id, "character"
-                )
-                latest_world = await asyncio.to_thread(
-                    storage.get_latest_card_by_type, session_id, "world"
-                )
-                char_card_obj = {}
-                world_card_obj = {}
-                if latest_char:
-                    try:
-                        char_card_obj = json.loads(latest_char["card_json"])
-                    except Exception:
-                        pass
-                if latest_world:
-                    try:
-                        world_card_obj = json.loads(latest_world["card_json"])
-                    except Exception:
-                        pass
-                card_summary = ""
-                if char_card_obj:
-                    card_summary += f"\n캐릭터: {char_card_obj.get('name', '?')} — {char_card_obj.get('description', '')}"
-                if world_card_obj:
-                    card_summary += f"\n세계: {world_card_obj.get('name', '?')} — {world_card_obj.get('description', '')}"
-
-                # 기존 게임 spec 추출 (수정 요청 시 이전 spec 보존)
-                current_spec_str = ""
-                try:
-                    existing_games = await asyncio.to_thread(storage.list_games, session_id)
-                    if existing_games:
-                        latest_game_path = Path(existing_games[-1].get("file_path", ""))
-                        if latest_game_path.exists():
-                            game_html_src = latest_game_path.read_text(encoding="utf-8")
-                            spec_m = _re.search(r'const SPEC = (\{[\s\S]*?\});', game_html_src)
-                            if spec_m:
-                                try:
-                                    spec_for_prompt = json.loads(spec_m.group(1))
-                                    # SVG 필드 제거 — 프롬프트 단축 + LLM 혼란 방지
-                                    spec_for_prompt.get("world", {}).pop("bg_svg", None)
-                                    spec_for_prompt.pop("char_sprite", None)
-                                    current_spec_str = (
-                                        f"\n\n현재 게임 spec (이걸 기반으로 수정해, 바꾸지 않는 필드는 그대로 유지):\n"
-                                        f"{json.dumps(spec_for_prompt, ensure_ascii=False)}"
-                                    )
-                                except json.JSONDecodeError:
-                                    pass
-                except Exception:
-                    logger.warning("[%s::%s] 기존 spec 추출 실패, 새 spec 생성", child_id, session_id)
-
-                # spec emitter prompt — 부품 라이브러리를 LLM에 전달
-                spec_prompt = (
-                    f'아이가 이렇게 말했어: "{original_prompt}"\n'
-                    f'{card_summary}'
-                    f'{current_spec_str}\n\n'
-                    f'다음 JSON spec만 출력해 (다른 텍스트·마크다운 금지). 부품 조합으로 게임을 정의:\n\n'
-                    f'## player.movement (캐릭터 이동 방식)\n'
-                    f'- "free": WASD/화살표 4방향 자유 이동 (기본)\n'
-                    f'- "x_fixed": x 고정, y만 이동 (수직 점프 게임)\n'
-                    f'- "jump": 좌우 + 점프(스페이스). 중력 적용. 횡스크롤 점프 게임 ("점프/횡이동" 단어)\n'
-                    f'- "swim": 4방향 + 중력 0 (떠다님)\n\n'
-                    f'## spawns[] (등장 객체. 0~6개 자유)\n'
-                    f'각 spawn = {{role, sprite, from, motion, rate, speed, score_delta, respawn_on_collect}}\n'
-                    f'- role: "item"(모음+1), "hazard"(피함-1), "friend"(만남+1, respawn 추천)\n'
-                    f'- sprite: 이모지 1개 (없으면 자동)\n'
-                    f'- from: "top"(위에서) "bottom"(아래에서) "left"(좌측에서) "right"(우측에서) '
-                    f'"alternating_lr"(좌우 번갈아) "static_grid_bottom"(바닥에 줄지어) "wandering"(임의)\n'
-                    f'- motion: "fall" "rise" "horizontal" "sine" "static" "wandering"\n'
-                    f'- rate: 0.005~0.08 (분당 spawn 빈도). static_*은 무시.\n'
-                    f'- speed: 0.5~5\n\n'
-                    f'## world\n'
-                    f'- scroll: "none" | "horizontal" | "parallax" (점프 게임은 horizontal 추천)\n\n'
-                    f'## goal\n'
-                    f'- time_limit: 20~90 (초). 기본 45.\n'
-                    f'- target_score: 0~30. 0=무제한, N=N점이면 조기 성공.\n\n'
-                    f'## 예시 매핑\n'
-                    f'- "별 모으기 게임" → free + spawns[item from=top motion=fall sprite=⭐]\n'
-                    f'- "위험 피하면서 보석" → free + spawns[item from=top, hazard from=top]\n'
-                    f'- "친구 5명 찾기" → free + spawns[friend wandering, respawn] + goal.target_score=5\n'
-                    f'- "장애물 점프 게임" → jump + spawns[hazard from=right horizontal] + scroll=horizontal\n'
-                    f'- "좌우에서 줄넘기 피하면서 바닥 목화" → jump + spawns[hazard alternating_lr horizontal, item static_grid_bottom static]\n\n'
-                    f'아이의 의도를 부품 조합으로 옮겨. JSON만 출력:\n'
-                    f'{{"player":{{"movement":"..."}},"spawns":[...],"world":{{"scroll":"none"}},"goal":{{"time_limit":45,"target_score":0}}}}'
-                )
-                # generate_spec() — TUTOR.md 카드 페르소나 안 쓰고 spec 전용 system prompt만 사용
-                spec_raw = {}
-                try:
-                    spec_text = await generate_spec(spec_prompt)
-                    if spec_text:
-                        # 가장 큰 JSON 객체 매치 (LLM이 마크다운/설명을 섞어 보내도 추출)
-                        jm = _re.search(r'\{[\s\S]*\}', spec_text)
-                        if jm:
-                            try:
-                                spec_raw = json.loads(jm.group())
-                            except json.JSONDecodeError:
-                                logger.warning("[%s::%s] spec JSON 파싱 실패, 폴백 사용",
-                                               child_id, session_id)
-                except Exception:
-                    logger.exception("[%s::%s] spec emit 실패", child_id, session_id)
-
-                # spec 빌드 (검증·default 채움은 game_engine 내부에서)
-                from game_engine import build_game_with_spec
-                game_html = await asyncio.to_thread(
-                    build_game_with_spec, spec_raw, char_card_obj, world_card_obj
-                )
-
-                import time as _time
-                game_id = f"game_{int(_time.time() * 1000)}"
-                game_dir = (_DATA_DIR / "games" / child_id / session_id).resolve()
-                games_base = (_DATA_DIR / "games").resolve()
-                game_url = ""
-                if game_dir.is_relative_to(games_base):
-                    game_dir.mkdir(parents=True, exist_ok=True)
-                    game_file = game_dir / f"{game_id}.html"
-                    game_file.write_text(game_html, encoding="utf-8")
-                    game_url = f"{os.getenv('BACKEND_BASE_URL', 'http://localhost:8000')}/games/{child_id}/{session_id}/{game_id}"
-                    try:
-                        await asyncio.to_thread(
-                            storage.add_game, session_id, child_id, game_id, str(game_file), game_url
-                        )
-                    except Exception:
-                        logger.exception("[%s::%s] 게임 메타 DB 등록 실패", child_id, session_id)
-
-                # 인트로 — spec에서 추출된 정보 기반
-                from game_engine import validate_spec as _vs
-                validated = _vs(spec_raw, char_svg=char_card_obj.get("image_svg", ""),
-                                world_svg=world_card_obj.get("image_svg", ""),
-                                char_name=char_card_obj.get("name", "모험가"))
-                mv = validated["player"]["movement"]
-                tlim = validated["goal"]["time_limit"]
-                tgt = validated["goal"]["target_score"]
-                control_hint = "스페이스/↑/탭 = 점프, ←→ = 좌우" if mv == "jump" else "방향키나 WASD로 움직여"
-                goal_msg = f"{tlim}초 안에 " + (f"{tgt}점 모으면 끝!" if tgt > 0 else "최대한 많이!") if tlim > 0 else (f"{tgt}점 모으면 끝!" if tgt > 0 else "마음껏!")
-                intro = f"와, 게임을 만들었어! 🎮\n\n{control_hint}\n\n{goal_msg}"
-
-                await websocket.send_json({"type": "text", "chunk": intro})
-                await websocket.send_json({"type": "game", "html": game_html, "game_url": game_url})
-                await websocket.send_json({"type": "done", "hint": "게임을 해보고, 다음엔 '더 빠르게 해줘' 같이 바꿔봐!"})
-                continue
-
-            # 캐릭터·세계 카드 컨텍스트 동시 주입 — 세계 구축 단계에서 캐릭터 SVG를 보존·수정하도록.
-            prompt = original_prompt
-            latest_character = await asyncio.to_thread(
-                storage.get_latest_card_by_type, session_id, "character"
-            )
-            latest_world = await asyncio.to_thread(
-                storage.get_latest_card_by_type, session_id, "world"
-            )
-            context_lines = []
-            if latest_character:
-                context_lines.append(f"이전 캐릭터: {latest_character['card_json']}")
-            if latest_world:
-                context_lines.append(f"이전 세계: {latest_world['card_json']}")
-            if context_lines:
-                prompt = (
-                    f"{original_prompt}\n\n---\n"
-                    + "\n".join(context_lines)
-                    + "\n수정 요청이면 위 카드를 기반으로 고쳐줘. 완전히 새 카드 요청이면 무시하고 새로 만들어."
-                )
-
-            assistant_text = ""
-            try:
-                async for event in generate_card(prompt, child_id, session_id):
-                    payload: dict = {"type": event.type}
-                    if event.type == "text":
-                        assistant_text += event.chunk or ""
-                        payload["chunk"] = event.chunk
-                    elif event.type == "card":
-                        payload["card_json"] = event.card_json
-                        payload["card_url"] = event.card_url
-                    elif event.type == "game":
-                        payload["html"] = event.html
-                        payload["game_url"] = event.game_url
-                    elif event.type == "done":
-                        payload["hint"] = event.hint
-                        payload["session_id"] = event.session_id
-                        payload["game_url"] = event.game_url
-                        # Fix 1: assistant 메시지 done 시점에 저장
-                        try:
-                            await asyncio.to_thread(
-                                storage.append_message, session_id, child_id, "assistant", assistant_text
-                            )
-                        except Exception:
-                            logger.exception("[%s::%s] assistant 메시지 저장 실패", child_id, session_id)
-                        assistant_text = ""  # 저장 완료 후 초기화
-                    elif event.type == "error":
-                        payload["chunk"] = event.chunk
-
-                    await websocket.send_json(payload)
-
-            except Exception as inner_exc:
-                logger.exception("[%s::%s] stream_claude 내부 오류: %s", child_id, session_id, inner_exc)
-                await websocket.send_json({"type": "error", "chunk": "뭔가 잘못됐어. 다시 한 번 해볼까? 😅"})
+            await handle_chat_message(websocket, original_prompt, child_id, session_id, graph)
 
     except WebSocketDisconnect:
         logger.info("[%s::%s] WebSocket 연결 해제", child_id, session_id)
-        # Fix 1: 연결 해제 시 부분 응답 저장
-        if assistant_text:
-            try:
-                await asyncio.to_thread(
-                    storage.append_message, session_id, child_id, "assistant", assistant_text
-                )
-            except Exception:
-                logger.exception("[%s::%s] 부분 응답 저장 실패", child_id, session_id)
     except Exception as e:
         logger.exception("[%s::%s] WebSocket 오류: %s", child_id, session_id, e)
         try:

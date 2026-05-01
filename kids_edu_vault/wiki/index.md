@@ -2,7 +2,7 @@
 type: meta
 title: "Index"
 created: 2026-04-12
-updated: 2026-04-19
+updated: 2026-05-01
 tags:
   - meta/index
 ---
@@ -32,7 +32,7 @@ tags:
 - [[2026-04-19-curriculum-v0.3]] (2026-04-19) — 커리큘럼 v0.3 전문 요약
 - [[2026-04-17-jay-jinyong-call]] (2026-04-17) · [[2026-04-12-jay-workshop-structure]] · [[2026-04-11-call-note]] · [[2026-02-09-meeting]] · [[2026-01-26-meeting]] · [[2026-01-19-meeting]] · [[2026-01-12-meeting]] · [[2026-01-05-meeting]]
 
-### Decisions (14)
+### Decisions (17)
 - [[decisions/_index|_index]]
 - [[regular-meeting-monday-930]] · [[discord-for-comms]] · [[podcast-format-host-panels-guest]] · [[markdown-for-knowledge-share]] · [[ai-onboarding-role]] · [[fast-implementation-mode]] · [[combat-vs-cooperative-framing]]
 - Pivot (2026-04-12): [[pivot-to-chat-preview-wrapper]] · [[iframe-sandbox-over-webcontainers]] · [[parent-gated-signup-first]]
@@ -42,6 +42,9 @@ tags:
 - Mobile UX (2026-04-13): [[mobile-swipe-navigation]]
 - Frontend UX (2026-04-13): [[click-to-send-ui]]
 - Auth + Session + Game Persistence (2026-04-13): [[auth-session-game-persistence]]
+- Backend Rewrite (2026-05-01): [[adr-langgraph-gemini-backend]]
+- Deployment (2026-05-01): [[adr-container-deployment]] (Langfuse 관측성 섹션 포함)
+- Multitenant Schema (2026-05-01): [[adr-multitenant-schema]]
 
 ### Deliverables (11)
 - [[deliverables/_index|_index]]
@@ -51,12 +54,13 @@ tags:
 - [[curriculum-v0.3]] — 커리큘럼 v0.3 산출물 트래킹 (봉호·지웅, 2026-04-19 delivered)
 - [[pilot-gemini-api-key]] · [[pilot-server-domain]] · [[pilot-oauth-setup]] · [[pilot-cline-gemini-integration]] · [[pilot-game-starter-template]] · [[pilot-rehearsal-late-april]] · [[pilot-operator-guide]]
 
-### Specs (5)
+### Specs (6)
 - [[specs/_index|_index]]
 - [[pilot-env-design]] · [[pilot-curriculum-adapted]]
 - [[curriculum-wizard-v1]] (2026-04-20) — 나만의 마법 게임 만들기 커리큘럼 상세 스펙 (게임 타이틀 카드)
 - [[ai-prompting-literacy-input]] (2026-04-12) — BH 커리큘럼 인풋: 블록별 AI 프롬프팅 스킬 매핑
 - [[product-requirements]] (2026-04-12) — JY/Ryan 공통 상품 요구사항 R1-R9 + 충족 현황
+- [[langfuse-observability]] (2026-05-01) — Langfuse 셀프호스팅 관측성 설정·LangGraph 통합 스펙
 
 ### Components (7)
 - [[components/_index|_index]]

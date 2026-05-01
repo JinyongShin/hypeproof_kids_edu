@@ -13,16 +13,28 @@ tags:
 
 ---
 
-## 현재 상태: 파일럿 D-4 — 2026-05-05 워크샵
+## 현재 상태: LangGraph 백엔드 구현 완료 — 파일럿 D-4 (2026-05-05)
 
-### ✅ 오늘 완료 (2026-05-01)
+### ✅ 완료된 작업 (2026-05-01)
 
-**게임 버그 3종 수정** → `fix/game-bug-3종` 브랜치 커밋
-- Bug 1: 게임 수정 시 HTML 소스코드 채팅 노출 → 수정 완료
-- Bug 2: 게임 생성 후 캐릭터 카드 소실 → 🎴/🎮 토글 추가
-- Bug 3: 게임 수정 요청 시 새 게임 생성 → spec 주입으로 수정
+**LangGraph + Gemini 백엔드 전체 구현** (`feature/langgraph-gemini` 브랜치)
+- Claude CLI subprocess 제거 → LangGraph StateGraph 전환 완료
+- 8개 노드 구현: classify_intent, generate_card, save_card, generate_spec, edit_spec, validate_and_build, save_game, chitchat
+- 게임 편집 루프: edit_spec_node가 current_spec deep-merge 패치 → "더 빠르게 해줘" 정상 동작
+- AsyncSqliteSaver 체크포인터로 대화 맥락 영속화
+- 64개 테스트 전체 통과 (MOCK_LLM=1 사용)
+- Docker Compose 배포: backend/frontend/langfuse/langfuse-db 4개 서비스
+- Langfuse 관측성: 트레이스 정상 수집 확인 (langfuse/langfuse:2.95.11 버전 핀 고정)
 
-상세: [[game-bug-fix-2026-05-01]]
+### 현재 스택
+- **백엔드**: FastAPI + LangGraph + Gemini 2.5 Flash (langchain-google-genai)
+- **관측성**: Langfuse v2 self-hosted (localhost:3002)
+- **배포**: Docker Compose (로컬) / 추후 fly.io VPS
+
+### 다음 단계
+- MOCK_LLM=0으로 실제 Gemini 연동 E2E 테스트
+- fly.io VPS 배포
+- 파일럿 D-day 준비
 
 ---
 

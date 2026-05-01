@@ -45,5 +45,8 @@ src/backend/.claude
 # Playwright / 테스트 결과물
 test-results/
 
+# 원본 백업 — 참고용, 커밋 불필요
+src/_backup_original/
+
 # 런타임 백엔드 URL 오버라이드 — Cloudflare quick tunnel은 재시작마다 URL이 바뀌므로 .example만 트래킹
 src/frontend/public/_backend.js
