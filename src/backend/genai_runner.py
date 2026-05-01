@@ -6,6 +6,7 @@ Gemini 2.5 Flash (텍스트) + 이미지 생성 (Nano Banana) 통합.
 import json
 import logging
 import os
+import re
 import time
 import asyncio
 from dataclasses import dataclass
@@ -100,6 +101,13 @@ def _extract_card_json(text: str) -> "str | None":
         except json.JSONDecodeError:
             pass
     return None
+
+
+def _strip_code_for_chat(text: str) -> str:
+    """채팅 버블용 텍스트: 코드 블록·bare HTML 제거."""
+    result = re.sub(r'```[\s\S]*?```', '', text).strip()
+    result = re.sub(r'<!DOCTYPE[\s\S]*?</html>', '', result, flags=re.IGNORECASE).strip()
+    return result
 
 
 def _friendly_error(kind: str) -> str:
@@ -228,7 +236,9 @@ async def generate_card(prompt: str, child_id: str, session_id: str):
 
         if response_text:
             full_text = response_text
-            yield StreamEvent(type="text", chunk=full_text)
+            display = _strip_code_for_chat(full_text)
+            if display:
+                yield StreamEvent(type="text", chunk=display)
     except Exception as glm_err:
         logger.warning("[%s::%s] GLM 실패, Pollinations 폴백: %s", child_id, session_id, glm_err)
         # 2차: Pollinations.ai 폴백
@@ -236,7 +246,9 @@ async def generate_card(prompt: str, child_id: str, session_id: str):
             response_text = await asyncio.to_thread(_pollinations_chat, system_prompt, prompt)
             if response_text:
                 full_text = response_text
-                yield StreamEvent(type="text", chunk=full_text)
+                display = _strip_code_for_chat(full_text)
+                if display:
+                    yield StreamEvent(type="text", chunk=display)
         except Exception as poll_err:
             logger.error("[%s::%s] Pollinations도 실패: %s", child_id, session_id, poll_err)
 
