@@ -82,13 +82,20 @@ export default function CardPreview({
   const [latestCharacter, setLatestCharacter] = useState<CardData | null>(null);
   const [latestWorld, setLatestWorld] = useState<CardData | null>(null);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [showGame, setShowGame] = useState(true);
 
   // 세션 전환 시 합성 슬롯과 저장 상태 리셋
   useEffect(() => {
     setLatestCharacter(null);
     setLatestWorld(null);
     setSaveStatus("idle");
+    setShowGame(true);
   }, [sessionId]);
+
+  // 새 게임 도착 시 자동으로 게임 뷰 표시
+  useEffect(() => {
+    if (gameHtml) setShowGame(true);
+  }, [gameHtml]);
 
   // 새 카드 도착 → 타입별 슬롯 갱신
   useEffect(() => {
@@ -141,8 +148,8 @@ export default function CardPreview({
     );
   }
 
-  // 게임 HTML — 카드/합성보다 우선
-  if (gameHtml) {
+  // 게임 HTML — showGame=true면 게임 iframe, false면 카드 뷰로 fall-through
+  if (gameHtml && showGame) {
     const canSave = Boolean(gameUrl && childId && sessionId);
     const saveLabel =
       saveStatus === "saved"
@@ -178,6 +185,12 @@ export default function CardPreview({
             {saveLabel}
           </button>
         )}
+        <button
+          onClick={() => setShowGame(false)}
+          className="absolute bottom-3 left-3 z-10 rounded-full bg-white/90 px-3 py-1.5 text-xs text-gray-700 shadow-sm backdrop-blur-sm border border-gray-200 hover:bg-white"
+        >
+          🎴 카드 보기
+        </button>
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-white/70 backdrop-blur-sm">
             <div className="h-12 w-12 animate-spin rounded-full border-4 border-violet-200 border-t-violet-500" />
@@ -194,6 +207,14 @@ export default function CardPreview({
     const worldSvg = sanitizeSvg(latestWorld!.image_svg);
     return (
       <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-violet-50 to-sky-50 p-6">
+        {gameHtml && (
+          <button
+            onClick={() => setShowGame(true)}
+            className="absolute top-3 right-3 z-10 rounded-full bg-violet-500 px-3 py-1.5 text-xs text-white shadow-sm hover:bg-violet-600"
+          >
+            🎮 게임 보기
+          </button>
+        )}
         <div className="w-full max-w-sm bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
           {/* 합성 캔버스 — 배경(world) + 캐릭터(중앙) */}
           <div className="bg-gradient-to-r from-violet-400 to-sky-400 px-6 py-8 text-center">
@@ -251,6 +272,14 @@ export default function CardPreview({
   if (card) {
     return (
       <div className="relative h-full w-full flex items-center justify-center bg-gradient-to-br from-violet-50 to-sky-50 p-6">
+        {gameHtml && (
+          <button
+            onClick={() => setShowGame(true)}
+            className="absolute top-3 right-3 z-10 rounded-full bg-violet-500 px-3 py-1.5 text-xs text-white shadow-sm hover:bg-violet-600"
+          >
+            🎮 게임 보기
+          </button>
+        )}
         <div className="w-full max-w-sm bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
           <div className="bg-gradient-to-r from-violet-400 to-sky-400 px-6 py-8 text-center relative">
             {safeSvg ? (
