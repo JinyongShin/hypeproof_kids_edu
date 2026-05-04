@@ -280,6 +280,97 @@ async def generate_card(prompt: str, child_id: str, session_id: str):
         yield StreamEvent(type="error", chunk=_friendly_error("generic"))
 
 
+async def generate_spec(prompt: str):
+    """게임 spec JSON 전용 LLM 호출. TUTOR.md(카드 페르소나)를 system prompt로 쓰지 않고
+    미니멀한 spec 전용 지시만 사용. generate_card와의 system prompt 충돌 회피.
+
+    반환: spec JSON 문자열 1개 (그 외 텍스트 없음). 실패 시 빈 문자열.
+    """
+    SPEC_SYSTEM = (
+        "너는 게임 spec JSON generator다.\n"
+        "오직 하나의 JSON 객체만 출력한다. 다음을 절대 출력하지 않는다:\n"
+        "- 인사말, 설명, 마크다운\n"
+        "- ```json / ```html / ```javascript 등 코드 펜스\n"
+        "- card_type 필드 (이건 카드 페르소나 출력. spec과 무관)\n"
+        "- HTML / JavaScript 코드\n\n"
+        "출력은 반드시 `{`로 시작해 `}`로 끝나는 단일 JSON 객체."
+    )
+
+    if MOCK_MODE:
+        return '{"player":{"movement":"free"},"spawns":[{"role":"item","from":"top","motion":"fall","sprite":"⭐","rate":0.03}],"goal":{"time_limit":45,"target_score":0}}'
+
+    ZAI_API_KEY = os.getenv("ZAI_API_KEY", "1edec351dba64a08a4838bd5993a9322.r7Z6EBjcZJxmpKNL")
+    ZAI_BASE_URL = os.getenv("ZAI_BASE_URL", "https://api.z.ai/api/coding/paas/v4/chat/completions")
+    ZAI_MODEL = os.getenv("ZAI_MODEL", "glm-5")
+
+    import urllib.request
+    import json as _json
+
+    def _glm_call(system_prompt, user_prompt):
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ]
+        body = _json.dumps({
+            "model": ZAI_MODEL,
+            "messages": messages,
+            "temperature": 0.5,  # spec 안정성 위해 낮춤
+            "max_tokens": 1024,
+            "stream": True,
+        }).encode("utf-8")
+        req = urllib.request.Request(
+            ZAI_BASE_URL,
+            data=body,
+            headers={"Content-Type": "application/json",
+                     "Authorization": f"Bearer {ZAI_API_KEY}"},
+        )
+        chunks = []
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            for line in resp:
+                line = line.decode("utf-8").strip()
+                if line.startswith("data: ") and line != "data: [DONE]":
+                    try:
+                        d = _json.loads(line[6:])
+                        delta = d.get("choices", [{}])[0].get("delta", {})
+                        c = delta.get("content", "")
+                        if c:
+                            chunks.append(c)
+                    except Exception:
+                        pass
+        return "".join(chunks)
+
+    def _pollinations_call(system_prompt, user_prompt):
+        body = _json.dumps({
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            "model": "openai",
+            "seed": int(time.time()),
+        }).encode("utf-8")
+        req = urllib.request.Request(
+            "https://text.pollinations.ai/",
+            data=body,
+            headers={"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"},
+        )
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            return resp.read().decode("utf-8")
+
+    try:
+        text = await asyncio.to_thread(_glm_call, SPEC_SYSTEM, prompt)
+        if text:
+            return text
+    except Exception as e:
+        logger.warning("generate_spec GLM 실패, Pollinations 폴백: %s", e)
+        try:
+            text = await asyncio.to_thread(_pollinations_call, SPEC_SYSTEM, prompt)
+            if text:
+                return text
+        except Exception as pe:
+            logger.error("generate_spec Pollinations도 실패: %s", pe)
+    return ""
+
+
 async def generate_image(image_prompt: str):
     """
     Pollinations.ai로 이미지 생성 (무료, API 키 불필요).
