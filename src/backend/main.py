@@ -486,10 +486,35 @@ async def chat_ws(websocket: WebSocket, child_id: str):
                 if world_card_obj:
                     card_summary += f"\n세계: {world_card_obj.get('name', '?')} — {world_card_obj.get('description', '')}"
 
+                # 기존 게임 spec 추출 (수정 요청 시 이전 spec 보존)
+                current_spec_str = ""
+                try:
+                    existing_games = await asyncio.to_thread(storage.list_games, session_id)
+                    if existing_games:
+                        latest_game_path = Path(existing_games[-1].get("file_path", ""))
+                        if latest_game_path.exists():
+                            game_html_src = latest_game_path.read_text(encoding="utf-8")
+                            spec_m = _re.search(r'const SPEC = (\{[\s\S]*?\});', game_html_src)
+                            if spec_m:
+                                try:
+                                    spec_for_prompt = json.loads(spec_m.group(1))
+                                    # SVG 필드 제거 — 프롬프트 단축 + LLM 혼란 방지
+                                    spec_for_prompt.get("world", {}).pop("bg_svg", None)
+                                    spec_for_prompt.pop("char_sprite", None)
+                                    current_spec_str = (
+                                        f"\n\n현재 게임 spec (이걸 기반으로 수정해, 바꾸지 않는 필드는 그대로 유지):\n"
+                                        f"{json.dumps(spec_for_prompt, ensure_ascii=False)}"
+                                    )
+                                except json.JSONDecodeError:
+                                    pass
+                except Exception:
+                    logger.warning("[%s::%s] 기존 spec 추출 실패, 새 spec 생성", child_id, session_id)
+
                 # spec emitter prompt — 부품 라이브러리를 LLM에 전달
                 spec_prompt = (
                     f'아이가 이렇게 말했어: "{original_prompt}"\n'
-                    f'{card_summary}\n\n'
+                    f'{card_summary}'
+                    f'{current_spec_str}\n\n'
                     f'다음 JSON spec만 출력해 (다른 텍스트·마크다운 금지). 부품 조합으로 게임을 정의:\n\n'
                     f'## player.movement (캐릭터 이동 방식)\n'
                     f'- "free": WASD/화살표 4방향 자유 이동 (기본)\n'
