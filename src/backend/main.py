@@ -18,9 +18,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, Response
 
 import storage
-from claude_runner import StreamEvent, _DATA_DIR, reset_session, stream_claude
-from genai_runner import generate_card, generate_image, generate_spec
-from qr_generator import generate_qr_png
+
+_DATA_DIR = Path(__file__).parent / "data"
 
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
@@ -186,9 +185,6 @@ async def delete_session(child_id: str, session_id: str):
     if not game_dir.is_relative_to(games_base):
         raise HTTPException(status_code=400, detail="잘못된 요청이에요")
 
-    # claude 세션 초기화
-    reset_session(child_id, session_id)
-
     # DB 삭제 (messages + games + session)
     await asyncio.to_thread(storage.delete_session, session_id)
 
@@ -226,10 +222,14 @@ async def get_messages(child_id: str, session_id: str):
 
 @app.get("/qr/{child_id}/{session_id}/{card_id}")
 async def get_qr(child_id: str, session_id: str, card_id: str):
-    """카드 URL을 QR PNG로 반환."""
-    card_url = f"{os.getenv('BACKEND_BASE_URL', 'http://localhost:8000')}/cards/{child_id}/{session_id}/{card_id}"
-    png_bytes = await asyncio.to_thread(generate_qr_png, card_url, child_id)
-    return Response(content=png_bytes, media_type="image/png")
+    """카드 URL을 QR PNG로 반환. (qrcode 패키지 필요 — 미설치 시 501)"""
+    try:
+        from qr_generator import generate_qr_png
+        card_url = f"{os.getenv('BACKEND_BASE_URL', 'http://localhost:8000')}/cards/{child_id}/{session_id}/{card_id}"
+        png_bytes = await asyncio.to_thread(generate_qr_png, card_url, child_id)
+        return Response(content=png_bytes, media_type="image/png")
+    except ImportError:
+        raise HTTPException(status_code=501, detail="QR 생성 모듈이 없어요")
 
 
 # ---------------------------------------------------------------------------
@@ -256,17 +256,8 @@ async def gallery():
 
 @app.post("/generate-image")
 async def generate_image_endpoint(body: dict):
-    """프론트엔드에서 image_prompt로 이미지 생성 요청."""
-    image_prompt = body.get("image_prompt", "").strip()
-    if not image_prompt:
-        raise HTTPException(status_code=400, detail="image_prompt가 필요해요")
-    try:
-        image_bytes, mime_type = await generate_image(image_prompt)
-        import base64
-        return {"image_base64": base64.b64encode(image_bytes).decode("utf-8"), "mime_type": mime_type}
-    except Exception as e:
-        logger.exception("이미지 생성 오류: %s", e)
-        raise HTTPException(status_code=500, detail="이미지 생성에 실패했어요")
+    """이미지 생성 — genai_runner 대체 구현이 연결될 때까지 501."""
+    raise HTTPException(status_code=501, detail="이미지 생성 기능은 현재 준비 중이에요")
 
 
 # ---------------------------------------------------------------------------
@@ -471,6 +462,6 @@ async def chat_ws(websocket: WebSocket, child_id: str):
 
 @app.post("/admin/reset/{child_id}")
 async def admin_reset(child_id: str):
-    """운영자용 child_id 전체 세션 리셋."""
-    ok = reset_session(child_id)
-    return {"reset": ok, "child_id": child_id}
+    """운영자용 child_id 전체 LangGraph 체크포인터 세션 초기화 (claude_session_id 클리어)."""
+    count = await asyncio.to_thread(storage.reset_all_claude_sessions, child_id)
+    return {"reset": count > 0, "child_id": child_id, "cleared": count}
