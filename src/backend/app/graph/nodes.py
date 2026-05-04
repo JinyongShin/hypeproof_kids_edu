@@ -153,6 +153,18 @@ async def generate_card_node(state: EduSessionState) -> dict:
         usage.get("output_tokens", 0),
     )
 
+    # AI 응답 텍스트 저장 (JSON 블록 + 💡 힌트 줄 제거 후 순수 대화 텍스트만)
+    chat_text = re.sub(r"```[\s\S]*?```", "", _content_to_str(text)).strip()
+    chat_text = re.sub(r"\n*💡[^\n]*$", "", chat_text, flags=re.MULTILINE).strip()
+    if chat_text:
+        await asyncio.to_thread(
+            _storage.add_message,
+            state.get("session_id", ""),
+            state.get("child_id", ""),
+            "assistant",
+            chat_text,
+        )
+
     return {
         "card_result": card_data,
         "hint": hint or "💡 다음엔 세계를 만들어봐!",
@@ -464,6 +476,7 @@ async def save_game_node(state: EduSessionState) -> dict:
         hint = random.choice(_GAME_CREATE_HINTS)
         commentary = "게임 만들었어! 🎮 직접 플레이해봐!"
 
+    await asyncio.to_thread(_storage.add_message, session_id, child_id, "assistant", commentary)
     await asyncio.to_thread(_storage.add_message, session_id, child_id, "assistant", hint)
 
     return {"current_game_url": game_url, "hint": hint, "game_commentary": commentary}
@@ -483,6 +496,20 @@ async def chitchat_node(state: EduSessionState) -> dict:
         messages.append(SystemMessage(content=f"[세션 요약] {ctx}"))
     messages.append(HumanMessage(content=user_msg))
     response = await llm.ainvoke(messages)
+
+    import sys as _sys
+    _sys.path.insert(0, str(_BACKEND_ROOT))
+    import storage as _storage
+    chat_text = _content_to_str(response.content).strip()
+    if chat_text:
+        await asyncio.to_thread(
+            _storage.add_message,
+            state.get("session_id", ""),
+            state.get("child_id", ""),
+            "assistant",
+            chat_text,
+        )
+
     return {"hint": "💡 캐릭터를 만들어볼까?"}
 
 
