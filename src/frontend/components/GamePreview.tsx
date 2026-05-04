@@ -162,6 +162,7 @@ export default function CardPreview({
     return (
       <div className="relative h-full w-full bg-gray-900">
         <iframe
+          key={gameUrl || gameHtml.slice(0, 32)}
           srcDoc={gameHtml}
           className="w-full h-full border-0"
           sandbox="allow-scripts"

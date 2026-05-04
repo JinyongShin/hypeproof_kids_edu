@@ -1,6 +1,7 @@
 import asyncio
 import json
 import os
+import random
 import re
 import logging
 import time
@@ -24,6 +25,22 @@ _GAME_EDIT_KEYWORDS = [
     "시간 늘려", "시간 줄여", "점프 게임", "횡스크롤",
     "바꿔줘", "수정해줘", "변경해줘", "추가해줘", "없애줘", "지워줘",
     "색 바꿔", "색깔", "크게", "작게", "체력", "목숨", "점프", "배경",
+]
+
+_GAME_CREATE_HINTS = [
+    "💡 다음엔 '더 어렵게 해줘'라고 해봐!",
+    "💡 다음엔 '배경을 우주로 바꿔줘'라고 해봐!",
+    "💡 다음엔 '적을 추가해줘'라고 해봐!",
+    "💡 다음엔 '시간을 늘려줘'라고 해봐!",
+    "💡 다음엔 '더 빠르게 해줘'라고 해봐!",
+]
+
+_GAME_EDIT_HINTS = [
+    "💡 다음엔 '아이템을 더 추가해줘'라고 해봐!",
+    "💡 다음엔 '점프 게임으로 바꿔줘'라고 해봐!",
+    "💡 다음엔 '더 느리게 해줘'라고 해봐!",
+    "💡 다음엔 '배경 색을 바꿔줘'라고 해봐!",
+    "💡 다음엔 '더 어렵게 해줘'라고 해봐!",
 ]
 
 _MOCK_CARD_RESPONSE = '''와, 토끼 전사 캐릭터를 만들었어! 귀도 쫑긋하고 너무 귀엽다!
@@ -262,7 +279,7 @@ async def generate_spec_node(state: EduSessionState) -> dict:
         SystemMessage(content=_SPEC_SYSTEM),
         HumanMessage(content=full_prompt),
     ])
-    spec = _extract_spec_json(response.content)
+    spec = _extract_spec_json(_content_to_str(response.content))
     usage = getattr(response, "usage_metadata", {}) or {}
 
     import sys
@@ -439,10 +456,17 @@ async def save_game_node(state: EduSessionState) -> dict:
         session_id, child_id, game_id, str(game_file), game_url,
     )
 
-    hint = "💡 다음엔 '더 빠르게 해줘'라고 해봐!"
+    intent = state.get("intent", "game_create")
+    if intent == "game_edit":
+        hint = random.choice(_GAME_EDIT_HINTS)
+        commentary = "수정 완료! ⚡ 다시 해봐~"
+    else:
+        hint = random.choice(_GAME_CREATE_HINTS)
+        commentary = "게임 만들었어! 🎮 직접 플레이해봐!"
+
     await asyncio.to_thread(_storage.add_message, session_id, child_id, "assistant", hint)
 
-    return {"current_game_url": game_url, "hint": hint}
+    return {"current_game_url": game_url, "hint": hint, "game_commentary": commentary}
 
 
 # ── 8. 잡담 ──
@@ -531,6 +555,21 @@ def _extract_hint(text: str) -> str:
     return ""
 
 
+def _content_to_str(content) -> str:
+    """AIMessage.content가 str 또는 list[str|dict]일 때 non-thinking 텍스트만 추출."""
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts = []
+        for part in content:
+            if isinstance(part, str):
+                parts.append(part)
+            elif isinstance(part, dict) and part.get("type") != "thinking":
+                parts.append(part.get("text", ""))
+        return "".join(parts)
+    return str(content)
+
+
 def _extract_spec_json(text: str) -> dict:
     # 코드 펜스 제거
     text = re.sub(r"```(?:json)?\s*", "", text).strip()
@@ -539,8 +578,10 @@ def _extract_spec_json(text: str) -> dict:
     if m:
         try:
             return json.loads(m.group())
-        except json.JSONDecodeError:
-            pass
+        except json.JSONDecodeError as e:
+            logger.warning(f"_extract_spec_json JSONDecodeError: {e}, raw[:200]={m.group()[:200]!r}")
+    else:
+        logger.warning(f"_extract_spec_json: no JSON found, text[:200]={text[:200]!r}")
     return {}
 
 

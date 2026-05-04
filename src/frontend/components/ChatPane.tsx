@@ -22,7 +22,7 @@ export default function ChatPane({
   currentBlock,
   onBlockChange,
 }: ChatPaneProps) {
-  const { messages, cardUrl, cardJson, hint, isLoading, wsStatus, send, stop, getLastUserMessage, gameHtml, gameUrl } = useChat(
+  const { messages, cardUrl, cardJson, hint, isLoading, wsStatus, send, stop, getLastUserMessage, gameHtml, gameUrl, thinkingText } = useChat(
     childId,
     sessionId
   );
@@ -165,11 +165,11 @@ export default function ChatPane({
             </div>
           </div>
         ))}
-        {/* 대기 피드백 — 15초·40초 후 안심 메시지 */}
-        {waitingMessage && isLoading && (
+        {/* 대기 피드백 — thinking 스트림 우선, 없으면 타임아웃 메시지 */}
+        {isLoading && (thinkingText || waitingMessage) && (
           <div className="flex justify-center">
-            <p className="rounded-full bg-violet-50 border border-violet-200 px-4 py-1.5 text-xs text-violet-600 animate-pulse">
-              {waitingMessage}
+            <p className="rounded-full bg-violet-50 border border-violet-200 px-4 py-1.5 text-xs text-violet-600 animate-pulse max-w-xs truncate">
+              {thinkingText ? `🤔 ${thinkingText.slice(-120)}` : waitingMessage}
             </p>
           </div>
         )}

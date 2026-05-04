@@ -11,8 +11,10 @@ from app.checkpointer import get_thread_config
 
 logger = logging.getLogger(__name__)
 
-# LangGraph 그래프 노드 이름 (graph.py g.add_node() 에 등록된 이름 그대로)
+# 텍스트 스트리밍 노드 (LLM 응답을 채팅 말풍선으로 실시간 표시)
 _STREAMING_NODES = {"generate_card", "chitchat"}
+# Thinking 스트리밍 노드 (thinking 토큰만 추출해 별도 이벤트로 전송, 본문 JSON/HTML은 채팅 미노출)
+_THINKING_NODES = {"generate_spec", "edit_code"}
 
 
 def _get_langfuse_callback():
@@ -41,7 +43,7 @@ async def handle_chat_message(
 ):
     """
     WebSocket 메시지를 받아 LangGraph 그래프를 astream_events v2 로 실행하고
-    WS 이벤트(text/card/game/done/error)로 스트리밍.
+    WS 이벤트(text/thinking/card/game/done/error)로 스트리밍.
     """
     from langchain_core.messages import HumanMessage
 
@@ -50,9 +52,9 @@ async def handle_chat_message(
     if langfuse_cb:
         config["callbacks"] = [langfuse_cb]
 
-    # 스트리밍 중 card/game 이벤트 발송 여부 추적
     card_sent = False
     game_sent = False
+    commentary_sent = False
 
     try:
         async for event in graph.astream_events(
@@ -69,13 +71,26 @@ async def handle_chat_message(
             kind = event["event"]
             node_name = event.get("metadata", {}).get("langgraph_node", "")
 
-            # LLM 토큰 스트리밍 — 텍스트 생성 노드만
-            if kind == "on_chat_model_stream" and node_name in _STREAMING_NODES:
+            if kind == "on_chat_model_stream":
                 chunk = event["data"].get("chunk")
-                if chunk and hasattr(chunk, "content") and chunk.content:
-                    await ws.send_json({"type": "text", "chunk": chunk.content})
+                if not chunk or not hasattr(chunk, "content"):
+                    continue
 
-            # 노드 완료 — 카드 또는 게임 결과 전송 시도
+                if node_name in _STREAMING_NODES:
+                    # 일반 텍스트 스트리밍 — 채팅 말풍선
+                    if chunk.content:
+                        await ws.send_json({"type": "text", "chunk": chunk.content})
+
+                elif node_name in _THINKING_NODES:
+                    # thinking 토큰만 추출 — JSON/HTML 본문은 전송 안 함
+                    content = chunk.content
+                    if isinstance(content, list):
+                        for part in content:
+                            if isinstance(part, dict) and part.get("type") == "thinking":
+                                thinking_text = part.get("thinking", "")
+                                if thinking_text:
+                                    await ws.send_json({"type": "thinking", "chunk": thinking_text})
+
             elif kind == "on_chain_end":
                 output = event.get("data", {}).get("output") or {}
                 if not isinstance(output, dict):
@@ -93,15 +108,13 @@ async def handle_chat_message(
                         card_sent = True
 
                 elif node_name == "save_game":
-                    game_html = output.get("current_game_html", "")
-                    game_url = output.get("current_game_url", "")
-                    if game_html:
-                        await ws.send_json({
-                            "type": "game",
-                            "html": game_html,
-                            "game_url": game_url,
-                        })
-                        game_sent = True
+                    # 게임 생성/편집 완료 텍스트 응답 먼저 전송
+                    commentary = output.get("game_commentary", "")
+                    if commentary:
+                        await ws.send_json({"type": "text", "chunk": commentary})
+                        commentary_sent = True
+                    # save_game 출력엔 current_game_html이 없으므로 fallback에서 처리
+                    # 단, commentary 중복 방지를 위해 플래그만 설정
 
         # 그래프 실행 완료 후 최종 상태에서 결과 보완
         final_state = await graph.aget_state(config)
@@ -110,7 +123,6 @@ async def handle_chat_message(
         hint = values.get("hint", "")
         game_url = values.get("current_game_url", "")
 
-        # card 이벤트를 스트리밍 중 못 보낸 경우 최종 상태로 폴백
         if not card_sent:
             card_result = values.get("card_result")
             card_url = values.get("card_url", "")
@@ -121,10 +133,13 @@ async def handle_chat_message(
                     "card_url": card_url,
                 })
 
-        # game 이벤트를 스트리밍 중 못 보낸 경우 최종 상태로 폴백
         if not game_sent:
             game_html = values.get("current_game_html", "")
             if game_html:
+                if not commentary_sent:
+                    commentary = values.get("game_commentary", "")
+                    if commentary:
+                        await ws.send_json({"type": "text", "chunk": commentary})
                 await ws.send_json({
                     "type": "game",
                     "html": game_html,

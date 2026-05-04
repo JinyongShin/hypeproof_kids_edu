@@ -1,6 +1,4 @@
-# 로컬 테스트용 오버라이드 — Gemini API 호출 차단
+# 로컬 테스트용 오버라이드
 # docker compose가 자동으로 병합함
 services:
-  backend:
-    environment:
-      MOCK_LLM: "1"
+  backend: {}

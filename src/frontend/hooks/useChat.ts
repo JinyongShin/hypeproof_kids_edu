@@ -21,6 +21,7 @@ interface UseChatReturn {
   getLastUserMessage: () => string;
   gameHtml: string;
   gameUrl: string;
+  thinkingText: string;
 }
 
 
@@ -33,6 +34,7 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
   const [wsStatus, setWsStatus] = useState<"connected" | "reconnecting" | "disconnected">("connected");
   const [gameHtml, setGameHtml] = useState("");
   const [gameUrl, setGameUrl] = useState("");
+  const [thinkingText, setThinkingText] = useState("");
 
   const wsRef = useRef<WebSocket | null>(null);
 
@@ -46,6 +48,7 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
     setGameHtml("");
     setGameUrl("");
     setMessages([]);
+    setThinkingText("");
     fetch(`${BACKEND_HTTP_URL}/sessions/${childId}/${sessionId}/messages`)
       .then((r) => (r.ok ? r.json() : []))
       .then((msgs: { role: "user" | "assistant"; text: string }[]) => {
@@ -73,10 +76,10 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
       };
 
       ws.onmessage = (event) => {
-        retryCount = 0; // 메시지 수신 시 재시도 카운트 초기화
+        retryCount = 0;
         setWsStatus("connected");
         const data = JSON.parse(event.data) as {
-          type: "text" | "card" | "game" | "done" | "error";
+          type: "text" | "thinking" | "card" | "game" | "done" | "error";
           chunk?: string;
           card_url?: string;
           card_json?: string;
@@ -86,7 +89,10 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
           session_id?: string;
         };
 
-        if (data.type === "text" && data.chunk) {
+        if (data.type === "thinking" && data.chunk) {
+          // thinking 토큰 누적 — ChatPane의 대기 말풍선에 표시
+          setThinkingText((prev) => prev + data.chunk);
+        } else if (data.type === "text" && data.chunk) {
           setMessages((prev) => {
             const last = prev[prev.length - 1];
             if (last?.role === "assistant" && last.isStreaming) {
@@ -114,6 +120,7 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
             }
             return prev;
           });
+          setThinkingText("");
           if (data.hint) setHint(data.hint);
           if (data.card_url) setCardUrl(data.card_url);
           if (data.game_url) setGameUrl(data.game_url);
@@ -127,12 +134,14 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
               isStreaming: false,
             },
           ]);
+          setThinkingText("");
           setIsLoading(false);
         }
       };
 
       ws.onerror = () => {
         setIsLoading(false);
+        setThinkingText("");
       };
 
       ws.onclose = () => {
@@ -151,6 +160,7 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
               isStreaming: false,
             },
           ]);
+          setThinkingText("");
           setIsLoading(false);
         }
       };
@@ -175,6 +185,7 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
         { role: "user", text: prompt, isStreaming: false },
       ]);
       setHint("");
+      setThinkingText("");
       setIsLoading(true);
 
       wsRef.current.send(JSON.stringify({ prompt }));
@@ -185,6 +196,7 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
   const stop = useCallback(() => {
     wsRef.current?.close();
     setIsLoading(false);
+    setThinkingText("");
   }, []);
 
   const getLastUserMessage = useCallback(() => {
@@ -194,5 +206,5 @@ export function useChat(childId: string, sessionId: string): UseChatReturn {
     return "";
   }, [messages]);
 
-  return { messages, cardUrl, cardJson, hint, isLoading, wsStatus, send, stop, getLastUserMessage, gameHtml, gameUrl };
+  return { messages, cardUrl, cardJson, hint, isLoading, wsStatus, send, stop, getLastUserMessage, gameHtml, gameUrl, thinkingText };
 }

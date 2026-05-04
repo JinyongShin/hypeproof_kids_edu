@@ -23,6 +23,7 @@ class EduSessionState(TypedDict):
     card_result: Optional[dict]
     card_url: Optional[str]
     hint: Optional[str]
+    game_commentary: Optional[str]  # 게임 생성/편집 후 채팅 텍스트 응답
     # 롤링 컨텍스트 요약 (매 턴 갱신)
     session_context: Optional[str]
     # 관측성

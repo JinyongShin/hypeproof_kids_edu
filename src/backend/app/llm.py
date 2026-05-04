@@ -9,37 +9,41 @@ def get_card_llm() -> BaseChatModel:
         return _mock_card_llm()
     from langchain_google_genai import ChatGoogleGenerativeAI
     return ChatGoogleGenerativeAI(
-        model="gemini-2.5-flash-preview-04-17",
+        model="gemini-2.5-flash",
         temperature=0.7,
-        max_output_tokens=2048,
+        max_output_tokens=8192,
         google_api_key=settings.GEMINI_API_KEY,
     )
 
 
 def get_spec_llm() -> BaseChatModel:
-    """스펙 생성용: 비스트리밍, deterministic"""
+    """스펙 생성용: thinking 활성화로 게임 설계 품질 향상"""
     settings = get_settings()
     if settings.MOCK_LLM:
         return _mock_spec_llm()
     from langchain_google_genai import ChatGoogleGenerativeAI
     return ChatGoogleGenerativeAI(
-        model="gemini-2.5-flash-preview-04-17",
+        model="gemini-2.5-flash",
         temperature=0.5,
-        max_output_tokens=1024,
+        max_output_tokens=2048,
+        thinking_budget=1024,
+        include_thoughts=True,
         google_api_key=settings.GEMINI_API_KEY,
     )
 
 
 def get_edit_llm() -> BaseChatModel:
-    """코드 편집용: 전체 HTML 반환이므로 토큰 한도 크게"""
+    """코드 편집용: thinking 활성화, 전체 HTML 반환이므로 토큰 한도 크게"""
     settings = get_settings()
     if settings.MOCK_LLM:
         return _mock_edit_llm()
     from langchain_google_genai import ChatGoogleGenerativeAI
     return ChatGoogleGenerativeAI(
-        model="gemini-2.5-flash-preview-04-17",
+        model="gemini-2.5-flash",
         temperature=0.3,
         max_output_tokens=16384,
+        thinking_budget=2048,
+        include_thoughts=True,
         google_api_key=settings.GEMINI_API_KEY,
     )
 
@@ -51,7 +55,7 @@ def get_summary_llm() -> BaseChatModel:
         return _mock_summary_llm()
     from langchain_google_genai import ChatGoogleGenerativeAI
     return ChatGoogleGenerativeAI(
-        model="gemini-2.5-flash-preview-04-17",
+        model="gemini-2.5-flash",
         temperature=0.1,
         max_output_tokens=256,
         google_api_key=settings.GEMINI_API_KEY,
@@ -65,7 +69,7 @@ def get_intent_llm() -> BaseChatModel:
         return _mock_intent_llm()
     from langchain_google_genai import ChatGoogleGenerativeAI
     return ChatGoogleGenerativeAI(
-        model="gemini-2.5-flash-preview-04-17",
+        model="gemini-2.5-flash",
         temperature=0.1,
         max_output_tokens=64,
         google_api_key=settings.GEMINI_API_KEY,
