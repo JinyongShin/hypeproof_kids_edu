@@ -2,59 +2,78 @@
 type: meta
 title: "Hot Cache"
 created: 2026-04-12
-updated: 2026-05-01
+updated: 2026-05-05
 tags:
   - meta/cache
 ---
 
-# Hot Cache — 2026-05-01
+# Hot Cache — 2026-05-05
 
 최근 컨텍스트 스냅샷. 세션 시작 시 가장 먼저 읽을 것.
 
 ---
 
-## 현재 상태: 파일럿 D-4 — 2026-05-05 워크샵
+## 현재 상태
 
-### ✅ 오늘 완료 (2026-05-01)
-
-**게임 버그 3종 수정** → `fix/game-bug-3종` 브랜치 커밋
-- Bug 1: 게임 수정 시 HTML 소스코드 채팅 노출 → 수정 완료
-- Bug 2: 게임 생성 후 캐릭터 카드 소실 → 🎴/🎮 토글 추가
-- Bug 3: 게임 수정 요청 시 새 게임 생성 → spec 주입으로 수정
-
-상세: [[game-bug-fix-2026-05-01]]
+- **Track A**: 소아암 병동 파일럿 2026-05-05 완료 (국립암센터, 40명). 관찰 결과 미ingest.
+- **Track B**: 보아치과 파일럿 2026-05-26 예정. 커리큘럼 v3 + 진행자 스크립트 완성.
+- **Track C**: 미착수.
 
 ---
 
-## 프로젝트 개요
+## 3-트랙 구조 (2026-05-05 확정)
 
-- 목표: 소아암 병동 어린이 AI 창작 워크샵 파일럿 (2026-05-05, 국립암센터, 40명)
+| 트랙 | 대상 | 상태 | 다음 스텝 |
+|---|---|---|---|
+| Track A | 아동 | 파일럿 완료 | 관찰 노트 ingest → v2 설계 |
+| Track B | 성인 (치과의사) | 5/26 파일럿 준비 중 | 원장님 사례 사전 확인 |
+| Track C | 아동+성인 혼합 | 미착수 | A·B 안정 후 시작 |
+
+상세: [[three-track-structure]]
+
+---
+
+## Track B — 치과의사 워크샵 현황
+
+- 커리큘럼: `specs/track-b/치과의사-curriculum-v3.md` ← **확정 버전**
+- 진행자 스크립트: `specs/track-b/facilitator-script-dental-v3.md`
+- v1·v2는 참고용으로 `specs/track-b/` 에 보관
+- 관찰 데이터 준비: `validation/track-b/` (5/26 파일럿 후 적재 예정)
+
+**5/26 전 필수 확인**: 원장님이 실제로 쓰는 AI 사례 1개 (블록 1용)
+
+---
+
+## Track A — 아동 워크샵 현황
+
+- 커리큘럼: `specs/track-a/`
 - 스택: FastAPI (Python/uv) + Next.js (App Router) + GLM-5 (z.ai)
-- 래퍼: 채팅(WebSocket) + iframe 게임 프리뷰 + 블록별 프롬프트 스캐폴드
+- 핵심 assets: `src/frontend/lib/scaffoldData.ts`, `src/backend/personas/TUTOR.md`
+- 파일럿 완료 → Production Loop Stage 1 진입 대기 (관찰 노트 ingest 필요)
 
 ---
 
-## 완료된 개발 작업 (최신순)
+## 제작 프로세스 (Production Loop)
 
-| 기능 | 상태 | 날짜 |
-|---|---|---|
-| 게임 버그 3종 수정 (소스코드 노출·카드 소실·spec 유실) | ✅ | 2026-05-01 |
-| spec composition 게임 엔진 (enumeration → 부품 조합) | ✅ | 2026-04-30 |
-| Playwright MCP 연동 (chromium) | ✅ | 2026-05-01 |
-| UX 개선 (iframe srcDoc·에러메시지·블록버튼·대기피드백·WS배너) | ✅ | 2026-04-18 |
-| SQLite 마이그레이션 + 게임 파일시스템 저장 | ✅ | |
-| 세션 이름 자동 할당 + 세션 전환 버그 3종 수정 | ✅ | |
+파일럿 이후 모든 트랙에 적용. 상세: [[production-loop]]
+
+- Stage 1 (인풋→설계): 관찰 노트 ingest + 교육 목표 정의
+- Stage 2 (설계→기술피드백): scaffold·페르소나 봉호님 직접 작성
+- Stage 3 (리허설→반영): 산출물·타이밍 수집 → vault 환류
 
 ---
 
 ## 핵심 ADR
 
+- [[three-track-structure]] — 3-트랙 구조 확정 (2026-05-05)
+- [[production-loop-adoption]] — 3단계 제작 루프 채택 (2026-05-05)
 - [[stack-decision-after-curriculum]] — 커리큘럼 확정 후 스택 결정
 - [[auth-session-game-persistence]] — status: implemented
-- [[track-a-primary-b-backup]] — Track A 주력
 - [[game-bug-fix-2026-05-01]] — 게임 버그 3종 수정 기록
 
-### 핵심 파일 경로
+---
+
+## 핵심 파일 경로 (Track A 기술)
 
 - `src/backend/genai_runner.py` — `_strip_code_for_chat()`, `generate_card()`
 - `src/backend/main.py` — spec 추출·주입 로직 (~490번째 줄)
