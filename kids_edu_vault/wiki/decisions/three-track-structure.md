@@ -1,6 +1,7 @@
 ---
 type: decision
-status: active
+status: superseded
+superseded_by: "[[one-track-multi-skin]]"
 priority: 1
 date: 2026-05-05
 owner: "봉호 태"
