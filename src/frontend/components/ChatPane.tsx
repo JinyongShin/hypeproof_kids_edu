@@ -158,7 +158,7 @@ export default function ChatPane({
             >
               {/* 카드 JSON 제외하고 텍스트만 표시 */}
               {msg.text
-                .replace(/```json[\s\S]*?```/gi, "")   // JSON 코드블록 제거
+                .replace(/```[\s\S]*?```/gi, "")   // 모든 코드블록 제거
                 .replace(/\n*💡[^\n]*$/m, "")           // 마지막 💡 힌트 줄 제거 (별도 버튼으로 표시)
                 .trim() ||
                 (msg.isStreaming ? "..." : "")}

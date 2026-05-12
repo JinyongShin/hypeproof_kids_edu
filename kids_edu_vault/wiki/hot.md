@@ -2,129 +2,83 @@
 type: meta
 title: "Hot Cache"
 created: 2026-04-12
-updated: 2026-04-21
+updated: 2026-05-11
 tags:
   - meta/cache
 ---
 
-# Hot Cache — 2026-04-21
+# Hot Cache — 2026-05-11
 
 최근 컨텍스트 스냅샷. 세션 시작 시 가장 먼저 읽을 것.
 
 ---
 
-## 현재 상태: 파일럿 D-14 — ASAP 마감 2026-04-24 / 커리큘럼 방향 미확정
+## 커리큘럼 구조: 1트랙 멀티 스킨 (2026-05-11 전환)
 
-### 🚨 즉시 해야 할 일 (마감 2026-04-24 목 아침)
+> 3-트랙 구조 폐기 → **코어 1개 + 스킨 교체** 방식으로 전환.
+> 상세: [[one-track-multi-skin]]
 
-1. **[[bongho-tae]] + [[jiwoong-kim]]**: 당일 커리큘럼 (시간·활동·감정 포인트) 작성 → [[filamentary]] 부대표 전달
-   - 선행: 회의록 녹음본 재검토 필요
-2. **[[jinyong-shin]]**: 현장 상황 정리 (부모 동반 여부 등) → [[filamentary]] 전달
-   - 병원 측 확인 질문 초안 작성 완료 (`meeting_notes/2026-04-21-hospital-inquiry-draft.md`), 팀 검토 대기 중
-3. 두 산출물 합쳐서 2026-04-24 필라멘트리에 통합 전달
-
-상세: [[2026-04-21-asap-action-items]]
-
----
-
-### ⚠️ 커리큘럼 방향 3종 병존 — 확정 필요
-
-| 버전 | 출처 | 결과물 형식 |
+| 스킨 | 대상 | 상태 |
 |---|---|---|
-| [[pilot-curriculum-adapted]] | JY (원본) | HTML 게임 (실제 조작) |
-| [[2026-04-19-curriculum-v0.3]] | 봉호·지웅 (4/19) | 그림책 (표지+이야기) |
-| [[curriculum-wizard-v1]] | JY (4/20) | **게임 타이틀 카드** (이미지+텍스트+QR) |
-
-**현재 선호 방향 (4/20 JY)**: 게임 타이틀 카드. 기술적으로 실현 가능하고 "만든다"는 경험 살림.
-**미확정**: 봉호/지웅이 2026-04-24 전 최종 방향 확정 필요.
+| 아동 | 초등생 | 5/5 파일럿 완료. 관찰 노트 ingest 필요 |
+| 성인 (치과의사) | 직장인·전문직 | 5/26 보아치과 파일럿 준비 중 |
+| 혼합 | 아동+성인 | 미착수 |
 
 ---
 
-### 프로젝트 개요
+## 현재 우선순위
 
-- 목표: 소아암 병동 어린이 AI 창작 워크샵 파일럿 (2026-05-05, 국립암센터, 40명)
-- 스택: FastAPI (Python/uv) + Next.js (App Router) + Claude CLI subprocess
-- 래퍼: 채팅(WebSocket) + iframe 게임 프리뷰 + 블록별 프롬프트 스캐폴드
-
----
-
-### 커리큘럼 위자드 v1 핵심 (4/20 신규, [[curriculum-wizard-v1]])
-
-**타임테이블** (13:00–15:30)
-
-| 블록 | 시간 | 내용 |
-|---|---|---|
-| 세팅 | 13:00–13:30 | 기기·Wi-Fi·스크린 준비 |
-| 1 | 13:30–13:45 | 지휘관의 선언 (나쁜 명령 vs 좋은 명령 시연) |
-| 2 | 13:45–14:05 | 아바타 소환 (캐릭터 묘사 → 이미지 카드) |
-| 3 | 14:05–14:25 | 세계 구축 → 게임 타이틀 카드 완성 |
-| — | 14:25–14:35 | 갤러리 타임 (슬라이드쇼) |
-| 4 | 14:35–15:00 | 마스터 개발자 임명식 (QR + 사원증 수령) |
-| 5 | 15:00–15:20 | 런칭쇼 (미디어 기록) |
-| — | 15:20–15:30 | 마무리 |
-
-**사전 파악된 문제 5종**: 기술 미존재(재정의 완료) / 병동 집합 허가 / 촬영 동의 / 연령 미정 / 기기·Wi-Fi 주체 미확정
-
-**기술 필수 구현**: 웹 인터페이스(캐릭터→이미지→게임카드) · 갤러리(서버저장+슬라이드쇼) · QR 생성 · 부하 테스트(40명)
+1. **5/26 보아치과 파일럿** — 치과의사 스킨 v3 + 진행자 스크립트 완성 상태. 원장님 AI 사례 1개 사전 확인 필요.
+2. **아동 파일럿 관찰 노트 ingest** — 코어 v2 설계를 위한 선행 작업.
+3. **스킨 구조 설계** — `specs/core/` + `specs/skins/` 파일 구조 재편, scaffold·페르소나 스킨 분리.
 
 ---
 
-### 교육 철학 (4/20 브리핑, [[2026-04-20-meeting-briefing]])
+## Track B — 치과의사 워크샵 현황
 
-- **[[vibe-coding]]**: 자연어로 AI에게 지시해 창작물 생성 — 코딩 지식 없이 의도로 실현
-- **16가지 AI 덕목**: 커리큘럼 핵심 1~2개로 압축 권장 (구체적 명시 Specificity + 컨텍스트 관리)
-- **인력**: 40명 기준 6~7명 스태프 권장 (현 계획 5명, 1~2명 부족 가능)
-- **소아 환자**: 부정적 표현 사전 제한, STT 음성 입력 접근성 강화
+- 커리큘럼: `specs/track-b/치과의사-curriculum-v3.md` ← **확정 버전**
+- 진행자 스크립트: `specs/track-b/facilitator-script-dental-v3.md`
+- v1·v2는 참고용으로 `specs/track-b/` 에 보관
+- 관찰 데이터 준비: `validation/track-b/` (5/26 파일럿 후 적재 예정)
 
----
-
-### 신규 이해관계자: [[filamentary]]
-
-- 현장 교육 협력 기관. 4/20 미팅에서 처음 언급.
-- 2026-04-24 커리큘럼 + 현장 상황 수신 후 피드백 예정.
-- 부대표 이름·역할 범위 미확인.
+**5/26 전 필수 확인**: 원장님이 실제로 쓰는 AI 사례 1개 (블록 1용)
 
 ---
 
-### 긴급 마일스톤 (현재 ~ 4/30)
+## Track A — 아동 워크샵 현황
 
-| 날짜 | 마일스톤 | 담당 | 상태 |
-|---|---|---|---|
-| 2026-04-21 | 커리큘럼 리뷰 → Track A 스택 결정 | Jay + JY | **오늘** → [[stack-decision-after-curriculum]] |
-| 2026-04-24 | 커리큘럼 → 필라멘트리 전달 | BH + 지웅 | Pending |
-| 2026-04-24 | 현장 상황 정리 → 필라멘트리 전달 | JY | **In Progress** (초안 팀 검토 중) |
-| 2026-04-26 | Track A 래퍼 리허설 가능 상태 | JY | Pending |
-| 2026-04-26 | 갤러리 + 랜딩 페이지 | JeHyeong | Pending |
-| 2026-04-30 | 드라이런 | 전원 | Planned |
+- 커리큘럼: `specs/track-a/`
+- 스택: FastAPI (Python/uv) + Next.js (App Router) + GLM-5 (z.ai)
+- 핵심 assets: `src/frontend/lib/scaffoldData.ts`, `src/backend/personas/TUTOR.md`
+- 파일럿 완료 → Production Loop Stage 1 진입 대기 (관찰 노트 ingest 필요)
 
 ---
 
-### 완료된 개발 작업 (최신순)
+## 제작 프로세스 (Production Loop)
 
-| 기능 | 상태 |
-|---|---|
-| UX 개선 (iframe srcDoc·에러메시지·블록버튼·대기피드백·WS배너) | ✅ 2026-04-18 |
-| SQLite 마이그레이션 + 게임 파일시스템 저장 | ✅ |
-| 세션 이름 자동 할당 + 세션 전환 버그 3종 수정 | ✅ |
+파일럿 이후 모든 트랙에 적용. 상세: [[production-loop]]
 
-### 남은 P0 갭 (4/26 리허설 목표)
-
-| 우선순위 | 항목 |
-|---|---|
-| P0 | R4 폴백 (Claude 실패 시 기본 콘텐츠) |
-| P0 | R9 밝은 UI (다크→밝은 테마, 큰 글씨) |
-| P0 | v0.3 AI 호출 3종 (커리큘럼 방향 확정 후) |
-| P1 | R8 결과물 공유 QR |
+- Stage 1 (인풋→설계): 관찰 노트 ingest + 교육 목표 정의
+- Stage 2 (설계→기술피드백): scaffold·페르소나 봉호님 직접 작성
+- Stage 3 (리허설→반영): 산출물·타이밍 수집 → vault 환류
 
 ---
 
-### 핵심 ADR
+## 핵심 ADR
 
-- [[stack-decision-after-curriculum]] — 커리큘럼 확정 후 스택 결정 (오늘 게이트)
+- [[one-track-multi-skin]] — 1트랙 멀티 스킨 구조 채택 (2026-05-11) ← **현행**
+- [[three-track-structure]] — 3-트랙 구조 (superseded)
+- [[production-loop-adoption]] — 3단계 제작 루프 채택 (2026-05-05)
+- [[stack-decision-after-curriculum]] — 커리큘럼 확정 후 스택 결정
 - [[auth-session-game-persistence]] — status: implemented
-- [[track-a-primary-b-backup]] — Track A 주력
+- [[game-bug-fix-2026-05-01]] — 게임 버그 3종 수정 기록
 
-### 핵심 파일 경로
+---
 
-- `src/backend/storage.py` / `src/backend/main.py` / `src/backend/claude_runner.py`
-- `src/frontend/hooks/useChat.ts` / `src/frontend/components/ChatPane.tsx`
+## 핵심 파일 경로 (Track A 기술)
+
+- `src/backend/genai_runner.py` — `_strip_code_for_chat()`, `generate_card()`
+- `src/backend/main.py` — spec 추출·주입 로직 (~490번째 줄)
+- `src/frontend/components/ChatPane.tsx` — 메시지 렌더 regex
+- `src/frontend/components/GamePreview.tsx` — `showGame` 토글
+- `src/backend/storage.py` / `src/frontend/hooks/useChat.ts`
