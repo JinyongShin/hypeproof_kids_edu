@@ -70,7 +70,16 @@
       "Bash(echo \"frontend PID: $!\")",
       "Bash(taskkill //PID 20784 //F)",
       "Bash(taskkill //PID 20404 //F)",
-      "Skill(wiki-ingest)"
+      "Skill(wiki-ingest)",
+      "Read(//Users/jj_home/.claude/**)",
+      "Read(//Users/jj_home/.config/claude/**)",
+      "Bash(command -v uv)",
+      "Read(//usr/local/**)",
+      "Bash(/Users/jj_home/.nvm/versions/node/v24.15.0/bin/npm install *)",
+      "Bash(git *)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__query-docs",
+      "Bash(docker compose *)"
     ]
   },
   "enabledMcpjsonServers": [
