@@ -1,3 +1,15 @@
+---
+type: project
+title: "HypeProof Assets v0.1"
+status: active
+created: 2026-05-03
+updated: 2026-05-03
+tags:
+  - project
+  - assets
+  - sixteen-essence
+---
+
 # HypeProof Assets v0.1
 
 > 작성: 봉호 태 (2026-05-03)

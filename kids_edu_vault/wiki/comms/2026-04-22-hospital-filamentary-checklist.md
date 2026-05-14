@@ -1,3 +1,16 @@
+---
+type: comms
+title: "병원/필라멘트리 사전 확인 체크리스트"
+status: developing
+created: 2026-04-22
+updated: 2026-04-22
+tags:
+  - comms
+  - checklist
+  - hospital
+  - filamentary
+---
+
 # 병원/필라멘트리 사전 확인 체크리스트
 
 > 작성일: 2026-04-22

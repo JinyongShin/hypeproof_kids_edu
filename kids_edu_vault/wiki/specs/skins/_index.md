@@ -1,5 +1,6 @@
 ---
 type: index
+status: navigational
 title: "스킨 인덱스"
 created: 2026-05-11
 updated: 2026-05-11

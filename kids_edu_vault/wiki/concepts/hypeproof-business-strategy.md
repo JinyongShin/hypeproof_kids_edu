@@ -1,3 +1,15 @@
+---
+type: concept
+title: "HypeProof 비즈니스 전략"
+status: developing
+created: 2026-05-04
+updated: 2026-05-14
+tags:
+  - concept
+  - business
+  - strategy
+---
+
 # HypeProof 비즈니스 전략 — 2026-05-04
 
 ## 현황

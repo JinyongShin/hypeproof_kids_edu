@@ -1,5 +1,7 @@
 ---
 type: validation
+status: archive
+updated: 2026-05-14
 title: "엣지케이스 발견 사항"
 created: 2026-04-27
 tags:

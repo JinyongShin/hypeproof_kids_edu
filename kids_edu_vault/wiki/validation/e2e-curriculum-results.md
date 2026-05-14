@@ -4,6 +4,7 @@ test: e2e-curriculum-6block
 date: 2026-04-27
 server: localhost:8000
 status: PASS (6/6)
+updated: 2026-05-14
 ---
 
 # 커리큘럼 6블록 엔드투엔드 테스트 결과

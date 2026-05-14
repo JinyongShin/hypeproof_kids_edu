@@ -1,5 +1,7 @@
 ---
 type: validation-report
+status: archive
+updated: 2026-05-14
 test: edge-cases
 date: 2026-04-27
 server: localhost:8000

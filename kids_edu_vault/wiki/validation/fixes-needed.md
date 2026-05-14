@@ -1,5 +1,7 @@
 ---
 type: validation
+status: archive
+updated: 2026-05-14
 title: "수정 필요 항목 (우선순위)"
 created: 2026-04-27
 tags:

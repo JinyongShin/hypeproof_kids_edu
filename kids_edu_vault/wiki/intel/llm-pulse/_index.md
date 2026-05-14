@@ -1,5 +1,6 @@
 ---
 type: index
+status: navigational
 title: "LLM Pulse — 일일 시그널 아카이브"
 created: 2026-05-11
 updated: 2026-05-11

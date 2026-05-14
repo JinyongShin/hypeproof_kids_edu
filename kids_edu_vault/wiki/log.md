@@ -13,6 +13,19 @@ tags:
 
 ---
 
+## 2026-05-14 | vault-migration | 볼트 구조 정렬 — 스킬 철학 일치
+- 작업: wiki/wiki-ingest/wiki-query/wiki-lint 스킬 철학과 볼트 구조 갭 해소
+- Phase 0: git commit + tag (`vault-pre-migration-2026-05-14`) + 파일시스템 백업
+- Phase 1: [[sources/_index]] · [[questions/_index]] 신규 폴더 생성
+- Phase 2: `HypeProof-business-strategy.md` 루트→[[hypeproof-business-strategy]] (concepts/) 이동 + frontmatter 추가, 중복 파일 삭제
+- Phase 3: dead link 4개 stub 생성 — [[adr-langgraph-gemini-backend]] · [[adr-container-deployment]] · [[adr-multitenant-schema]] · [[langfuse-observability]]
+- Phase 4: orphan 파일 39개 → [[index]] 등록 (Validation·Projects·Assets·Sources·Questions 섹션 신설, Decisions·Specs·Runbooks·Components·Concepts·Comms 섹션 확장)
+- Phase 5: frontmatter 보완 — projects/ 3개·runbooks/ 1개·comms/ 1개 frontmatter 추가, _index.md 13개 `status: navigational` 추가, validation/ 6개 `status: archive` + `updated` 추가
+- Phase 6: vault CLAUDE.md 구조 문서 갱신 — 5개 폴더 추가, kebab-case 컨벤션 명시, 스킬 관리 폴더 주의사항 추가
+- Key insight: sources/와 questions/가 없으면 wiki-ingest·wiki-query의 지식 누적 루프가 단절됨
+
+---
+
 ## 2026-05-14 — JY 액션 리스트 저장 + LangGraph E2E 완료 기록
 
 - Type: save / status update

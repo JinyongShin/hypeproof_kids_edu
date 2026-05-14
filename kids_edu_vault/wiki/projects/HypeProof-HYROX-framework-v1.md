@@ -1,3 +1,15 @@
+---
+type: project
+title: "HypeProof HYROX — 이론적 프레임워크 v1"
+status: developing
+created: 2026-05-11
+updated: 2026-05-11
+tags:
+  - project
+  - hyrox
+  - framework
+---
+
 # HypeProof HYROX — 이론적 프레임워크 v1 (2026-05-11)
 
 > 작성: AB_kimi_bot (주인님 피드백 기반)

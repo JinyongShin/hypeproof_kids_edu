@@ -1,3 +1,15 @@
+---
+type: project
+title: "HypeProof HYROX 논의 세션 (2026-05-11)"
+status: archive
+created: 2026-05-11
+updated: 2026-05-11
+tags:
+  - project
+  - hyrox
+  - session
+---
+
 # HypeProof HYROX 논의 세션 (2026-05-11)
 
 > 참여: 봉호 태, Jiwoong Kim (주인님), AB_kimi_bot

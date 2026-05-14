@@ -1,5 +1,6 @@
 ---
 type: index
+status: navigational
 title: "코어 커리큘럼 인덱스"
 created: 2026-05-11
 updated: 2026-05-11

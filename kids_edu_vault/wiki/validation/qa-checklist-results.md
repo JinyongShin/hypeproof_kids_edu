@@ -1,5 +1,7 @@
 ---
 type: validation
+status: archive
+updated: 2026-05-14
 title: "QA 체크리스트 검증 결과 (봉호 QA 방식 차용)"
 created: 2026-04-27
 tags:

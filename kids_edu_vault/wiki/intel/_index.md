@@ -1,5 +1,6 @@
 ---
 type: index
+status: navigational
 title: "Intel"
 created: 2026-04-12
 updated: 2026-04-12

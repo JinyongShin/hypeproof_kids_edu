@@ -1,5 +1,6 @@
 ---
 type: meta
+status: navigational
 title: "Track B 관찰 데이터"
 created: 2026-05-05
 updated: 2026-05-05
