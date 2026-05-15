@@ -17,10 +17,14 @@ tags:
 
 ### 가장 최근 작업 (2026-05-15)
 
-**볼트 구조 정렬 완료 + .raw 정비**
-- wiki/wiki-ingest/wiki-query/wiki-lint 스킬 철학과 볼트 구조 갭 해소
+**PR#7 `feature/langgraph-gemini` → main 머지 완료**
+- ico1036 리뷰 3건 반영 + 이미 구현된 항목 코멘트 확인 처리
+- 수정: `edit_code_node` 실패 피드백, `sys.path.insert` 7회→1회, [[langfuse-observability]] 시크릿 외부 주입, `.env.example` 추가
+- main 현재 커밋: `3794819`, 워크트리 및 `feature/langgraph-gemini` 브랜치 정리 완료
+- 파일럿 후 처리 예정: Ping/Pong 하트비트, iframe CSP, 10턴+ rolling summary
+
+**볼트 구조 정렬 완료 + .raw 정비 (동일 세션)**
 - `sources/`, `questions/` 폴더 신설, dead link 4개 복구, orphan 39개 index 등록
-- meeting_notes/ 전체 `.raw/meeting_notes/`로 복사 완료
 - 미ingest 파일 `2026-04-21-hospital-inquiry-draft.md` ingest 완료
 
 **[[sk-biopharma]] × [[bitree]] 파일럿 확정 (2026-05-14)**
@@ -59,7 +63,7 @@ tags:
 
 | 레이어 | 기술 |
 |---|---|
-| 백엔드 | FastAPI + LangGraph + Gemini 2.5 Flash |
+| 백엔드 | FastAPI + [[langgraph]] + [[gemini-2-5-flash]] |
 | 프론트 | Next.js (App Router) |
-| 관측성 | Langfuse v2 self-hosted |
+| 관측성 | [[langfuse-observability]] v2 self-hosted |
 | 교육 도구 | [[hypeproof-studio]] v0.1 (예정) / Cline (Plan B) |

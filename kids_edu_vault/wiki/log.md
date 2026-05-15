@@ -13,6 +13,13 @@ tags:
 
 ---
 
+## 2026-05-15 | pr-merge | PR#7 feature/langgraph-gemini → main 머지 + 리뷰 반영
+- PR: https://github.com/JinyongShin/hypeproof_kids_edu/pull/7
+- Pages updated: [[adr-langgraph-gemini-backend]]
+- Key insight: [[langgraph]]+[[gemini-2-5-flash]] 백엔드 전환 PR이 리뷰 후 main에 머지됨. `edit_code_node` 실패 피드백 추가(사용자 경험), `sys.path` 반복 패턴 정리(코드 품질), Langfuse 시크릿 외부 주입(보안). 파일럿 후 처리 항목(Ping/Pong, CSP, rolling summary)은 별도 이슈로 추적 예정.
+
+---
+
 ## 2026-05-15 | ingest | 국립암센터 행사 사전 확인 요청 초안
 - Source: `.raw/meeting_notes/2026-04-21-hospital-inquiry-draft.md`
 - Pages created: [[2026-04-21-hospital-inquiry-draft]]
@@ -39,7 +46,7 @@ tags:
 - Type: save / status update
 - Created: [[jy-action-list-2026-05-14]]
 - Updated: [[hot]]
-- Key insight: LangGraph MOCK_LLM=0 E2E 테스트 완료 확인. fly.io 배포만 남음. [[sk-biopharma]] 파일럿 critical path: 제안서 초안 → Freelancer 채용 → Studio v0.1 빌드.
+- Key insight: [[langgraph]] MOCK_LLM=0 E2E 테스트 완료 확인. fly.io 배포만 남음. [[sk-biopharma]] 파일럿 critical path: 제안서 초안 → Freelancer 채용 → Studio v0.1 빌드.
 
 ---
 
