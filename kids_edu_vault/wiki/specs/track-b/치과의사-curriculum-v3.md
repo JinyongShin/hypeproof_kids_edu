@@ -1,5 +1,6 @@
 ---
 type: curriculum
+status: active
 title: "치과의사 AI 실전 워크샵 v3"
 created: 2026-05-05
 updated: 2026-05-05

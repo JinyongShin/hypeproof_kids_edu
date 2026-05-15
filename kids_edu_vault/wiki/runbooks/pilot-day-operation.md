@@ -69,7 +69,7 @@ updated: 2026-04-12
 - **운영자 스크립트 붕괴**: 튜터가 "AI와 대화" 포맷으로 개별 대응.
 
 ## 관련
-- Runbook: [[rehearsal-checklist]] (예정), [[deploy-code-server]] (예정, C 단계 한정).
+- Runbook: rehearsal-checklist (예정) (예정), deploy-code-server (예정) (예정, C 단계 한정).
 - Spec: [[pilot-env-design]] · [[pilot-curriculum-adapted]].
 - Intel: [[environ-kukrip-amsenter]] · [[case-pediatric-onc-infection-control]] · [[case-korean-hospital-schools]].
 - Deliverable: [[pilot-operator-guide]] · [[pilot-rehearsal-late-april]] · [[okr-q2-jy]].

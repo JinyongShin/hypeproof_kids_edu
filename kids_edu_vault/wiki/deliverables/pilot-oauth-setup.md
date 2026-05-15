@@ -1,6 +1,6 @@
 ---
 type: deliverable
-status: in-progress
+status: delivered
 priority: 2
 owner: "[[jinyong-shin]]"
 due_date: 2026-04-25
@@ -9,7 +9,7 @@ tags:
   - pilot
   - auth
 created: 2026-04-12
-updated: 2026-04-12
+updated: 2026-05-15
 ---
 
 # OAuth 연동 + HTTPS

@@ -3,6 +3,8 @@ type: decision
 status: proposed
 priority: 1
 date: 2026-04-12
+created: 2026-04-12
+updated: 2026-04-12
 owner: "[[jinyong-shin]]"
 context: "아동 사용자의 가입·인증 정책"
 tags:

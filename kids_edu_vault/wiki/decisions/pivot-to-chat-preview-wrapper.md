@@ -3,6 +3,8 @@ type: decision
 status: proposed
 priority: 1
 date: 2026-04-12
+created: 2026-04-12
+updated: 2026-04-12
 owner: "[[jinyong-shin]]"
 context: "파일럿 실행환경 아키텍처 피벗"
 tags:

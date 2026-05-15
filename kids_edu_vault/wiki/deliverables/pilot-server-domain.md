@@ -1,6 +1,6 @@
 ---
 type: deliverable
-status: in-progress
+status: delivered
 priority: 2
 owner: "[[jinyong-shin]]"
 due_date: 2026-04-18
@@ -9,7 +9,7 @@ tags:
   - pilot
   - infra
 created: 2026-04-12
-updated: 2026-04-12
+updated: 2026-05-15
 ---
 
 # 배포 서버 + 도메인 준비

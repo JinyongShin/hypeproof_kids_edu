@@ -1,6 +1,6 @@
 ---
 type: deliverable
-status: in-progress
+status: delivered
 priority: 3
 owner: "[[jinyong-shin]]"
 due_date: 2026-04-25
@@ -9,7 +9,7 @@ tags:
   - pilot
   - content
 created: 2026-04-12
-updated: 2026-04-12
+updated: 2026-05-15
 ---
 
 # 게임 스타터 템플릿 + AI 튜터 지침 탑재

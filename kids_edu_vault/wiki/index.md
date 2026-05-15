@@ -65,7 +65,7 @@ tags:
 - [[pilot-gemini-api-key]] · [[pilot-server-domain]] · [[pilot-oauth-setup]] · [[pilot-cline-gemini-integration]] · [[pilot-game-starter-template]] · [[pilot-rehearsal-late-april]] · [[pilot-operator-guide]]
 - [[curriculum-submission-v2]] (2026-04-22) — 커리큘럼 협력사 제출용 포맷 (final)
 
-### Specs (11)
+### Specs (19)
 - [[specs/_index|_index]]
 - [[pilot-env-design]] · [[pilot-curriculum-adapted]]
 - [[curriculum-wizard-v1]] (2026-04-20) — 나만의 마법 게임 만들기 커리큘럼 상세 스펙 (게임 타이틀 카드)
@@ -77,11 +77,16 @@ tags:
 - [[production-loop]] — 프로덕션 루프 스펙 (봉호 태, target: 2026-06-01)
 - [[tech-decisions-wizard-v1]] (2026-04-25) — 커리큘럼 위자드 v1 기술 결정사항
 - Curriculum tracks: [[specs/core/_index|core]] · [[specs/skins/_index|skins (adult/kids)]] · [[specs/track-a/_index|track-a]] · [[specs/track-b/_index|track-b]]
+- Core: [[curriculum-core]] — 커리큘럼 코어 (skin 독립 공통 로직)
+- Track A: [[curriculum-v2-lesson-wow-impact]] · [[curriculum-wow-lesson-run]]
+- Track B: [[치과의사-curriculum-v1]] (archive) · [[치과의사-curriculum-v2]] (archive) · [[치과의사-curriculum-v3]] (active) · [[facilitator-script-dental-v3]]
+- Skins: [[specs/skins/adult/skin|adult/skin]] · [[specs/skins/kids/skin|kids/skin]]
 
-### Components (8)
+### Components (9)
 - [[components/_index|_index]]
 - [[code-server]] · [[oauth2-proxy]] · [[caddy]] · [[cline]] · [[gemini-2-5-flash]] · [[sans-kids-school-2025]]
 - Dev (2026-04-12): [[kids-edu-backend]] · [[kids-edu-frontend]]
+- [[langgraph]] — LangGraph StateGraph 백엔드 (stub)
 
 ### Concepts (12)
 - [[concepts/_index|_index]]
@@ -97,11 +102,13 @@ tags:
 - Cases: [[case-sickle-cell-coding-study]] · [[case-stjude-educational-challenges]] · [[case-starlight-therapeutic-gaming]] · [[case-techquity-pediatric-oncology]] · [[case-hospital-pedagogy-framework]] · [[case-pediatric-onc-infection-control]] · [[case-korean-hospital-schools]] · [[case-academic-continuity-peds-onc]] · [[case-oep-socioecological-program]]
 - Tech/Market (2026-04-12): [[intel-wrapper-architecture]] · [[intel-auth-billing-compliance]] · [[intel-competitive-landscape-2026]]
 
-### Runbooks (3)
+### Runbooks (5)
 - [[runbooks/_index|_index]]
 - [[pilot-day-operation]] (stub, planned, 2026-04-12)
 - [[deployment]] (2026-04-28) — 파일럿 환경 수동 배포 절차 (active)
 - [[pilot-operator-guide-wizard-v1]] — Kids Edu 파일럿 운영자 가이드 (wizard-v1)
+- [[llm-pulse-update]] — LLM Pulse 업데이트 런북
+- [[pilot-deploy]] — /pilot-deploy 슬래시 커맨드 런북 (stub)
 
 ### Validation (7) — QA·커리큘럼 검증 결과 (2026-04-27)
 - [[e2e-curriculum-results]] — E2E 커리큘럼 6블록 전체 실행 결과

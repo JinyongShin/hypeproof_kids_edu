@@ -1,6 +1,6 @@
 ---
 type: deliverable
-status: in-progress
+status: delivered
 priority: 2
 owner: "[[jinyong-shin]]"
 due_date: 2026-04-18
@@ -8,7 +8,7 @@ tags:
   - deliverable
   - pilot
 created: 2026-04-12
-updated: 2026-04-12
+updated: 2026-05-15
 ---
 
 # Gemini API Key 발급

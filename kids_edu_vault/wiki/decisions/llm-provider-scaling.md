@@ -69,7 +69,7 @@ deciders:
 
 ## 위임 / 책임
 
-- 구현: [[implementer]] (`genai_runner.py`에 분기 + 4-키 풀 + 자동 폴백)
+- 구현: [[subagent-team-structure]] (`genai_runner.py`에 분기 + 4-키 풀 + 자동 폴백)
 - 부하 테스트: `src/backend/load_test.py` 확장 (40 concurrent + 폴백 트리거 시나리오)
 - 결과 기록: [[load-test]] 페이지 갱신
 - 의사결정 게이트: 페이즈 1 결과 → 단일 키로 충분하면 페이즈 2 스킵

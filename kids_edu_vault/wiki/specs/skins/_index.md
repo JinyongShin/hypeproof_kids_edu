@@ -16,8 +16,8 @@ tags:
 
 | 스킨 | 대상 | 파일 | 상태 |
 |---|---|---|---|
-| kids | 아동 (초등생) | `kids/skin.md` | active — 5/5 파일럿 완료 |
-| adult | 성인 (직장인·전문직) | `adult/skin.md` | active — 5/26 파일럿 예정 |
+| kids | 아동 (초등생) | [[specs/skins/kids/skin|skin (kids)]] | active — 5/5 파일럿 완료 |
+| adult | 성인 (직장인·전문직) | [[specs/skins/adult/skin|skin (adult)]] | active — 5/26 파일럿 예정 |
 | mixed | 아동+성인 혼합 | — | 미착수 |
 
 ## 스킨 교체 요소 요약

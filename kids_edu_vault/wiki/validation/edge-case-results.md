@@ -5,6 +5,10 @@ updated: 2026-05-14
 test: edge-cases
 date: 2026-04-27
 server: localhost:8000
+created: 2026-04-27
+tags:
+  - validation
+  - edge-case
 ---
 
 # 엣지케이스 테스트 결과

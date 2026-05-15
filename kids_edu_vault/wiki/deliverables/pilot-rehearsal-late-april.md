@@ -1,6 +1,6 @@
 ---
 type: deliverable
-status: in-progress
+status: delivered
 priority: 1
 owner: "[[jinyong-shin]]"
 due_date: 2026-04-30
@@ -9,7 +9,7 @@ tags:
   - pilot
   - rehearsal
 created: 2026-04-12
-updated: 2026-04-12
+updated: 2026-05-15
 ---
 
 # 4월 말 리허설

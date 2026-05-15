@@ -177,4 +177,4 @@ tools/llm-pulse/
 
 - [[assets_v0.1]] — 분류 기준
 - [[curriculum-core]] · [[one-track-multi-skin]] — 4주 코스 베이스
-- 30일 회고로 [[assets_v0.2]] 후보 자동 생성 예정
+- 30일 회고로 assets_v0.2 (미착수) 후보 자동 생성 예정

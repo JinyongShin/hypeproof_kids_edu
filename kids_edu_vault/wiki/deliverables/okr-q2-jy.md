@@ -1,6 +1,6 @@
 ---
 type: deliverable
-status: in-progress
+status: active
 priority: 1
 owner: "[[jinyong-shin]]"
 due_date: 2026-06-30
@@ -9,7 +9,7 @@ tags:
   - okr
   - q2
 created: 2026-04-12
-updated: 2026-04-12
+updated: 2026-05-15
 ---
 
 # OKR Q2 (JY) — 파일럿 실행환경 구축

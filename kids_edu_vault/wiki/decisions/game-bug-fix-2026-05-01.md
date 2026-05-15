@@ -1,5 +1,6 @@
 ---
 type: decision
+status: resolved
 title: "게임 버그 3종 수정 (2026-05-01)"
 created: 2026-05-01
 tags:
@@ -7,6 +8,7 @@ tags:
   - game-engine
   - chat
   - spec
+updated: 2026-05-01
 ---
 
 # 게임 버그 3종 수정

@@ -1,5 +1,6 @@
 ---
 type: deliverable
+status: active
 title: "진행자 스크립트 — 치과의사 워크샵 v3"
 created: 2026-05-05
 updated: 2026-05-05

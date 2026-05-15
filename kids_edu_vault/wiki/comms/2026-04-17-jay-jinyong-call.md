@@ -13,7 +13,6 @@ related:
   - "[[jay]]"
   - "[[jinyong-shin]]"
   - "[[pilot-5-5-milestones]]"
-  - "[[2026-04-21-stack-meeting]]"
 sources:
   - "0417-call.md"
 ---
