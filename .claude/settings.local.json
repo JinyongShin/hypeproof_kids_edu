@@ -79,7 +79,10 @@
       "Bash(git *)",
       "mcp__context7__resolve-library-id",
       "mcp__context7__query-docs",
-      "Bash(docker compose *)"
+      "Bash(docker compose *)",
+      "Bash(MOCK_LLM=1 uv run pytest -v --tb=short)",
+      "Bash(MOCK_LLM=1 uv run pytest -v --tb=short --ignore=tests/test_auth_session_game.py)",
+      "Bash(MOCK_LLM=1 uv run pytest tests/test_auth_session_game.py -v --tb=short)"
     ]
   },
   "enabledMcpjsonServers": [

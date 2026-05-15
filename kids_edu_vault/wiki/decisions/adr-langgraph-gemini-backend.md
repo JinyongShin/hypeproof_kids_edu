@@ -3,7 +3,7 @@ type: decision
 title: "ADR: LangGraph + Gemini 백엔드 전환"
 status: active
 created: 2026-05-01
-updated: 2026-05-14
+updated: 2026-05-15
 tags:
   - decision
   - adr
@@ -15,8 +15,8 @@ tags:
 # ADR: LangGraph + Gemini 2.5 Flash 백엔드 전환
 
 **날짜**: 2026-05-01  
-**브랜치**: `feature/langgraph-gemini`  
-**상태**: active
+**브랜치**: `feature/langgraph-gemini` → **main 머지 완료 (2026-05-15, PR#7)**  
+**상태**: active (merged)
 
 ---
 
@@ -143,6 +143,27 @@ get_intent_llm()  # temp=0.1, 64 tokens — 분류 전용
 - 인텐트별 LLM 파라미터 튜닝 가능
 - 롤링 컨텍스트로 긴 세션에서도 맥락 유지
 - 체크포인터로 서버 재시작 후에도 세션 복원
+
+## PR#7 리뷰 반영 (2026-05-15 머지)
+
+PR 리뷰(ico1036) 3건에서 제기된 항목 중 코드 수정이 필요한 것만 처리. 이미 구현된 것은 코멘트로 확인.
+
+| 항목 | 처리 방식 | 커밋 |
+|------|---------|------|
+| `nodes.py` `sys.path.insert` 7회 반복 | 모듈 레벨 1회로 통합 | `ad4ca19` |
+| `edit_code_node` 실패 시 무음 | `error: "edit_code_failed"` → `save_game_node`에서 "수정을 제대로 못했어" 피드백 | `ad4ca19` |
+| `docker-compose.yml` Langfuse 시크릿 하드코딩 | `${VAR:-fallback}` 패턴 + `.env.langfuse.example` 추가 | `ad4ca19` |
+| 프론트엔드 `.env.example` 없음 | `src/frontend/.env.example` 신규 추가 | `ad4ca19` |
+| `test_auth_session_game.py` 깨진 import | `claude_runner` → `app.graph.nodes` 수정 | `ad4ca19` |
+
+**이미 구현 확인됨 (수정 불필요)**:
+- WebSocket 재연결: `hooks/useChat.ts` — 3회 재시도 + `wsStatus` UI 구현됨
+- SQLite WAL 모드: `storage.py:95` `PRAGMA journal_mode=WAL` 설정됨
+- JWT SECRET_KEY: `app/auth.py` 환경변수 기반 확인됨
+
+**파일럿 후 처리 예정**: Ping/Pong 하트비트, iframe CSP 헤더, 10턴+ rolling summary
+
+---
 
 ## 관련 페이지
 
