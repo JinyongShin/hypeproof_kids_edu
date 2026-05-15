@@ -1,5 +1,6 @@
 ---
 type: index
+status: navigational
 title: "Comms"
 created: 2026-04-12
 updated: 2026-04-12
@@ -10,6 +11,11 @@ tags:
 # Comms
 
 미팅·주요 스레드 합성 요약. 원본 트랜스크립트는 `../../meeting_notes/` 에 있음 (frontmatter `raw_source` 참조).
+
+## Ops / Comms
+- [[2026-04-21-hospital-inquiry-draft]] (2026-04-21) — 국립암센터 행사 사전 확인 요청 초안 (허가·감염관리·장비·콘텐츠 9개 항목)
+- [[2026-04-12-team-briefing-research]] (2026-04-12) — 소아암 환아 AI 코딩 파일럿 근거 요약
+- [[2026-04-22-hospital-filamentary-checklist]] (2026-04-22) — 병원/필라멘트리 사전 확인 체크리스트
 
 ## Weekly / Meetings
 - [[2026-04-21-asap-action-items]] — ASAP 액션 아이템 (필라멘트리 전달 마감 2026-04-24)

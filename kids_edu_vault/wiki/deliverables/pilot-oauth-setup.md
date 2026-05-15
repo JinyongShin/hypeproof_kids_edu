@@ -9,7 +9,7 @@ tags:
   - pilot
   - auth
 created: 2026-04-12
-updated: 2026-04-12
+updated: 2026-05-15
 ---
 
 # OAuth 연동 + HTTPS
@@ -24,7 +24,7 @@ updated: 2026-04-12
 - [ ] 비인가 계정 접속 시 차단 확인.
 
 ## 진행 현황
-- 미시작. Google 계정 보유 여부 Jay 확인 대기.
+- 미완료. [[sk-biopharma]] 파일럿(6~7월) 준비 진행 중 — 수강생 계정 구조 확정 필요.
 
 ## 의존성
 - [[pilot-server-domain]] 완료 후.

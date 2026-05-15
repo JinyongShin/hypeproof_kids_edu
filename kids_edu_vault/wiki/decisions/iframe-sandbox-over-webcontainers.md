@@ -3,6 +3,8 @@ type: decision
 status: proposed
 priority: 2
 date: 2026-04-12
+created: 2026-04-12
+updated: 2026-04-12
 owner: "[[jinyong-shin]]"
 context: "래퍼 라이브 프리뷰의 실행 샌드박스 기술 선택"
 tags:

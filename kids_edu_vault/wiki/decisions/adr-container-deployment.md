@@ -1,172 +1,138 @@
 ---
 type: decision
-title: "Docker Compose + 단일 VPS (fly.io/Railway) 배포"
+title: "ADR: 컨테이너 배포 전략"
+status: active
 created: 2026-05-01
-updated: 2026-05-01
-status: proposed
-priority: 2
-owner: "JY"
-context: "파일럿(2026-05-05) 이후 상품화 단계 — Cloudflare Quick Tunnel URL 불안정·맥북 단일 장애점 해소"
+updated: 2026-05-14
 tags:
   - decision
-  - architecture
+  - adr
   - deployment
-  - infra
   - docker
-related:
-  - "[[nextjs-fastapi-wrapper-architecture]]"
-  - "[[auth-session-game-persistence]]"
-  - "[[llm-provider-scaling]]"
-  - "[[adr-langgraph-gemini-backend]]"
-  - "[[langfuse-observability]]"
-deciders:
-  - "[[jinyong-shin]]"
+  - flyio
 ---
 
-# Docker Compose + 단일 VPS (fly.io/Railway) 배포
+# ADR: 컨테이너 배포 전략 (Docker + fly.io)
+
+**날짜**: 2026-05-01  
+**브랜치**: `feature/langgraph-gemini`  
+**상태**: active (파일럿은 Cloudflare Quick Tunnel, 정식 운영은 fly.io 예정)
+
+---
 
 ## 결정
 
-파일럿(2026-05-05) 이후 상품화 v1 시점에 **Docker Compose + fly.io 단일 VPS**로 전환한다. 로컬 dev와 VPS 배포를 단일 `docker-compose.yml`로 관리하고, fly.io Volumes로 SQLite 영속화, Cloudflare Named Tunnel로 URL 고정을 달성한다.
+백엔드 + 프론트엔드 + Langfuse를 **Docker 컨테이너**로 패키징하고, 정식 운영은 **fly.io (도쿄 리전)**에 배포.
 
-## 배경
+---
 
-현행 배포([[nextjs-fastapi-wrapper-architecture]], CLAUDE.md 배포 섹션)의 한계:
+## 배경 — Quick Tunnel 방식의 한계
 
-- **Quick Tunnel URL 매 재시작 변경** — `_backend.js` / `BACKEND_BASE_URL` 수동 갱신 필수. 상품화 환경에서 운영 불가.
-- **맥북 단일 장애점** — 절전 진입 시 외부 접속 즉시 끊김. 파일럿 당일 절전 OFF 필수이나 상시 운영 불가.
-- **어카운트리스 정책 위험** — 40명 동시 접속 트래픽 패턴에서 Cloudflare가 accountless tunnel을 차단할 수 있음.
-- **확장 불가** — 맥북 로컬은 스케일아웃 경로 없음.
+파일럿 배포 방식(Cloudflare Quick Tunnel + 운영자 맥북)은 다음 문제가 있음:
 
-## 결정 사항
+| 한계 | 내용 |
+|------|------|
+| URL 불안정 | cloudflared 재시작마다 URL 변경 → `_backend.js` 수동 갱신 필요 |
+| 가용성 | 맥 절전 시 외부 접속 끊김 |
+| 동시 접속 | Cloudflare 어카운트리스 정책 — 40명 동시 접속 미검증 |
+| 확장성 없음 | 여러 파일럿 고객(SK바이오팜, 보아치과)을 동시에 운영할 수 없음 |
 
-### 컨테이너 구성
+---
 
-| 파일 | 내용 |
-|---|---|
-| `src/backend/Dockerfile` | Python 3.12-slim, `uv sync`, `uvicorn` entrypoint |
-| `src/frontend/Dockerfile` | node:20-alpine, `next build`, `next start` |
-| `docker-compose.yml` (루트) | backend + frontend 서비스, 로컬 dev + VPS 공용 |
+## 컨테이너 구성
 
-### 영속화
+### 서비스 구조 (`docker-compose.yml`)
 
-- fly.io Volume `/app/data` 마운트 → `kids_edu.db`, `langgraph.db`([[adr-langgraph-gemini-backend]]) 보존.
-- 컨테이너 재시작·배포 시에도 SQLite 데이터 유지.
+```
+backend   (port 8000)  ← python:3.12-slim + uv + FastAPI/LangGraph
+frontend  (port 3000)  ← Node.js + Next.js
+langfuse  (port 3002)  ← langfuse/langfuse:2.95.11
+langfuse-db            ← postgres:16-alpine
+```
 
-### URL 고정
+### 백엔드 Dockerfile (`src/backend/Dockerfile`)
 
-- Cloudflare **Named Tunnel** 전환 (파일럿 이후) — 재시작 후에도 동일 subdomain 유지.
-- Named Tunnel은 `cloudflared tunnel create` + `config.yml` 기반, accountless 아님.
+```dockerfile
+FROM python:3.12-slim
+WORKDIR /app
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+COPY pyproject.toml uv.lock* ./
+RUN uv sync --frozen --no-dev
+COPY . .
+RUN mkdir -p data/games data/cards
+EXPOSE 8000
+CMD ["uv", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+```
 
-### 단계별 전환 계획
+- `uv sync --frozen --no-dev`: 재현 가능한 의존성 설치
+- `data/` 디렉토리: SQLite DB + 게임 HTML 파일 영속화 대상
 
-| 단계 | 시점 | 구성 |
-|---|---|---|
-| 파일럿 | 2026-05-05 | 현행 Quick Tunnel 유지 (변경 없음) |
-| 상품화 v1 | 파일럿 +2주 이내 | fly.io VPS + Named Tunnel 전환 |
-| 스케일아웃 | 필요 시 | Cloud Run (backend) + Vercel (frontend) + RDS 검토 |
+### 프론트엔드 Dockerfile (`src/frontend/Dockerfile`)
 
-### 관측성 (Observability) — Langfuse
+Next.js standalone 빌드. 빌드 시 `NEXT_PUBLIC_BACKEND_HTTP_URL` / `NEXT_PUBLIC_BACKEND_WS_URL` ARG 주입.
 
-LangGraph 기반 백엔드([[adr-langgraph-gemini-backend]])의 LLM 호출·그래프 실행 흐름을 추적하기 위해 **Langfuse를 docker-compose 서비스로 셀프호스팅**한다. 상세 설정은 [[langfuse-observability]] 스펙 참조.
-
-#### docker-compose 서비스 추가
-
-`docker-compose.yml`에 두 서비스를 추가한다.
+### Langfuse 구성
 
 ```yaml
 langfuse:
-  image: langfuse/langfuse:2.95.11
-  ports:
-    - "3002:3000"
+  image: langfuse/langfuse:2.95.11  # v2 패치버전 핀 고정
+  ports: ["3002:3000"]
   environment:
-    - DATABASE_URL=postgresql://langfuse:langfuse@langfuse_db:5432/langfuse
-    - NEXTAUTH_SECRET=${LANGFUSE_NEXTAUTH_SECRET}
-    - SALT=${LANGFUSE_SALT}
-    - NEXTAUTH_URL=http://localhost:3002
-  depends_on:
-    - langfuse_db
-
-langfuse_db:
-  image: postgres:16-alpine
-  environment:
-    - POSTGRES_USER=langfuse
-    - POSTGRES_PASSWORD=langfuse
-    - POSTGRES_DB=langfuse
-  volumes:
-    - langfuse_db_data:/var/lib/postgresql/data
-
-volumes:
-  langfuse_db_data:
+    DATABASE_URL: postgresql://langfuse:langfuse_local@langfuse-db:5432/langfuse
+    NEXTAUTH_SECRET: ...
+    NEXTAUTH_URL: http://localhost:3002
 ```
 
-- **이미지 버전 핀 고정**: `langfuse/langfuse:2.95.11` — `latest` 사용 시 더 높은 버전의 Langfuse가 실행되어 DB 스키마(`ScoreDataType` enum, `observations_view`)가 변경되고 langfuse SDK v2 컨테이너와 충돌이 발생한 이력 있음. 재현성 확보를 위해 2.95.11로 핀 고정.
-- **포트**: 3002 — 프론트(3000), 백엔드(8000)와 충돌 없음.
-- **데이터 영속화**: `langfuse_db_data` named volume — 컨테이너 재시작 후에도 트레이스 유지.
+v2를 채택한 이유: v3는 ClickHouse + S3/MinIO 필요 → 로컬/소규모 운영에 오버스펙. VPS 전환 시 v3 재검토.
 
-#### 백엔드 통합
+---
 
-`langfuse.callback.CallbackHandler`를 LangGraph `astream_events` 호출 시 콜백으로 주입한다. 활성화 여부는 환경변수 `LANGFUSE_ENABLED`로 제어하여 파일럿 당일(맥북 환경)에는 오버헤드 없이 비활성화 가능.
+## fly.io 배포 설정 (`fly.toml`)
 
-필요한 환경변수 (`.env.local`):
+```toml
+app = "kids-edu"
+primary_region = "nrt"   # 도쿄 — 한국 가장 가까운 fly.io 리전
 
-| 변수명 | 설명 |
-|---|---|
-| `LANGFUSE_ENABLED` | `true` / `false` — 콜백 주입 여부 |
-| `LANGFUSE_PUBLIC_KEY` | Langfuse 프로젝트 Public Key |
-| `LANGFUSE_SECRET_KEY` | Langfuse 프로젝트 Secret Key |
-| `LANGFUSE_HOST` | `http://localhost:3002` (로컬) 또는 VPS URL |
+[build]
+  dockerfile = "src/backend/Dockerfile"
 
-#### 제공하는 관측 정보
+[[services]]
+  internal_port = 8000
+  [services.concurrency]
+    type = "requests"
+    hard_limit = 50
+    soft_limit = 40
 
-- **노드별 토큰 사용량** — LangGraph 각 노드의 input/output 토큰 집계
-- **그래프 실행 흐름** — 어느 노드가 어느 순서로 호출되었는지 trace
-- **레이턴시** — 노드별·전체 그래프 실행 시간
-- **비용 추적** — 모델별 단가 기반 자동 비용 계산 (Gemini 모델 단가 등록 필요)
+[[mounts]]
+  source = "kids_edu_data"
+  destination = "/app/data"  # SQLite + 게임 파일 영속 볼륨
+```
 
-#### LangSmith 대비 선택 이유
+- 동시 요청 한도: soft 40 / hard 50 (40명 파일럿 기준)
+- `/app/data` 영속 볼륨: 서버 재시작 후에도 게임·세션 유지
 
-| 항목 | Langfuse (채택) | LangSmith |
-|---|---|---|
-| 호스팅 | 셀프호스팅 가능 | SaaS 전용 |
-| 데이터 유출 | 없음 — 로컬/VPS 내부 | 외부 서버로 전송 |
-| 비용 | 무료 (오픈소스) | 유료 플랜 필요 |
-| 소아암 병동 데이터 | 외부 유출 없음 (규정 준수) | 외부 전송 우려 |
+---
 
-## 대안 및 기각 이유
+## 배포 단계별 전략
 
-| 대안 | 기각 이유 |
-|---|---|
-| Cloudflare Named Tunnel + 맥북 유지 | 장기 맥북 상시 가동 비현실적, 하드웨어 장애 단일 위험 |
-| Render / Heroku | fly.io 대비 SQLite Volume 지원 제한적, 가격 불리 |
-| AWS EC2 직접 운영 | 운영 부담 과도, fly.io 관리형 대비 이점 없음 |
-| Docker 없이 직접 배포 | 로컬 dev와 prod 환경 차이 → 재현 불가 버그 위험 |
-| 파일럿에 즉시 적용 | D-4 시점에 배포 구조 변경은 리스크 과대. 파일럿은 현행 유지. |
-| LangSmith (관측성) | SaaS — 소아암 환아 데이터 외부 전송 우려. 셀프호스팅 Langfuse 채택. |
+| 단계 | 방식 | 대상 |
+|------|------|------|
+| 파일럿 D-day | Quick Tunnel (운영자 맥북) | 소아암 병동 (1회성) |
+| SK바이오팜 파일럿 (2026-06~07) | fly.io 배포 권장 | 다회차, 외부 접속 안정성 필요 |
+| 정식 운영 | fly.io + Named Tunnel (본인 도메인) | 멀티 파일럿 고객 |
 
-## 영향 범위
+---
 
-- **신규 파일**: `src/backend/Dockerfile`, `src/frontend/Dockerfile`, `docker-compose.yml` (루트), `fly.toml`.
-- **변경 파일**: `src/backend/.env.example` — `BACKEND_BASE_URL`, `LANGFUSE_*` 환경변수 예시 추가. `src/frontend/public/_backend.example.js` — Named Tunnel URL 예시로 갱신.
-- **gitignore 추가**: `src/backend/data/langgraph.db` (로컬 체크포인터 파일).
-- **운영 절차**: `kids_edu_vault/wiki/runbooks/deployment.md` — Docker Compose + fly.io 배포 단계 추가.
-- **스펙 신규**: [[langfuse-observability]] — Langfuse 셀프호스팅 설정·통합 상세.
-- **파일럿 당일(2026-05-05)**: 영향 없음. 현행 Quick Tunnel 절차 유지. Langfuse는 `LANGFUSE_ENABLED=false`로 비활성.
+## 환경 변수 구분
 
-## Open Questions
+- `.env.local` (gitignore): `GEMINI_API_KEY`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `LANGFUSE_*`
+- fly.io secrets: `fly secrets set GEMINI_API_KEY=...`로 주입
 
-- [ ] fly.io 무료 티어 RAM (256MB) vs. 유료 (512MB~) — Next.js `next build` 메모리 요구량 확인 필요.
-- [ ] Named Tunnel 도메인 — `hypeproof.kr` 서브도메인 사용 여부. 도메인 소유 확인 필요.
-- [ ] `langgraph.db`([[adr-langgraph-gemini-backend]])와 `kids_edu.db`를 같은 Volume에 둘지, Volume 분리 여부.
-- [ ] fly.io Volume는 단일 리전. 멀티리전 요구 시 Litestream(SQLite 스트리밍 복제) 도입 검토.
-- [ ] Langfuse VPS 배포 시 fly.io Volume에 Postgres 데이터 포함 여부 — 별도 managed Postgres (fly.io Postgres) 사용 검토.
-- [ ] Gemini 모델 단가를 Langfuse에 등록하는 방법 확인 필요 (커스텀 모델 정의).
+---
 
-## 관련
+## 관련 페이지
 
-- [[nextjs-fastapi-wrapper-architecture]]
-- [[auth-session-game-persistence]]
-- [[llm-provider-scaling]]
-- [[adr-langgraph-gemini-backend]]
-- [[langfuse-observability]]
-- [[pilot-server-domain]]
+- [[adr-langgraph-gemini-backend]] — 배포 대상 백엔드 구현 결정
+- [[adr-multitenant-schema]] — 멀티 파일럿 대응 DB 스키마
+- [[langfuse-observability]] — Langfuse 서비스 상세 설정
+- [[pilot-env-design]] — 파일럿 환경 설계 전체 스펙

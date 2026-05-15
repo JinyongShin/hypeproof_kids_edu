@@ -195,8 +195,8 @@ Day 5 (D-day):    파일럿 실행
 
 ## 책임
 
-- 구현: [[implementer]]
-- 측정 / 결과 기록: [[implementer]] + [[reviewer]] (메트릭 검증)
+- 구현: [[subagent-team-structure]]
+- 측정 / 결과 기록: [[subagent-team-structure]] + [[subagent-team-structure]] (메트릭 검증)
 - 게이트 의사결정: [[jinyong-shin]]
 
 ## 의존

@@ -4,7 +4,7 @@ status: draft
 owner: "[[jinyong-shin]]"
 target_date: 2026-05-19
 created: 2026-05-01
-updated: 2026-05-01
+updated: 2026-05-14
 tags:
   - spec
   - observability
@@ -45,33 +45,15 @@ PostgreSQL 16 (langfuse_db_data volume)
 
 ## docker-compose 설정
 
-`docker-compose.yml` 루트 파일에 두 서비스를 추가한다.
+`docker-compose.yml` 루트 파일에 두 서비스가 포함된다.
 
 ```yaml
-services:
-  # ... 기존 backend, frontend 서비스 ...
-
-  langfuse:
-    image: langfuse/langfuse:latest
-    ports:
-      - "3002:3000"
-    environment:
-      - DATABASE_URL=postgresql://langfuse:langfuse@langfuse_db:5432/langfuse
-      - NEXTAUTH_SECRET=${LANGFUSE_NEXTAUTH_SECRET}
-      - SALT=${LANGFUSE_SALT}
-      - NEXTAUTH_URL=http://localhost:3002
-      - TELEMETRY_ENABLED=false
-    depends_on:
-      langfuse_db:
-        condition: service_healthy
-    restart: unless-stopped
-
-  langfuse_db:
+  langfuse-db:
     image: postgres:16-alpine
     environment:
-      - POSTGRES_USER=langfuse
-      - POSTGRES_PASSWORD=langfuse
-      - POSTGRES_DB=langfuse
+      POSTGRES_DB: langfuse
+      POSTGRES_USER: langfuse
+      POSTGRES_PASSWORD: langfuse_local
     volumes:
       - langfuse_db_data:/var/lib/postgresql/data
     healthcheck:
@@ -79,14 +61,25 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    restart: unless-stopped
 
-volumes:
-  langfuse_db_data:
+  langfuse:
+    image: langfuse/langfuse:2.95.11   # v2 패치버전 핀 고정
+    ports:
+      - "3002:3000"
+    environment:
+      DATABASE_URL: postgresql://langfuse:langfuse_local@langfuse-db:5432/langfuse
+      NEXTAUTH_SECRET: local_dev_secret_change_in_prod
+      NEXTAUTH_URL: http://localhost:3002
+      SALT: local_dev_salt_change_in_prod
+    depends_on:
+      langfuse-db:
+        condition: service_healthy
 ```
 
 > [!note]
-> `LANGFUSE_NEXTAUTH_SECRET`과 `LANGFUSE_SALT`는 `.env.local`에 임의 문자열로 설정. 운영 환경에서는 반드시 강한 랜덤값 사용.
+> `NEXTAUTH_SECRET`과 `SALT`는 로컬 개발용 플레이스홀더. 운영 환경에서는 반드시 강한 랜덤값으로 교체.
+
+v2를 채택한 이유: v3는 ClickHouse + S3/MinIO 필요 → 로컬/소규모 운영에 오버스펙.
 
 ---
 
@@ -95,15 +88,15 @@ volumes:
 ### 1. 서비스 기동
 
 ```bash
-docker compose up -d langfuse langfuse_db
+docker compose up -d langfuse-db langfuse
 ```
 
 ### 2. 관리 UI 접속 및 계정 생성
 
 1. 브라우저에서 `http://localhost:3002` 접속
-2. "Sign Up" 클릭 → 관리자 계정 생성 (이메일 + 비밀번호)
-3. 로그인 후 "Create New Organization" → 조직명 입력 (예: `hypeproof-kids-edu`)
-4. "Create New Project" → 프로젝트명 입력 (예: `pilot-2026-05-05`)
+2. "Sign Up" → 관리자 계정 생성 (이메일 + 비밀번호)
+3. "Create New Organization" → 예: `hypeproof-kids-edu`
+4. "Create New Project" → 예: `pilot-2026-05-05`
 
 ### 3. API 키 발급
 
@@ -113,7 +106,7 @@ docker compose up -d langfuse langfuse_db
 
 ### 4. `.env.local` 설정
 
-`src/backend/.env.local`에 아래 항목 추가:
+`src/backend/.env.local`:
 
 ```bash
 LANGFUSE_ENABLED=true
@@ -122,21 +115,19 @@ LANGFUSE_SECRET_KEY=sk-lf-xxxxxxxxxxxx
 LANGFUSE_HOST=http://localhost:3002
 ```
 
-파일럿 당일(맥북 로컬 환경)에는 `LANGFUSE_ENABLED=false`로 비활성화하여 오버헤드를 제거한다.
+파일럿 당일(맥북 로컬)에는 `LANGFUSE_ENABLED=false`로 비활성화하여 오버헤드 제거.
 
 ---
 
 ## 백엔드 통합
 
-### 의존성 추가
+### 의존성
 
 ```bash
 uv add langfuse
 ```
 
-### CallbackHandler 주입
-
-`src/backend/genai_runner.py` (또는 LangGraph 실행 진입점)에 아래 패턴 적용:
+### CallbackHandler 주입 패턴
 
 ```python
 import os
@@ -152,7 +143,7 @@ def get_langfuse_callback() -> CallbackHandler | None:
     )
 ```
 
-LangGraph `astream_events` 호출 시 콜백 리스트에 주입:
+LangGraph `astream_events` 호출 시:
 
 ```python
 callbacks = [cb for cb in [get_langfuse_callback()] if cb is not None]
@@ -162,16 +153,12 @@ async for event in graph.astream_events(
     config={"callbacks": callbacks},
     version="v2",
 ):
-    # 기존 이벤트 처리 로직
     ...
 
-# 세션 종료 또는 요청 완료 시 flush
+# 요청 완료 시 flush (마지막 트레이스 누락 방지)
 if callbacks:
     callbacks[0].flush()
 ```
-
-> [!tip]
-> `flush()`는 비동기 배치 전송을 강제로 완료한다. 요청 핸들러 종료 직전에 호출하지 않으면 마지막 트레이스가 누락될 수 있다.
 
 ---
 
@@ -179,11 +166,11 @@ if callbacks:
 
 | 항목 | 설명 |
 |---|---|
-| **Traces** | 사용자 요청 1건 = 트레이스 1개. LangGraph 그래프 실행 전체 타임라인. |
-| **노드별 토큰 사용량** | 각 LangGraph 노드(예: `generate_card`, `run_game_spec`)의 input/output 토큰 수. |
-| **레이턴시** | 노드별·전체 그래프 실행 소요 시간 (ms). 병목 노드 식별 가능. |
-| **비용 추적** | 등록된 모델 단가 기반 자동 계산. Gemini 커스텀 모델 단가 등록 필요. |
-| **세션 그루핑** | `session_id`로 묶어 사용자별 전체 대화 흐름 추적 가능. |
+| **Traces** | 사용자 요청 1건 = 트레이스 1개. LangGraph 그래프 실행 전체 타임라인 |
+| **노드별 토큰 사용량** | 각 노드(`generate_card`, `edit_code` 등)의 input/output 토큰 수 |
+| **레이턴시** | 노드별·전체 그래프 실행 소요 시간. 병목 노드 식별 |
+| **비용 추적** | 등록된 모델 단가 기반 자동 계산. Gemini 커스텀 모델 단가 등록 필요 |
+| **세션 그루핑** | `session_id`로 묶어 사용자별 전체 대화 흐름 추적 |
 
 ---
 
@@ -191,38 +178,32 @@ if callbacks:
 
 ### PostgreSQL 백업
 
-`langfuse_db_data` named volume을 정기 백업한다. fly.io VPS 환경에서는 fly.io Volumes 스냅샷 기능 또는 `pg_dump`를 cron으로 실행.
-
 ```bash
-# 수동 백업 예시
-docker exec langfuse_db pg_dump -U langfuse langfuse > langfuse_backup_$(date +%Y%m%d).sql
+docker exec langfuse-db pg_dump -U langfuse langfuse > langfuse_backup_$(date +%Y%m%d).sql
 ```
 
-### Langfuse 버전 업그레이드
+### 버전 고정 이유
 
-`langfuse/langfuse:latest` 태그는 자동으로 최신 버전을 가리킨다. 운영 중 예고 없는 스키마 변경을 피하려면 **고정 버전 태그** 사용 권장:
+`langfuse/langfuse:2.95.11` 패치버전 핀 고정. latest 태그는 스키마 변경 시 무중단 업그레이드를 보장하지 않음.
 
-```yaml
-image: langfuse/langfuse:2   # major 버전 고정
-```
-
-업그레이드 시:
+업그레이드 절차:
 1. `docker compose pull langfuse`
-2. `docker compose up -d langfuse` — DB 마이그레이션은 컨테이너 기동 시 자동 실행.
-3. 대시보드 접속 확인.
+2. `docker compose up -d langfuse` — 기동 시 DB 마이그레이션 자동 실행
+3. 대시보드 접속 확인
 
 ### fly.io VPS 배포 시
 
-Langfuse Postgres를 fly.io Volume 내부에 둘지, fly.io managed Postgres를 사용할지 [[adr-container-deployment]] Open Questions 참조.
+Langfuse Postgres를 fly.io Volume 내부에 둘지, fly.io managed Postgres를 쓸지 [[adr-container-deployment]] 참조.
 
 ### 파일럿 당일 (2026-05-05)
 
-`LANGFUSE_ENABLED=false` — Langfuse 컨테이너 기동 불필요. 맥북 리소스 절약.
+`LANGFUSE_ENABLED=false` 권장. Langfuse 컨테이너 기동 불필요. 맥북 리소스 절약.
 
 ---
 
-## 관련
+## 관련 페이지
 
 - [[adr-container-deployment]]
 - [[adr-langgraph-gemini-backend]]
+- [[adr-multitenant-schema]]
 - [[llm-provider-scaling]]

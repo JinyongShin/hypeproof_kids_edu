@@ -1,6 +1,6 @@
 ---
 type: deliverable
-status: in-progress
+status: delivered
 priority: 2
 owner: "[[jinyong-shin]]"
 due_date: 2026-04-18
@@ -9,7 +9,7 @@ tags:
   - pilot
   - infra
 created: 2026-04-12
-updated: 2026-04-12
+updated: 2026-05-15
 ---
 
 # 배포 서버 + 도메인 준비
@@ -24,7 +24,7 @@ updated: 2026-04-12
 - [ ] 80/443 포트 개방 (Caddy ACME challenge).
 
 ## 진행 현황
-- 미시작.
+- **완료** (배포 전략 변경: 전용 서버+도메인 → Cloudflare Quick Tunnel 방식으로 전환. [[deployment]] runbook 참조).
 
 ## 의존성
 - 수강생 인원 확정 → 서버 스펙.

@@ -24,7 +24,12 @@ kids_edu_vault/
 │   ├── specs/                 # 설계 문서 (복합 결정 묶음)
 │   ├── components/            # 기술 스택 컴포넌트별 페이지
 │   ├── runbooks/              # 배포·당일 운영 절차
-│   └── concepts/              # 조직 맥락 용어·프레임워크
+│   ├── concepts/              # 조직 맥락 용어·프레임워크
+│   ├── sources/               # wiki-ingest 소스 요약 페이지 (원본 1개 = 요약 1개)
+│   ├── questions/             # wiki-query 답변 파일링 폴더 (지식 복리 누적)
+│   ├── validation/            # QA·커리큘럼 검증 결과 로그
+│   ├── projects/              # 비교육 사업 문서 (HYROX 등 외부 프로젝트)
+│   └── assets/                # 디자인·콘텐츠 자산 버전 관리
 └── CLAUDE.md                  # 이 파일
 ```
 
@@ -41,6 +46,11 @@ kids_edu_vault/
 | 조직/개발 용어 | `concepts/` | Mission Driven, 트랙 A/B |
 | 외부 자료·현장 체크 | `intel/` | 병원 장소 정보 |
 | 미팅 합성 요약 | `comms/` | 2026-01-05-meeting |
+| 비교육 사업 문서 | `projects/` | HYROX 제안서, 외부 세션 |
+| 디자인·콘텐츠 자산 | `assets/` | 16원칙 assets v0.1 |
+| QA·검증 테스트 결과 | `validation/` | E2E 결과, 에지케이스 로그 |
+| ingest 소스 요약 | `sources/` | wiki-ingest 자동 생성 — 직접 생성 금지 |
+| 쿼리 응답 아카이브 | `questions/` | wiki-query 자동 파일링 |
 
 ## Conventions
 
@@ -52,6 +62,10 @@ kids_edu_vault/
 - `wiki/hot.md`는 500단어 이내 캐시: 매 세션 끝·ingest 후 **완전히 덮어쓸 것**(저널 아님).
 - 날짜는 `YYYY-MM-DD` 만 사용 (ISO datetime 금지).
 - YAML 안의 wikilink는 반드시 따옴표: `- "[[Page]]"`.
+- **파일명**: `kebab-case` 사용 (예: `my-page.md`). wiki-lint 스킬의 기본값인 "Title Case with spaces"와 다름 — 이 볼트는 kebab-case를 의도적으로 채택. lint 실행 시 naming convention 항목은 false positive로 무시.
+- **_index.md 파일**: `status: navigational` 필드 사용. 콘텐츠 페이지와 다른 용도임을 명시.
+- **sources/ 폴더**: wiki-ingest 스킬이 자동 관리. 직접 파일 생성 금지.
+- **questions/ 폴더**: wiki-query 스킬이 자동 파일링. 직접 파일 생성 금지.
 
 ## Operations
 

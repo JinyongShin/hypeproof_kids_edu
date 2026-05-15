@@ -45,6 +45,58 @@
         "wiki/hot.md",
         "wiki/log.md"
       ]
+    },
+    "meeting_notes/2026-05-12.md": {
+      "hash": "814a4bd19e0102a2766b65664008fd36",
+      "ingested_at": "2026-05-14",
+      "pages_created": [
+        "wiki/comms/2026-05-12-sk-biopharma-meeting.md",
+        "wiki/stakeholders/sk-biopharma.md",
+        "wiki/stakeholders/bitree.md",
+        "wiki/stakeholders/oh-sungeun.md",
+        "wiki/deliverables/sk-biopharma-pilot.md"
+      ],
+      "pages_updated": [
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ],
+      "note": "동일 내용: meeting_notes/20260512_meeting.md"
+    },
+    "meeting_notes/20260512_meeting.md": {
+      "hash": "5c17ff57840961400d298f36c5adc466",
+      "ingested_at": "2026-05-14",
+      "pages_created": [],
+      "pages_updated": [],
+      "note": "2026-05-12.md와 동일 내용 — 별도 처리 없음, 단일 comms 페이지로 통합"
+    },
+    "meeting_notes/2026-05-14.md": {
+      "hash": "489ed538c54dcca1709d74348e6c9613",
+      "ingested_at": "2026-05-14",
+      "pages_created": [
+        "wiki/comms/2026-05-14-sk-biopharma-followup.md",
+        "wiki/concepts/hypeproof-studio.md",
+        "wiki/concepts/sixteen-essence.md",
+        "wiki/decisions/adr-hypeproof-studio-v01.md"
+      ],
+      "pages_updated": [
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ]
+    },
+    "kids_edu_vault/.raw/meeting_notes/2026-04-21-hospital-inquiry-draft.md": {
+      "hash": "be657fc81296873cc2988d3f1e0f29b0",
+      "ingested_at": "2026-05-15",
+      "pages_created": [
+        "wiki/comms/2026-04-21-hospital-inquiry-draft.md"
+      ],
+      "pages_updated": [
+        "wiki/comms/_index.md",
+        "wiki/index.md",
+        "wiki/log.md",
+        "wiki/hot.md"
+      ]
     }
   }
 }

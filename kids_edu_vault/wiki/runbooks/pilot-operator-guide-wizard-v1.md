@@ -1,3 +1,15 @@
+---
+type: runbook
+title: "Kids Edu 파일럿 운영자 가이드 (wizard-v1)"
+status: active
+created: 2026-04-25
+updated: 2026-04-25
+tags:
+  - runbook
+  - pilot
+  - operator
+---
+
 # Kids Edu 파일럿 운영자 가이드 (wizard-v1)
 
 ## 타임테이블

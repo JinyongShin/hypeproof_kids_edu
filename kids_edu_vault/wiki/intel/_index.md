@@ -1,5 +1,6 @@
 ---
 type: index
+status: navigational
 title: "Intel"
 created: 2026-04-12
 updated: 2026-04-12
@@ -40,3 +41,7 @@ tags:
 - 새 intel은 `_templates/intel.md`로 생성.
 - `case-*` prefix = 외부 선례 사례. 하나의 URL·저자 기반 1차 자료 요약.
 - `research-*` prefix = 여러 case를 묶은 합성.
+
+## LLM Pulse
+- [[intel/llm-pulse/_index|llm-pulse/_index]] — LLM Pulse 아카이브 인덱스
+- [[llm-pulse-update]] — LLM Pulse 업데이트 런북

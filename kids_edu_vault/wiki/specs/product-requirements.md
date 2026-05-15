@@ -15,7 +15,7 @@ related:
   - "[[kids-edu-backend]]"
   - "[[pilot-day-operation]]"
 sources:
-  - "[[production_requirements]]"
+  - "[[product-requirements]]"
 owner: JY
 ---
 

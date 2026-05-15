@@ -1,133 +1,127 @@
 ---
 type: decision
-title: "멀티테넌트 DB 스키마 — 테넌트·어드민 계정, 아이 개인 계정 없음"
+title: "ADR: 멀티테넌트 스키마"
+status: active
 created: 2026-05-01
-updated: 2026-05-01
-status: proposed
-priority: 2
-owner: "JY"
-context: "파일럿(2026-05-05) 이후 상품화 — 병원/학교별 데이터 격리·플랜별 요금제·토큰 사용량 추적"
+updated: 2026-05-14
 tags:
   - decision
-  - architecture
+  - adr
   - database
-  - auth
   - multitenant
-related:
-  - "[[auth-session-game-persistence]]"
-  - "[[parent-gated-signup-first]]"
-  - "[[adr-langgraph-gemini-backend]]"
-  - "[[adr-container-deployment]]"
-  - "[[product-requirements]]"
-deciders:
-  - "[[jinyong-shin]]"
+  - sqlite
 ---
 
-# 멀티테넌트 DB 스키마 — 테넌트·어드민 계정, 아이 개인 계정 없음
+# ADR: 멀티테넌트 스키마 (SQLite)
+
+**날짜**: 2026-05-01  
+**브랜치**: `feature/langgraph-gemini`  
+**상태**: active (MVP는 tenant_id="default" 단일 테넌트 운영)
+
+---
 
 ## 결정
 
-**테넌트(병원/학교) 단위 데이터 격리**를 위해 `tenants`, `admins`, `token_log` 테이블을 신규 추가하고, 기존 `sessions` 테이블에 `tenant_id` 컬럼을 추가한다. **아이 개인 계정은 만들지 않는다.** 어드민이 테넌트를 대표하며, 아이는 `child_id`(세션 식별자) 수준으로만 식별한다.
+SQLite에 `tenants` / `admins` / `token_log` 테이블을 추가하고, 기존 `sessions` 테이블에 `tenant_id` 컬럼을 마이그레이션. 멀티 파일럿 고객(SK바이오팜, 보아치과 등)을 단일 DB에서 격리 운영하는 구조를 준비.
+
+---
 
 ## 배경
 
-- **파일럿**: 국립암센터 단일 테넌트, 어드민 1명 (하드코딩 `root/0000` 로그인 — [[auth-session-game-persistence]]).
-- **상품화**: 병원·학교별 데이터 격리, 플랜별 요금제, 토큰 사용량 집계 필요.
-- [[parent-gated-signup-first]] — 부모 이메일 가입 우선, 구글 OAuth는 14+/교사 한정 결정과 일관성 유지. 아이 개인 계정은 이 ADR 범위 밖.
+파일럿 1회차는 단일 어드민 계정으로 충분했으나, 이후 상황이 달라짐:
 
-## 결정 사항
+- SK바이오팜 파일럿 (2026-06~07) + 보아치과 파일럿 동시 운영 예정
+- 파일럿별 관리자 계정·세션·토큰 사용량을 분리 추적해야 함
+- 기존 단일 `ADMIN_USERNAME/PASSWORD` env-var 방식은 복수 테넌트 불가
+
+---
+
+## 스키마 변경 (`src/backend/storage.py`)
 
 ### 신규 테이블
 
 ```sql
--- 테넌트 (병원/학교)
-CREATE TABLE tenants (
+CREATE TABLE IF NOT EXISTS tenants (
     tenant_id   TEXT PRIMARY KEY,
-    name        TEXT NOT NULL,
-    plan        TEXT NOT NULL DEFAULT 'free'
-                    CHECK (plan IN ('free', 'pilot', 'pro')),
-    created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+    name        TEXT NOT NULL DEFAULT '',
+    created_at  TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
 );
 
--- 어드민 계정 (테넌트당 복수 가능)
-CREATE TABLE admins (
+CREATE TABLE IF NOT EXISTS admins (
     admin_id    TEXT PRIMARY KEY,
     tenant_id   TEXT NOT NULL REFERENCES tenants(tenant_id),
     email       TEXT NOT NULL UNIQUE,
-    pw_hash     TEXT NOT NULL,
-    role        TEXT NOT NULL DEFAULT 'admin'
-                    CHECK (role IN ('superadmin', 'admin')),
-    created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+    pw_hash     TEXT NOT NULL,          -- bcrypt 해시
+    role        TEXT NOT NULL DEFAULT 'admin',
+    created_at  TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
 );
 
--- 토큰 사용량 로그
-CREATE TABLE token_log (
-    id            INTEGER PRIMARY KEY AUTOINCREMENT,
-    session_id    TEXT NOT NULL,
-    child_id      TEXT NOT NULL,
-    tenant_id     TEXT NOT NULL,
-    model         TEXT NOT NULL,
-    node          TEXT,
-    input_tokens  INTEGER NOT NULL DEFAULT 0,
-    output_tokens INTEGER NOT NULL DEFAULT 0,
-    created_at    TEXT NOT NULL DEFAULT (datetime('now'))
+CREATE TABLE IF NOT EXISTS token_log (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id      TEXT NOT NULL,
+    child_id        TEXT NOT NULL,
+    tenant_id       TEXT NOT NULL DEFAULT 'default',
+    node            TEXT NOT NULL,      -- LangGraph 노드명
+    input_tokens    INTEGER NOT NULL DEFAULT 0,
+    output_tokens   INTEGER NOT NULL DEFAULT 0,
+    created_at      TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
 );
 ```
 
-### 기존 테이블 변경
+### 기존 테이블 마이그레이션
 
 ```sql
--- sessions 테이블에 tenant_id 컬럼 추가
+-- sessions.tenant_id 컬럼 추가 (기존 DB backward compat)
 ALTER TABLE sessions ADD COLUMN tenant_id TEXT NOT NULL DEFAULT 'default';
 ```
 
-기존 파일럿 데이터는 `tenant_id = 'default'`로 마이그레이션. `tenants` 테이블에 `(tenant_id='default', name='파일럿', plan='pilot')` 시드 데이터 추가.
+`init_db()`에서 try/except로 처리 — 이미 컬럼이 있으면 무시.
 
-### Auth 흐름
+---
 
-1. `POST /auth/login` — `{ email, password }` 수신.
-2. `admins` 테이블에서 `email` 조회 → `bcrypt.verify(password, pw_hash)`.
-3. 성공 시 응답: `{ admin_id, tenant_id, role, token }` (JWT, 24h 만료).
-4. 이후 API 요청에 `Authorization: Bearer <token>` 헤더 → 미들웨어에서 `tenant_id` 추출.
+## 인증 구조 (`app/auth.py`)
 
-### 플랜별 제어 (결제 훅 defer)
+**DB 우선, env-var 폴백** 방식:
 
-- `tenants.plan` 컬럼이 rate limit과 `max_children` 결정.
-- `free`: max_children=5, RPM=10.
-- `pilot`: max_children=50, RPM=60.
-- `pro`: max_children=unlimited, RPM=200.
-- **Stripe 연동 시** `tenants` 테이블에 `stripe_customer_id TEXT`, `subscription_status TEXT` 컬럼 추가. 현재 미구현.
+```
+1. DB admins 테이블에서 email로 조회
+   → 있으면: bcrypt.checkpw(password, pw_hash)
+   → 성공: {admin_id, tenant_id, role} 반환
 
-## 대안 및 기각 이유
+2. DB에 없으면: ADMIN_USERNAME/ADMIN_PASSWORD env-var와 비교
+   → 성공: {admin_id=username, tenant_id="default", role="admin"} 반환
+```
 
-| 대안 | 기각 이유 |
-|---|---|
-| 아이 개인 계정 즉시 도입 | 소아암 환아 개인정보 수집 → 병원 개인정보보호 절차 필요. 파일럿 범위 초과. [[parent-gated-signup-first]] 와 충돌 |
-| 단일 테넌트 구조 유지 | 상품화 시 병원별 데이터 격리 재설계 비용 과대 |
-| Row-Level Security (PostgreSQL) | 현재 SQLite 스택([[adr-container-deployment]])과 불일치. 스케일아웃 시 재검토 |
-| 별도 DB 인스턴스 per 테넌트 | fly.io Volume 수 제한 + 운영 복잡도 과대 |
+env-var 폴백이 존재하는 이유: 파일럿 당일 하드코딩 `root/0000` 호환성 유지. 기존 파일럿 환경에서 `_backend.js`를 바꾸지 않아도 동작.
 
-## 영향 범위
+### 시딩 로직 (`ensure_default_admin`)
 
-- **변경 파일**: `src/backend/storage.py` — `tenants`, `admins`, `token_log` 테이블 DDL + 마이그레이션 함수 추가.
-- **신규 파일**: `src/backend/auth.py` — `POST /auth/login` 엔드포인트, JWT 발급, bcrypt 검증.
-- **변경 파일**: `src/backend/main.py` — WS 핸들러에 `tenant_id` 추출 미들웨어 추가. `token_log` insert 연동.
-- **추가 의존성**: `bcrypt`, `python-jose` (JWT) — `pyproject.toml`.
-- **파일럿 당일(2026-05-05)**: `admins` 테이블 미사용. 기존 하드코딩 `root/0000` 유지. 마이그레이션은 파일럿 이후.
-- **[[auth-session-game-persistence]] 부분 대체**: 하드코딩 로그인 → `admins` 테이블 기반 로그인으로 교체. 세션·게임 저장 로직은 그대로.
+서버 시작 시 1회 호출. `ADMIN_USERNAME`이 기본값("admin", "root")이면 DB 시딩 생략 (env-var 전용 모드).  
+의미있는 계정명이 설정된 경우에만 bcrypt 해시로 DB에 등록.
 
-## Open Questions
+---
 
-- [ ] JWT 서명 키 (`SECRET_KEY`) 환경변수 추가 필요 — `.env.example`에 placeholder 추가.
-- [ ] `token_log.node` 컬럼 — [[adr-langgraph-gemini-backend]] LangGraph 노드명 기록 여부. 과금 granularity 결정 필요.
-- [ ] `max_children` 강제 시점 — 세션 생성 시 차단할지, 소프트 경고만 할지 구현자 결정.
-- [ ] Stripe 연동 타이밍 — 상품화 v1 포함 여부. 별도 ADR로 분리 권장.
-- [ ] `superadmin` 역할 범위 — 모든 테넌트 조회 가능 여부. 관리자 콘솔 설계 전 미정.
+## MVP 운영 방식
 
-## 관련
+현재(`tenant_id="default"`) 단일 테넌트로 운영 중.  
+멀티테넌트 전환 시 필요한 작업:
+1. `tenants` 테이블에 고객사 row 삽입
+2. `admins` 테이블에 해당 tenant의 관리자 계정 생성
+3. 세션 생성 API에서 `tenant_id` 파라미터 활성화
 
-- [[auth-session-game-persistence]]
-- [[parent-gated-signup-first]]
-- [[adr-langgraph-gemini-backend]]
-- [[adr-container-deployment]]
-- [[product-requirements]]
+---
+
+## token_log 활용
+
+각 LangGraph 노드 실행 시 input/output 토큰을 `token_log`에 기록.  
+노드별·세션별·테넌트별 LLM 비용 추적 가능.  
+→ 파일럿 고객에게 사용량 리포트 제공 시 활용.
+
+---
+
+## 관련 페이지
+
+- [[adr-langgraph-gemini-backend]] — token_log가 기록하는 LangGraph 노드 구조
+- [[adr-container-deployment]] — 이 스키마가 배포되는 환경
+- [[langfuse-observability]] — 토큰 로깅의 보완적 관측성 레이어
+- [[sk-biopharma-pilot]] — 첫 멀티테넌트 대상 파일럿

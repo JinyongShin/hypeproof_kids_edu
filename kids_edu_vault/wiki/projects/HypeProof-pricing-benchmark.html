@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HypeProof HYROX — 프라이싱 포지셔닝</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; color: #1a1a2e; background: #fafafa; line-height: 1.7; }
+  .container { max-width: 800px; margin: 0 auto; padding: 40px 24px; }
+  h1 { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+  .subtitle { font-size: 15px; color: #888; margin-bottom: 24px; }
+
+  .bar-group { margin-bottom: 8px; }
+  .bar-label { font-size: 13px; font-weight: 600; margin-bottom: 2px; display: flex; justify-content: space-between; align-items: baseline; }
+  .bar-label .meta { font-size: 11px; color: #999; font-weight: 400; }
+  .bar-label .price { color: #555; font-weight: 700; white-space: nowrap; font-size: 13px; }
+  .bar-track { background: #eee; border-radius: 4px; height: 28px; position: relative; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 10px; font-size: 12px; color: #fff; font-weight: 700; min-width: 50px; transition: width 0.3s; }
+
+  .fill-elite { background: #1a1a2e; }
+  .fill-us { background: #457b9d; }
+  .fill-kr-hi { background: #7fb3d3; }
+  .fill-kr { background: #a8c7db; }
+  .fill-hype { background: #2a9d8f; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2a9d8f; }
+  .fill-free { background: #ccc; }
+
+  .section { margin-bottom: 32px; }
+  .section h2 { font-size: 17px; font-weight: 700; margin-bottom: 10px; }
+
+  .source-section { margin-top: 36px; padding: 20px; background: #f5f5f5; border-radius: 8px; }
+  .source-section h2 { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+  .source-item { font-size: 13px; color: #555; margin-bottom: 6px; padding-left: 12px; border-left: 2px solid #ccc; }
+  .source-item a { color: #457b9d; text-decoration: none; }
+  .source-item a:hover { text-decoration: underline; }
+
+  .legend { display: flex; gap: 14px; margin-bottom: 20px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 2px; }
+
+  .note { font-size: 12px; color: #999; margin-top: 12px; }
+  .divider { border: none; border-top: 1px solid #ddd; margin: 20px 0; }
+
+  .wtp-box { background: #f0faf8; border: 1px solid #2a9d8f; border-radius: 8px; padding: 16px; margin: 16px 0; }
+  .wtp-box h3 { font-size: 15px; font-weight: 700; color: #2a9d8f; margin-bottom: 8px; }
+  .wtp-row { display: flex; gap: 12px; margin-top: 8px; }
+  .wtp-card { flex: 1; text-align: center; padding: 12px 8px; background: #fff; border-radius: 6px; }
+  .wtp-card .name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .wtp-card .val { font-size: 20px; font-weight: 800; color: #2a9d8f; }
+  .wtp-card .sub { font-size: 11px; color: #888; margin-top: 2px; }
+  @media (max-width: 480px) { .wtp-row { flex-direction: column; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>프라이싱 포지셔닝</h1>
+  <p class="subtitle">일일 단가 기준 (₩/일) — HypeProof WTP 추정치가 시장에서 어디에 있는가</p>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#1a1a2e"></div> 미국 엘리트</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#457b9d"></div> 미국 일반</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#7fb3d3"></div> 한국 대치동</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#a8c7db"></div> 한국 일반</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#2a9d8f"></div> HypeProof (WTP 추정)</div>
+  </div>
+
+  <!-- 단일 차트: 1일 단가 내림차순 -->
+  <div class="section">
+    <div class="bar-group">
+      <div class="bar-label"><span>MIT xPRO AI <span class="meta">(12개월, 시니어)</span></span><span class="price">₩383,000/일</span></div>
+      <div class="bar-track"><div class="bar-fill fill-elite" style="width:100%">₩383K</div></div>
+    </div>
+
+    <div class="bar-group">
+      <div class="bar-label"><span>UC Riverside AX <span class="meta">(고딩 3주)</span></span><span class="price">₩366,000/일</span></div>
+      <div class="bar-track"><div class="bar-fill fill-elite" style="width:95%">₩366K</div></div>
+    </div>
+
+    <div class="bar-group">
+      <div class="bar-label"><span>MIT Professional Cert <span class="meta">(16일 집중, 최저)</span></span><span class="price">₩200,000/일</span></div>
+      <div class="bar-track"><div class="bar-fill fill-elite" style="width:52%">₩200K</div></div>
+    </div>
+
+    <div class="bar-group">
+      <div class="bar-label"><span>UC Santa Barbara RMP <span class="meta">(고딩 6주)</span></span><span class="price">₩107,000/일</span></div>
+      <div class="bar-track"><div class="bar-fill fill-us" style="width:28%">₩107K</div></div>
+    </div>
+
+    <div class="bar-group">
+      <div class="bar-label"><span style="font-weight:800; color:#2a9d8f;">▸ HypeProof 3급 Leader (WTP ₩1,000~1,500만 / 12주)</span><span class="price" style="color:#2a9d8f;">₩119,000~179,000/일</span></div>
+      <div class="bar-track" style="height:32px;"><div class="bar-fill fill-hype" style="width:35%">₩119~179K</div></div>
+    </div>
+
+    <div class="bar-group">
+      <div class="bar-label"><span>대치동 종합학원 <span class="meta">(국영수탐, 월 5일)</span></span><span class="price">₩100,000~150,000/일</span></div>
+      <div class="bar-track"><div class="bar-fill fill-kr-hi" style="width:30%">₩100~150K</div></div>
+    </div>
+
+    <div class="bar-group">
+      <div class="bar-label"><span style="font-weight:800; color:#2a9d8f;">▸ HypeProof 1급 Practitioner (WTP ₩300~500만 / 4주)</span><span class="price" style="color:#2a9d8f;">₩107,000~179,000/일</span></div>
+      <div class="bar-track" style="height:32px;"><div class="bar-fill fill-hype" style="width:35%">₩107~179K</div></div>
+    </div>
+
+    <div class="bar-group">
+      <div class="bar-label"><span style="font-weight:800; color:#2a9d8f;">▸ HypeProof 2급 Professional (WTP ₩500~800만 / 8주)</span><span class="price" style="color:#2a9d8f;">₩89,000~143,000/일</span></div>
+      <div class="bar-track" style="height:32px;"><div class="bar-fill fill-hype" style="width:28%">₩89~143K</div></div>
+    </div>
+
+    <div class="bar-group">
+      <div class="bar-label"><span>대치동 소규모 학원 <span class="meta">(과목당)</span></span><span class="price">₩65,000/일</span></div>
+      <div class="bar-track"><div class="bar-fill fill-kr" style="width:17%">₩65K</div></div>
+    </div>
+
+    <div class="bar-group">
+      <div class="bar-label"><span>한국 코딩학원 <span class="meta">(월 4회)</span></span><span class="price">₩50,000~100,000/일</span></div>
+      <div class="bar-track"><div class="bar-fill fill-kr" style="width:13%">₩50~100K</div></div>
+    </div>
+
+    <div class="bar-group">
+      <div class="bar-label"><span>한국 AI활용지도사 <span class="meta">(자격증)</span></span><span class="price">₩8만 (총액)</span></div>
+      <div class="bar-track"><div class="bar-fill fill-kr" style="width:2%">₩8만</div></div>
+    </div>
+
+    <div class="bar-group">
+      <div class="bar-label"><span>Stanford AI4ALL <span class="meta">(고딩 3주)</span></span><span class="price">무료</span></div>
+      <div class="bar-track"><div class="bar-fill fill-free" style="width:1%">Free</div></div>
+    </div>
+  </div>
+
+  <p class="note">* 일수: 4주=28일, 8주=56일, 12주=84일. 대치동은 주 5일=20일/월. 환율 $1=₩1,350</p>
+
+  <hr class="divider">
+
+  <div class="wtp-box">
+    <h3>WTP 추정 논리 (3가지 접근법 교차 검증)</h3>
+
+    <h4 style="font-size:15px; font-weight:700; margin: 16px 0 6px;">① 소득 대비 지출 비율 (Top-down)</h4>
+    <p style="font-size:14px;">치과 개원의 평균 연봉 ≈ ₩2억 (세후 월 ₩1천~2천만). 페이닥터 ≈ ₩1.2억.</p>
+    <p style="font-size:14px;">미국 의사 CME(평생교육) 연간 지출 = $3,000~5,000 (연봉의 1~2%).</p>
+    <p style="font-size:14px;">한국 치과의사가 연봉의 1~2%를 자기계발에 쓴다면 연 ₩200~400만.</p>
+    <p style="font-size:14px;"><strong>그런데</strong> 우리는 자기계발이 아니라 "지위 방어". FOMO 프리미엄 2~5배 곱 → 연봉의 2~5% = <strong>₩400~1,000만/연</strong>.</p>
+
+    <h4 style="font-size:15px; font-weight:700; margin: 16px 0 6px;">② 대체재 가격 (Bottom-up)</h4>
+    <p style="font-size:14px;">치과의사가 현재 AI 교육에 쓰는 돈: 거의 제로.</p>
+    <p style="font-size:14px;">대치동 학부모는 월 200~300만을 아이 교육에 씁니다. 우리 타겟과 본질 동일 ("지위를 위해 돈 쓰는 사람").</p>
+    <p style="font-size:14px;">이미 증명된 지출 의향 = 월 200~300만. 4주면 <strong>₩400~800만</strong>.</p>
+
+    <h4 style="font-size:15px; font-weight:700; margin: 16px 0 6px;">③ Van Westendorp Price Sensitivity Meter</h4>
+    <p style="font-size:14px;">신제품 WTP 추정의 업계 표준 (1976년 Peter van Westendorp 개발). 4문항으로 수용 가능 가격 구간 도출.</p>
+    <p style="font-size:14px;">"너무 싸서 의심할 가격" → "저렴하게 느끼는 가격" → "비싸지만 낼 수 있는 가격" → "절대 안 내는 가격"</p>
+    <p style="font-size:14px;">보아치과 파일럿 전 원장님에게 실측 예정. 현재는 ①②의 교차 구간을 WTP로 가정.</p>
+
+    <h4 style="font-size:15px; font-weight:700; margin: 16px 0 6px;">교차 검증 → WTP 구간</h4>
+    <p style="font-size:14px;">① 소득비율: ₩400~1,000만/연 &nbsp;&nbsp; ② 대체재: ₩400~800만/4주</p>
+    <p style="font-size:14px;">교차 구간: <strong>₩400~800만</strong>을 기준으로 등급별 차등 적용.</p>
+
+    <div class="wtp-row">
+      <div class="wtp-card">
+        <div class="name">1급 Practitioner</div>
+        <div class="val">₩300~500만</div>
+        <div class="sub">4주 / 대치동 2~3개월</div>
+      </div>
+      <div class="wtp-card">
+        <div class="name">2급 Professional</div>
+        <div class="val">₩500~800만</div>
+        <div class="sub">8주 / MIT 8주 수준</div>
+      </div>
+      <div class="wtp-card">
+        <div class="name">3급 Leader</div>
+        <div class="val">₩1,000~1,500만</div>
+        <div class="sub">12주 / 프랜차이즈 입점</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="source-section">
+    <h2>데이터 소스</h2>
+    <div class="source-item">MIT xPRO / Professional Certificate: <a href="https://fonzi.ai/blog/mit-ai-certificate-cost">fonzi.ai/blog/mit-ai-certificate-cost</a> — 8주 $3,200 ~ 12개월 $34,500</div>
+    <div class="source-item">UC Riverside AX: <a href="https://insideucr.ucr.edu/stories/2025/05/05/students-apply-ai-classroom">insideucr.ucr.edu</a> — 3주, $8,000 (주인님 제보)</div>
+    <div class="source-item">UC Santa Barbara RMP: <a href="https://www.polygence.org/blog/ai-summer-programs">polygence.org/blog/ai-summer-programs</a> — 6주, $4,700</div>
+    <div class="source-item">Stanford AI4ALL: <a href="https://ai4all.spcs.stanford.edu/">ai4all.spcs.stanford.edu</a> — 3주, 무료 (선발제)</div>
+    <div class="source-item">대치동 학원비: <a href="https://blog.seoltab.com/%EB%8C%80%EC%B9%98%EB%8F%99-%ED%95%9C%EB%8B%AC-%ED%95%99%EC%9B%90%EB%B9%84-%EA%B3%BC%EC%99%B8-%EB%B9%84%EC%9A%A9-%EC%A0%80%EB%A0%B4%ED%95%9C-%EA%B3%BC%EC%99%B8-%EC%B6%94%EC%B2%9C/">seoltab.com</a> — 종합 월 200~300만, 소규모 과목당 130만</div>
+    <div class="source-item">한국 코딩학원비: <a href="https://www.hani.co.kr/arti/society/schooling/1055926.html">hani.co.kr</a> — 월 4회 20~40만</div>
+    <div class="source-item">한국 AI활용지도사: <a href="https://www.lli.or.kr/license/license63.asp">lli.or.kr</a> — 자격발급비 8만</div>
+    <div class="source-item">치과의사 연봉: <a href="https://buffett-story.tistory.com/2194">buffett-story.tistory.com</a> — 개원의 평균 ₩2억, 페이닥터 ₩1.2억</div>
+    <div class="source-item">미국 의사 CME 지출: <a href="https://chellelaw.com/physician-contract-review/contract-benefits-medical-professionals/how-much-should-an-employer-give-a-physician-for-cme-expenses/">chellelaw.com</a> — 연 $3,000~5,000</div>
+    <div class="source-item">WTP 방법론: <a href="https://online.hbs.edu/blog/post/willingness-to-pay">HBS Online</a> — 소득 대비 지출비율 + Van Westendorp PSM</div>
+  </div>
+
+</div>
+</body>
+</html>
