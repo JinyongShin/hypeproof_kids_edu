@@ -20,7 +20,9 @@ import pytest
 from fastapi.testclient import TestClient
 
 import main
-from claude_runner import _DATA_DIR
+import storage
+from app.config import get_settings
+from main import _DATA_DIR
 
 
 # ---------------------------------------------------------------------------
@@ -29,28 +31,13 @@ from claude_runner import _DATA_DIR
 
 
 @pytest.fixture(autouse=True)
-def _reset_session_meta(monkeypatch):
-    """
-    각 테스트마다 _session_meta 를 빈 딕트로 초기화하고
-    _save_session_meta / _load_session_meta 를 no-op으로 교체한다.
-    디스크 I/O를 제거해 테스트를 격리하고 실제 data/ 를 오염시키지 않는다.
-
-    _save_session_meta 는 async def 이므로 monkeypatch 대상도
-    코루틴 함수여야 한다(sync lambda 는 TypeError 유발).
-
-    _load_session_meta 는 lifespan 에서 호출되어 global _session_meta 를
-    디스크 데이터로 덮어쓰므로 no-op으로 막아야 격리가 보장된다.
-    """
-    async def _noop_save():
-        pass
-
-    def _noop_load():
-        pass
-
-    # _session_meta 딕트를 먼저 비운다(참조 교체가 아닌 내용 초기화)
-    main._session_meta.clear()
-    monkeypatch.setattr(main, "_save_session_meta", _noop_save)
-    monkeypatch.setattr(main, "_load_session_meta", _noop_load)
+def _isolated_db(monkeypatch):
+    """테스트 전용 auth 자격증명 고정. DB 격리는 conftest.isolate_storage_db가 담당."""
+    get_settings.cache_clear()
+    monkeypatch.setenv("ADMIN_USERNAME", "root")
+    monkeypatch.setenv("ADMIN_PASSWORD", "0000")
+    yield
+    get_settings.cache_clear()
 
 
 @pytest.fixture()
@@ -71,7 +58,7 @@ class TestAuthLogin:
     def test_correct_credentials_return_200_with_child_id(self, client):
         res = client.post("/auth/login", json={"username": "root", "password": "0000"})
         assert res.status_code == 200
-        assert res.json() == {"child_id": "root"}
+        assert res.json().get("child_id") == "root"
 
     def test_wrong_password_returns_401(self, client):
         res = client.post("/auth/login", json={"username": "root", "password": "wrong"})
@@ -135,7 +122,7 @@ class TestCreateSession:
 
     def test_session_meta_stores_created_entry(self, client):
         client.post("/sessions/child02")
-        assert len(main._session_meta) == 1
+        assert len(storage.list_sessions("child02")) == 1
 
 
 # ---------------------------------------------------------------------------
@@ -229,9 +216,9 @@ class TestDeleteSession:
 
     def test_session_meta_is_empty_after_delete(self, client):
         session_id = client.post("/sessions/child08").json()["session_id"]
-        assert len(main._session_meta) == 1
+        assert len(storage.list_sessions("child08")) == 1
         client.delete(f"/sessions/child08/{session_id}")
-        assert len(main._session_meta) == 0
+        assert len(storage.list_sessions("child08")) == 0
 
 
 # ---------------------------------------------------------------------------
@@ -325,3 +312,120 @@ class TestPathTraversal:
         """null 바이트가 포함된 game_id 는 서버 오류 없이 4xx 처리되어야 한다."""
         res = client.get("/games/anyuser/anysession/game%00id", follow_redirects=False)
         assert res.status_code < 500
+
+    @pytest.mark.parametrize("bad_segment", ["../secret", "..%2Fsecret"])
+    def test_traversal_in_child_id_does_not_return_5xx(self, client, bad_segment):
+        """child_id 위치에 경로 순회 시퀀스가 있어도 5xx 를 반환하지 않아야 한다."""
+        res = client.get(f"/games/{bad_segment}/anysession/game_001", follow_redirects=False)
+        assert res.status_code < 500
+
+    @pytest.mark.parametrize("bad_segment", ["../secret", "..%2Fsecret"])
+    def test_traversal_in_session_id_does_not_return_5xx(self, client, bad_segment):
+        """session_id 위치에 경로 순회 시퀀스가 있어도 5xx 를 반환하지 않아야 한다."""
+        res = client.get(f"/games/anyuser/{bad_segment}/game_001", follow_redirects=False)
+        assert res.status_code < 500
+
+
+# ---------------------------------------------------------------------------
+# 7. PATCH /sessions/{child_id}/{session_id}/name — 세션 이름 변경
+# ---------------------------------------------------------------------------
+
+
+class TestRenameSession:
+    """세션 이름 변경 엔드포인트 계약."""
+
+    def test_rename_returns_200_with_ok(self, client):
+        session_id = client.post("/sessions/child10").json()["session_id"]
+        res = client.patch(
+            f"/sessions/child10/{session_id}/name",
+            json={"name": "새 이름"},
+        )
+        assert res.status_code == 200
+        assert res.json() == {"ok": True}
+
+    def test_empty_name_returns_400(self, client):
+        session_id = client.post("/sessions/child11").json()["session_id"]
+        res = client.patch(
+            f"/sessions/child11/{session_id}/name",
+            json={"name": ""},
+        )
+        assert res.status_code == 400
+
+    def test_long_name_is_capped_at_30_chars(self, client):
+        """30자 초과 이름은 30자로 잘려 저장되어야 한다."""
+        session_id = client.post("/sessions/child12").json()["session_id"]
+        long_name = "가" * 40
+        client.patch(
+            f"/sessions/child12/{session_id}/name",
+            json={"name": long_name},
+        )
+        items = client.get("/sessions/child12").json()
+        saved_name = next(s["name"] for s in items if s["session_id"] == session_id)
+        assert len(saved_name) <= 30
+
+
+# ---------------------------------------------------------------------------
+# 8. POST /games/.../save + GET /gallery — 갤러리 등록
+# ---------------------------------------------------------------------------
+
+
+class TestSaveGame:
+    """게임 갤러리 등록 엔드포인트 계약."""
+
+    def _insert_game(self, session_id: str, child_id: str, game_id: str, url: str = "http://localhost/games/test"):
+        """테스트용 게임 레코드를 직접 DB에 삽입."""
+        storage.add_game(session_id, child_id, game_id, f"/data/games/{game_id}.html", url)
+
+    def test_save_existing_game_returns_saved_true(self, client):
+        session_id = client.post("/sessions/child13").json()["session_id"]
+        self._insert_game(session_id, "child13", "game_001")
+        res = client.post(f"/games/child13/{session_id}/game_001/save")
+        assert res.status_code == 200
+        assert res.json() == {"saved": True}
+
+    def test_save_nonexistent_game_returns_404(self, client):
+        session_id = client.post("/sessions/child14").json()["session_id"]
+        res = client.post(f"/games/child14/{session_id}/no_game/save")
+        assert res.status_code == 404
+
+    def test_save_second_game_clears_first_saved_flag(self, client):
+        """같은 세션에서 두 번째 게임을 저장하면 첫 번째 게임의 saved 가 0이 되어야 한다."""
+        session_id = client.post("/sessions/child15").json()["session_id"]
+        self._insert_game(session_id, "child15", "game_a")
+        self._insert_game(session_id, "child15", "game_b")
+        client.post(f"/games/child15/{session_id}/game_a/save")
+        client.post(f"/games/child15/{session_id}/game_b/save")
+
+        saved_games = storage.list_saved_games()
+        saved_ids = {g["game_id"] for g in saved_games}
+        assert "game_b" in saved_ids
+        assert "game_a" not in saved_ids
+
+
+class TestGallery:
+    """갤러리 엔드포인트 계약."""
+
+    def test_empty_gallery_returns_empty_list(self, client):
+        res = client.get("/gallery")
+        assert res.status_code == 200
+        assert res.json() == []
+
+    def test_saved_game_appears_in_gallery(self, client):
+        session_id = client.post("/sessions/child16").json()["session_id"]
+        storage.add_game(session_id, "child16", "game_show", "/data/games/game_show.html", "http://localhost/games/game_show")
+        client.post(f"/games/child16/{session_id}/game_show/save")
+
+        items = client.get("/gallery").json()
+        assert len(items) >= 1
+        found = next((g for g in items if g["game_id"] == "game_show"), None)
+        assert found is not None
+
+    def test_gallery_item_has_required_fields(self, client):
+        session_id = client.post("/sessions/child17").json()["session_id"]
+        storage.add_game(session_id, "child17", "game_fields", "/data/games/g.html", "http://localhost/games/g")
+        client.post(f"/games/child17/{session_id}/game_fields/save")
+
+        items = client.get("/gallery").json()
+        item = next(g for g in items if g["game_id"] == "game_fields")
+        for field in ("game_id", "url", "session_name", "child_id", "created_at", "session_id"):
+            assert field in item, f"필드 누락: {field}"

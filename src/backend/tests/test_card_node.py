@@ -7,8 +7,16 @@ from langchain_core.messages import HumanMessage
 
 os.environ["MOCK_LLM"] = "1"
 
+import pytest
 from app.graph.state import EduSessionState
 from app.graph.nodes import generate_card_node, save_card_node
+
+
+@pytest.fixture(autouse=True)
+def _patch_data_dir(monkeypatch, tmp_path):
+    """파일 생성 테스트가 실제 data/ 를 오염시키지 않도록 _DATA_DIR 을 tmp_path 로 교체."""
+    import app.graph.nodes as nodes_mod
+    monkeypatch.setattr(nodes_mod, "_DATA_DIR", tmp_path)
 
 
 def make_state(**kwargs) -> EduSessionState:
@@ -124,9 +132,8 @@ async def test_save_card_creates_json_file():
     )
     await save_card_node(state)
 
-    # 파일이 실제로 생성되었는지 확인
-    from app.graph.nodes import _DATA_DIR
-    card_dir = _DATA_DIR / "cards" / "child-file-test" / "sess-file-test"
+    import app.graph.nodes as nodes_mod
+    card_dir = nodes_mod._DATA_DIR / "cards" / "child-file-test" / "sess-file-test"
     json_files = list(card_dir.glob("card_*.json"))
     assert len(json_files) >= 1
 
@@ -141,8 +148,8 @@ async def test_save_card_json_file_content():
     )
     await save_card_node(state)
 
-    from app.graph.nodes import _DATA_DIR
-    card_dir = _DATA_DIR / "cards" / "child-content-test" / "sess-content-test"
+    import app.graph.nodes as nodes_mod
+    card_dir = nodes_mod._DATA_DIR / "cards" / "child-content-test" / "sess-content-test"
     json_files = sorted(card_dir.glob("card_*.json"))
     assert json_files
     saved = json.loads(json_files[-1].read_text(encoding="utf-8"))

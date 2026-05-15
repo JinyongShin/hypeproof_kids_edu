@@ -134,9 +134,6 @@ def test_route_after_edit_code_without_html():
 @pytest.mark.asyncio
 async def test_edit_then_save_produces_game_url(tmp_path, monkeypatch):
     """edit_code → save_game 전체 루프가 game_url을 반환해야 함."""
-    import sys
-    sys.path.insert(0, str(__file__.replace("tests/test_edit_loop.py", "")))
-
     monkeypatch.setenv("MOCK_LLM", "1")
     monkeypatch.setenv("BACKEND_BASE_URL", "http://localhost:8000")
 

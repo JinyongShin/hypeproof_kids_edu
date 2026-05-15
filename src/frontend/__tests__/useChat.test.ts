@@ -107,6 +107,7 @@ describe("useChat — WebSocket 연결 URL", () => {
 
   it("WS URL 이 올바른 WebSocket 스킴(ws:// 또는 wss://)으로 시작한다", async () => {
     vi.resetModules();
+    vi.stubEnv("NEXT_PUBLIC_BACKEND_HTTP_URL", "http://localhost:8000");
     const useChat = await importUseChat();
 
     renderHook(() => useChat("child01", "child01_20260413_120001"));
@@ -117,6 +118,7 @@ describe("useChat — WebSocket 연결 URL", () => {
 
     const url = MockWebSocket.lastInstance!.url;
     expect(url).toMatch(/^wss?:\/\//);
+    vi.unstubAllEnvs();
   });
 
   it("child_id 가 URL 경로에 포함된다 (/ws/chat/{child_id})", async () => {
@@ -244,7 +246,7 @@ describe("useChat — session_id 없을 때 WS 미연결", () => {
     }).not.toThrow();
   });
 
-  it("session_id 가 공백 문자열이면 WebSocket 인스턴스를 생성하지 않는다", async () => {
+  it("session_id 가 빈 문자열이면 WebSocket 인스턴스를 생성하지 않는다", async () => {
     vi.resetModules();
     const useChat = await importUseChat();
 
@@ -256,5 +258,44 @@ describe("useChat — session_id 없을 때 WS 미연결", () => {
     await new Promise((r) => setTimeout(r, 50));
 
     expect(MockWebSocket.lastInstance).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 4. send() 가드 + payload 검증
+// ---------------------------------------------------------------------------
+
+describe("useChat — send() 동작", () => {
+  it("readyState 가 OPEN 이 아니면 send() 호출 시 메시지를 전송하지 않는다", async () => {
+    vi.resetModules();
+    const useChat = await importUseChat();
+    const { result } = renderHook(() => useChat("child01", "sess01"));
+
+    await waitFor(() => expect(MockWebSocket.lastInstance).not.toBeNull());
+
+    // CLOSED 상태로 전환 (onclose 핸들러는 트리거되지 않음 — 직접 값만 변경)
+    MockWebSocket.lastInstance!.readyState = 3;
+
+    act(() => {
+      result.current.send("테스트 메시지");
+    });
+
+    expect(MockWebSocket.lastInstance!.sentMessages).toHaveLength(0);
+  });
+
+  it("send() 호출 시 { prompt: ... } 형식 JSON 을 전송한다", async () => {
+    vi.resetModules();
+    const useChat = await importUseChat();
+    const { result } = renderHook(() => useChat("child01", "sess01"));
+
+    await waitFor(() => expect(MockWebSocket.lastInstance).not.toBeNull());
+
+    act(() => {
+      result.current.send("별을 모으는 게임");
+    });
+
+    expect(MockWebSocket.lastInstance!.sentMessages).toHaveLength(1);
+    const parsed = JSON.parse(MockWebSocket.lastInstance!.sentMessages[0]);
+    expect(parsed).toEqual({ prompt: "별을 모으는 게임" });
   });
 });

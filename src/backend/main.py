@@ -268,7 +268,10 @@ async def generate_image_endpoint(body: dict):
 async def serve_game(child_id: str, session_id: str, game_id: str):
     """저장된 게임 HTML 파일 서빙."""
     games_base = (_DATA_DIR / "games").resolve()
-    game_path = (_DATA_DIR / "games" / child_id / session_id / f"{game_id}.html").resolve()
+    try:
+        game_path = (_DATA_DIR / "games" / child_id / session_id / f"{game_id}.html").resolve()
+    except (ValueError, OSError):
+        raise HTTPException(status_code=400, detail="잘못된 요청이에요")
     if not game_path.is_relative_to(games_base):
         raise HTTPException(status_code=400, detail="잘못된 요청이에요")
     if not game_path.exists():

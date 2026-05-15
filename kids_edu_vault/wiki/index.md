@@ -110,7 +110,8 @@ tags:
 - [[llm-pulse-update]] — LLM Pulse 업데이트 런북
 - [[pilot-deploy]] — /pilot-deploy 슬래시 커맨드 런북 (stub)
 
-### Validation (7) — QA·커리큘럼 검증 결과 (2026-04-27)
+### Validation (8) — QA·커리큘럼 검증 결과
+- [[test-quality-review-2026-05-15]] (2026-05-15) — LangGraph 전환 후 테스트 수정 + 3-Phase 품질 개선 완료 (111 BE / 19 FE = 130 tests, HIGH 3건 해소)
 - [[e2e-curriculum-results]] — E2E 커리큘럼 6블록 전체 실행 결과
 - [[edge-case-findings]] — 엣지케이스 발견 사항 (priority-ranked)
 - [[edge-case-results]] — 엣지케이스 검증 결과

@@ -13,6 +13,23 @@ tags:
 
 ---
 
+## 2026-05-15 | validation | 테스트 품질 3-Phase 개선 완료
+
+- 수정: Phase1(sys.path 삭제, anyio→asyncio, tautology assertion 수정, fixture 중복 제거, 테스트명 수정) / Phase2(test_card_node·test_spec_node _DATA_DIR monkeypatch 격리) / Phase3(error 이벤트, 갤러리/rename/save 엔드포인트, backendUrl.ts 단위 테스트, send() 가드+payload 검증)
+- Pages updated: [[test-quality-review-2026-05-15]], [[hot]], [[index]]
+- Key insight: 97(BE)+9(FE) → 111(BE)+19(FE) = 130 tests 전체 통과. HIGH 3건(sys.path 잔재, send() 가드 미검증, asyncio 마커 누락) 모두 해소. `backendUrl.test.ts` 신규 생성으로 프론트 테스트 파일 2개로 확장.
+
+---
+
+## 2026-05-15 | validation | 테스트 수정 + 전체 테스트 품질 검토
+
+- 수정: `test_auth_session_game.py` (claude_runner 임포트 → main, `_session_meta` → SQLite, 픽스처 전면 교체), `useChat.test.ts` (WS scheme env stub), `main.py` (null byte path traversal 400 처리)
+- Pages created: [[test-quality-review-2026-05-15]]
+- Pages updated: [[kids-edu-backend]], [[log]], [[hot]], [[index]]
+- Key insight: LangGraph 리라이트로 세션 저장소가 인메모리 딕트 → SQLite로 바뀌면서 테스트 픽스처가 통째로 무효화됐음. 동시에 `main.py`의 null byte path traversal 방어 구멍(Python 3.14 ValueError 미처리)이 발견돼 수정됨. 테스트 품질 검토 결과 97/9 전체 통과하나 HIGH 3건·MEDIUM 다수 공백 확인.
+
+---
+
 ## 2026-05-15 | pr-merge | PR#7 feature/langgraph-gemini → main 머지 + 리뷰 반영
 - PR: https://github.com/JinyongShin/hypeproof_kids_edu/pull/7
 - Pages updated: [[adr-langgraph-gemini-backend]]

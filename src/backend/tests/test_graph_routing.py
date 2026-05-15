@@ -105,14 +105,14 @@ def test_route_spec_empty_dict():
 
 # ── classify_intent_node (async, keyword path) ──
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_classify_game_create_keyword():
     state = make_state(messages=[HumanMessage(content="게임 만들어줘!")])
     result = await classify_intent_node(state)
     assert result["intent"] == "game_create"
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_classify_game_edit_keyword_with_html():
     state = make_state(
         messages=[HumanMessage(content="더 빠르게 해줘")],
@@ -122,7 +122,7 @@ async def test_classify_game_edit_keyword_with_html():
     assert result["intent"] == "game_edit"
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_classify_game_edit_keyword_without_html_falls_to_llm():
     # current_game_html 없으면 키워드 분기를 타지 않고 LLM에 위임 → mock returns "card"
     state = make_state(

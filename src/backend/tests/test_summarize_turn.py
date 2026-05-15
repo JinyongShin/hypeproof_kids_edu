@@ -44,8 +44,9 @@ async def test_summarize_replaces_previous_context():
     )
     result = await summarize_turn_node(state)
     new_ctx = result["session_context"]
-    # MOCK은 고정된 새 요약을 반환 — 이전 요약과 달라야 함
-    assert new_ctx != old_ctx
+    # MOCK_LLM=1 환경에서 nodes._MOCK_SUMMARY 고정값을 반환하는지 검증
+    assert isinstance(new_ctx, str) and len(new_ctx) > 0
+    assert new_ctx == "캐릭터: 테스트용사(용감함). 게임: 별 모으기(낙하형, 속도3). 선호: 빠른 속도."
 
 
 @pytest.mark.asyncio

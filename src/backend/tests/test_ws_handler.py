@@ -146,3 +146,35 @@ async def test_no_error_event_on_valid_prompt(graph):
 
     error_events = ws.events_of_type("error")
     assert len(error_events) == 0, f"error 이벤트 예상치 못함: {error_events}"
+
+
+# ---------------------------------------------------------------------------
+# 테스트 5: 그래프 예외 발생 시 error 이벤트 발송
+# ---------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_error_event_sent_on_graph_exception():
+    """
+    그래프 실행 중 예외가 발생하면 error 타입 WS 이벤트를 발송해야 한다.
+    ws_handler.py:156-158 의 except Exception 경로를 검증.
+    """
+    from ws_handler import handle_chat_message
+
+    class BrokenGraph:
+        """항상 예외를 던지는 가짜 그래프."""
+        async def astream_events(self, *args, **kwargs):
+            raise RuntimeError("테스트용 강제 오류")
+            yield  # async generator 시그니처 유지
+
+    ws = FakeWebSocket()
+    await handle_chat_message(
+        ws=ws,
+        prompt="테스트",
+        child_id="child-err",
+        session_id="sess-err-01",
+        graph=BrokenGraph(),
+    )
+
+    error_events = ws.events_of_type("error")
+    assert len(error_events) == 1, f"error 이벤트 1개 기대, 실제: {ws.sent}"
+    assert error_events[0].get("type") == "error"

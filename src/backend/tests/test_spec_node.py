@@ -10,6 +10,13 @@ from app.graph.state import EduSessionState
 from app.graph.nodes import generate_spec_node, validate_and_build_node, save_game_node
 
 
+@pytest.fixture(autouse=True)
+def _patch_data_dir(monkeypatch, tmp_path):
+    """파일 생성 테스트가 실제 data/ 를 오염시키지 않도록 _DATA_DIR 을 tmp_path 로 교체."""
+    import app.graph.nodes as nodes_mod
+    monkeypatch.setattr(nodes_mod, "_DATA_DIR", tmp_path)
+
+
 def make_state(**kwargs) -> EduSessionState:
     defaults: EduSessionState = {
         "messages": [],
@@ -239,8 +246,8 @@ async def test_save_game_creates_html_file():
     )
     await save_game_node(save_state)
 
-    from app.graph.nodes import _DATA_DIR
-    game_dir = _DATA_DIR / "games" / "child-file-game-test" / "sess-file-game-test"
+    import app.graph.nodes as nodes_mod
+    game_dir = nodes_mod._DATA_DIR / "games" / "child-file-game-test" / "sess-file-game-test"
     html_files = list(game_dir.glob("game_*.html"))
     assert len(html_files) >= 1
 

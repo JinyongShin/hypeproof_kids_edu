@@ -17,15 +17,17 @@ tags:
 
 ### 가장 최근 작업 (2026-05-15)
 
-**PR#7 `feature/langgraph-gemini` → main 머지 완료**
+**테스트 품질 3-Phase 개선 완료**
+- Phase1: sys.path 잔재 삭제, anyio→asyncio 마커, tautology assertion 수정, fixture 중복 제거, 테스트명 수정
+- Phase2: `test_card_node.py`·`test_spec_node.py` `_DATA_DIR` monkeypatch 파일시스템 격리
+- Phase3: error 이벤트 테스트, 갤러리/rename/save 엔드포인트 커버리지, `backendUrl.test.ts` 신규(8개), `send()` 가드+payload 검증
+- 현재 테스트: **111 BE + 19 FE = 130 tests 전체 통과**
+- 상세: [[test-quality-review-2026-05-15]] (status: resolved)
+
+**PR#7 `feature/langgraph-gemini` → main 머지 완료 (동일 세션)**
 - ico1036 리뷰 3건 반영 + 이미 구현된 항목 코멘트 확인 처리
 - 수정: `edit_code_node` 실패 피드백, `sys.path.insert` 7회→1회, [[langfuse-observability]] 시크릿 외부 주입, `.env.example` 추가
-- main 현재 커밋: `3794819`, 워크트리 및 `feature/langgraph-gemini` 브랜치 정리 완료
-- 파일럿 후 처리 예정: Ping/Pong 하트비트, iframe CSP, 10턴+ rolling summary
-
-**볼트 구조 정렬 완료 + .raw 정비 (동일 세션)**
-- `sources/`, `questions/` 폴더 신설, dead link 4개 복구, orphan 39개 index 등록
-- 미ingest 파일 `2026-04-21-hospital-inquiry-draft.md` ingest 완료
+- main 현재 커밋: `75159ee`, 워크트리 및 `feature/langgraph-gemini` 브랜치 정리 완료
 
 **[[sk-biopharma]] × [[bitree]] 파일럿 확정 (2026-05-14)**
 - 대상: 약 15~20가족, 6~7월 토요일 Biweekly, [[sk-biopharma]] 10층 내부 카페
@@ -51,7 +53,8 @@ tags:
 
 ## 핵심 페이지
 
-- [[2026-04-21-hospital-inquiry-draft]] — 국립암센터 사전 확인 요청 초안 (방금 ingest)
+- [[test-quality-review-2026-05-15]] — 테스트 품질 검토 결과 (방금 생성)
+- [[kids-edu-backend]] — 백엔드 컴포넌트 (LangGraph 구조 반영 업데이트)
 - [[2026-05-12-sk-biopharma-meeting]] · [[2026-05-14-sk-biopharma-followup]]
 - [[sk-biopharma]] · [[bitree]] · [[oh-sungeun]]
 - [[hypeproof-studio]] · [[adr-hypeproof-studio-v01]] · [[sixteen-essence]]
@@ -63,7 +66,8 @@ tags:
 
 | 레이어 | 기술 |
 |---|---|
-| 백엔드 | FastAPI + [[langgraph]] + [[gemini-2-5-flash]] |
+| 백엔드 | FastAPI + [[langgraph]] + [[gemini-2-5-flash]] + SQLite |
 | 프론트 | Next.js (App Router) |
 | 관측성 | [[langfuse-observability]] v2 self-hosted |
 | 교육 도구 | [[hypeproof-studio]] v0.1 (예정) / Cline (Plan B) |
+| 테스트 | pytest 111개 (백엔드) · Vitest 19개 (프론트, 파일 2개) — 전체 통과 |
