@@ -60,6 +60,32 @@ CREATE TRIGGER IF NOT EXISTS messages_fts_ai
     AFTER INSERT ON messages BEGIN
         INSERT INTO messages_fts(rowid, content) VALUES (new.id, new.content);
     END;
+
+CREATE TABLE IF NOT EXISTS tenants (
+    tenant_id   TEXT PRIMARY KEY,
+    name        TEXT NOT NULL DEFAULT '',
+    created_at  TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+
+CREATE TABLE IF NOT EXISTS admins (
+    admin_id    TEXT PRIMARY KEY,
+    tenant_id   TEXT NOT NULL REFERENCES tenants(tenant_id),
+    email       TEXT NOT NULL UNIQUE,
+    pw_hash     TEXT NOT NULL,
+    role        TEXT NOT NULL DEFAULT 'admin',
+    created_at  TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+
+CREATE TABLE IF NOT EXISTS token_log (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id      TEXT NOT NULL,
+    child_id        TEXT NOT NULL,
+    tenant_id       TEXT NOT NULL DEFAULT 'default',
+    node            TEXT NOT NULL,
+    input_tokens    INTEGER NOT NULL DEFAULT 0,
+    output_tokens   INTEGER NOT NULL DEFAULT 0,
+    created_at      TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
 """
 
 
@@ -81,6 +107,12 @@ def init_db() -> None:
         if "saved" not in cols:
             conn.execute("ALTER TABLE games ADD COLUMN saved INTEGER NOT NULL DEFAULT 0")
             logger.info("games 테이블에 saved 컬럼 추가")
+        # sessions.tenant_id 컬럼 (기존 DB 호환)
+        try:
+            conn.execute("ALTER TABLE sessions ADD COLUMN tenant_id TEXT NOT NULL DEFAULT 'default'")
+            logger.info("sessions 테이블에 tenant_id 컬럼 추가")
+        except Exception:
+            pass  # 이미 존재하면 무시
     logger.info("SQLite DB 초기화 완료: %s", _DB_PATH)
 
 
@@ -347,3 +379,87 @@ def delete_card(session_id: str, card_id: str) -> None:
             "DELETE FROM cards WHERE session_id=? AND card_id=?",
             (session_id, card_id),
         )
+
+
+# ---------------------------------------------------------------------------
+# Tenants
+# ---------------------------------------------------------------------------
+
+def get_tenant(tenant_id: str):
+    with _connect() as conn:
+        row = conn.execute(
+            "SELECT tenant_id, name, created_at FROM tenants WHERE tenant_id=?",
+            (tenant_id,),
+        ).fetchone()
+    return dict(row) if row else None
+
+
+def create_tenant(tenant_id: str, name: str) -> None:
+    with _connect() as conn:
+        conn.execute(
+            "INSERT OR IGNORE INTO tenants (tenant_id, name) VALUES (?,?)",
+            (tenant_id, name),
+        )
+
+
+# ---------------------------------------------------------------------------
+# Admins
+# ---------------------------------------------------------------------------
+
+def get_admin_by_email(email: str):
+    with _connect() as conn:
+        row = conn.execute(
+            "SELECT admin_id, tenant_id, email, pw_hash, role FROM admins WHERE email=?",
+            (email,),
+        ).fetchone()
+    return dict(row) if row else None
+
+
+def create_admin(admin_id: str, tenant_id: str, email: str, pw_hash: str, role: str = "admin") -> None:
+    with _connect() as conn:
+        conn.execute(
+            "INSERT OR IGNORE INTO admins (admin_id, tenant_id, email, pw_hash, role) VALUES (?,?,?,?,?)",
+            (admin_id, tenant_id, email, pw_hash, role),
+        )
+
+
+def seed_default_admin(email: str, pw_hash: str) -> None:
+    """디폴트 테넌트 + 루트 admin 초기 시딩. 이미 존재하면 무시."""
+    create_tenant("default", "default")
+    existing = get_admin_by_email(email)
+    if existing is None:
+        import uuid
+        create_admin(str(uuid.uuid4()), "default", email, pw_hash, role="root")
+        logger.info("default admin 시딩 완료: %s", email)
+
+
+# ---------------------------------------------------------------------------
+# Token log
+# ---------------------------------------------------------------------------
+
+def log_token_usage(
+    session_id: str,
+    child_id: str,
+    tenant_id: str,
+    node: str,
+    input_tokens: int,
+    output_tokens: int,
+) -> None:
+    with _connect() as conn:
+        conn.execute(
+            "INSERT INTO token_log (session_id, child_id, tenant_id, node, input_tokens, output_tokens) "
+            "VALUES (?,?,?,?,?,?)",
+            (session_id, child_id, tenant_id, node, input_tokens, output_tokens),
+        )
+
+
+# ---------------------------------------------------------------------------
+# Aliases (LangGraph graph nodes용 — 이름 통일)
+# ---------------------------------------------------------------------------
+
+def get_cards(session_id: str) -> list[dict]:
+    return list_cards(session_id)
+
+
+def add_message(session_id: str, child_id: str, role: str, content: str) -> None:
+    append_message(session_id, child_id, role, content)

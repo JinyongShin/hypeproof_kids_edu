@@ -1,0 +1,71 @@
+# docker-compose.yml
+# Langfuse만: docker compose up langfuse-db langfuse-clickhouse langfuse-worker langfuse-web
+# 전체:       docker compose up
+
+services:
+  # ── 앱 서비스 ──────────────────────────────────
+  backend:
+    build:
+      context: ./src/backend
+      dockerfile: Dockerfile
+    env_file: ./src/backend/.env.local
+    environment:
+      LANGFUSE_HOST: http://langfuse:3000
+    volumes:
+      - backend_data:/app/data
+    ports:
+      - "8000:8000"
+    depends_on:
+      langfuse:
+        condition: service_started
+        required: false
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./src/frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_BACKEND_HTTP_URL: ${NEXT_PUBLIC_BACKEND_HTTP_URL:-http://localhost:8000}
+        NEXT_PUBLIC_BACKEND_WS_URL: ${NEXT_PUBLIC_BACKEND_WS_URL:-ws://localhost:8000}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # ── Langfuse v2 (로컬 LLM 관측성) ──────────────
+  # v2는 Postgres만 필요 — 로컬 dev에 적합
+  # v3는 ClickHouse + S3/MinIO 필요 → VPS 전환 시 검토
+  langfuse-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: langfuse
+      POSTGRES_USER: langfuse
+      POSTGRES_PASSWORD: langfuse_local
+    volumes:
+      - langfuse_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U langfuse"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  langfuse:
+    image: langfuse/langfuse:2.95.11   # v2 패치버전 핀 고정
+    ports:
+      - "3002:3000"
+    environment:
+      DATABASE_URL: postgresql://langfuse:langfuse_local@langfuse-db:5432/langfuse
+      NEXTAUTH_SECRET: local_dev_secret_change_in_prod
+      NEXTAUTH_URL: http://localhost:3002
+      SALT: local_dev_salt_change_in_prod
+    depends_on:
+      langfuse-db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  backend_data:
+  langfuse_db_data:

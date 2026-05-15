@@ -43,6 +43,9 @@ tags:
 - [[subagent-team-structure]] — Wiki 2 + Dev 4 subagent 팀 구조 (2026-04-12, proposed)
 - [[auth-session-game-persistence]] — 로그인·채팅 세션 관리·게임 HTML 파일 저장 통합 (2026-04-13, proposed)
 - [[game-content-guideline-pending]] — 소아암 환아용 게임 콘텐츠 가이드라인 (의료 전문가 확인 전 보류) (2026-04-18)
+- [[adr-langgraph-gemini-backend]] — 백엔드 LangGraph + Gemini 단일 스택 재작성 (2026-05-01, proposed)
+- [[adr-container-deployment]] — Docker Compose + 단일 VPS (fly.io/Railway) 배포 + Langfuse 관측성 (2026-05-01, proposed)
+- [[adr-multitenant-schema]] — 멀티테넌트 DB 스키마 — 테넌트·어드민 계정, 아이 개인 계정 없음 (2026-05-01, proposed)
 
 ## Superseded
 _없음._
