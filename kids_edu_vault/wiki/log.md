@@ -39,7 +39,7 @@ tags:
 - Type: save / status update
 - Created: [[jy-action-list-2026-05-14]]
 - Updated: [[hot]]
-- Key insight: LangGraph MOCK_LLM=0 E2E 테스트 완료 확인. fly.io 배포만 남음. SK바이오팜 파일럿 critical path: 제안서 초안 → Freelancer 채용 → Studio v0.1 빌드.
+- Key insight: LangGraph MOCK_LLM=0 E2E 테스트 완료 확인. fly.io 배포만 남음. [[sk-biopharma]] 파일럿 critical path: 제안서 초안 → Freelancer 채용 → Studio v0.1 빌드.
 
 ---
 
@@ -49,7 +49,7 @@ tags:
 - Type: batch ingest
 - Created: [[2026-05-12-sk-biopharma-meeting]], [[2026-05-14-sk-biopharma-followup]], [[sk-biopharma]], [[bitree]], [[oh-sungeun]], [[sixteen-essence]], [[hypeproof-studio]], [[adr-hypeproof-studio-v01]], [[sk-biopharma-pilot]]
 - Updated: [[index]], [[hot]]
-- Key insight: HypeProof Lab이 SK바이오팜 임직원 가족 대상 AI 게임 창작 교육 파일럿을 추진 중. 자체 IDE "HypeProof Studio" (VS Code fork) 개발 결정. 5/28 dry-run이 Go/No-go 게이트. 16 Essence 프레임워크를 교육 IP의 핵심으로 구조화.
+- Key insight: HypeProof Lab이 [[sk-biopharma]] 임직원 가족 대상 AI 게임 창작 교육 파일럿을 추진 중. 자체 IDE "[[hypeproof-studio]]" (VS Code fork) 개발 결정. 5/28 dry-run이 Go/No-go 게이트. [[sixteen-essence]] 프레임워크를 교육 IP의 핵심으로 구조화.
 - 주의: 2026-05-12.md와 20260512_meeting.md는 동일 내용 — 단일 comms 페이지로 통합.
 
 ---

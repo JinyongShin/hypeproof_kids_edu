@@ -20,8 +20,8 @@ HypeProof Lab의 **첫 번째 기업 임직원 가족 교육 프로덕트 파일
 
 | 항목 | 내용 |
 |---|---|
-| 대상 | SK바이오팜 임직원 가족 (약 15~20가족) |
-| 장소 | SK바이오팜 10층 내부 카페 |
+| 대상 | [[sk-biopharma]] 임직원 가족 (약 15~20가족) |
+| 장소 | [[sk-biopharma]] 10층 내부 카페 |
 | 일정 | 2026년 6~7월 토요일 Biweekly |
 | 수업 단위 | 4시간 × 2그룹/일 (오전·오후) |
 | 도구 | [[hypeproof-studio]] v0.1 (Plan B: Cline + Proxy) |
@@ -34,9 +34,9 @@ HypeProof Lab의 **첫 번째 기업 임직원 가족 교육 프로덕트 파일
 |---|---|---|
 | 2026-05-15~30 | HypeProof Studio v0.1 빌드 | 진행 예정 |
 | 2026-05-28~30 | 운영진 자녀 dry-run (4시간) | 진행 예정 |
-| 2026-05-31 | SK바이오팜 수요조사용 제안서 제출 | 진행 예정 |
+| 2026-05-31 | [[sk-biopharma]] 수요조사용 제안서 제출 | 진행 예정 |
 | 2026-06-01 | Studio v0.1 release + 가족 안내 메일 | 진행 예정 |
-| 2026-06 (2~3주) | SK바이오팜 1회차 | 예정 |
+| 2026-06 (2~3주) | [[sk-biopharma]] 1회차 | 예정 |
 
 ---
 
@@ -47,10 +47,10 @@ HypeProof Lab의 **첫 번째 기업 임직원 가족 교육 프로덕트 파일
 | 수요조사용 제안서 작성 | 5월 중순 | HypeProof Lab |
 | 4시간 클래스 구성안 확정 | 5월 중순 | HypeProof Lab |
 | 학년별 게임 제작 방향성 정의 | 5월 중순 | HypeProof Lab |
-| [[sixteen-essence]]와 게임 제작 과정 매핑 | 5월 중순 | HypeProof Lab + 비트리 |
+| [[sixteen-essence]]와 게임 제작 과정 매핑 | 5월 중순 | HypeProof Lab + [[bitree]] |
 | 시스템 요구사항 문서 작성 | 5월 중순 | HypeProof Lab |
 | AI 사용 비용 산정 | 5월 중순 | HypeProof Lab |
-| 강사비·판매가 정책 정리 | 5월 중순 | HypeProof Lab + 비트리 |
+| 강사비·판매가 정책 정리 | 5월 중순 | HypeProof Lab + [[bitree]] |
 | 사전 설치 환경 검토 (Mac/Win) | 5월 말 | HypeProof Lab |
 | 보조강사 운영 매뉴얼 작성 | 5월 말 | HypeProof Lab |
 | 수료증·표창장·성장 리포트 템플릿 | 5월 말 | HypeProof Lab |

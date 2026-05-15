@@ -23,8 +23,8 @@ tags:
 - meeting_notes/ 전체 `.raw/meeting_notes/`로 복사 완료
 - 미ingest 파일 `2026-04-21-hospital-inquiry-draft.md` ingest 완료
 
-**SK바이오팜 × 비트리 파일럿 확정 (2026-05-14)**
-- 대상: 약 15~20가족, 6~7월 토요일 Biweekly, SK바이오팜 10층 내부 카페
+**[[sk-biopharma]] × [[bitree]] 파일럿 확정 (2026-05-14)**
+- 대상: 약 15~20가족, 6~7월 토요일 Biweekly, [[sk-biopharma]] 10층 내부 카페
 - 수업 단위: 4시간 × 2그룹/일
 
 **HypeProof Studio v0.1 개발 결정**
@@ -39,9 +39,9 @@ tags:
 |---|---|
 | 2026-05-15~30 | HypeProof Studio v0.1 빌드 |
 | 2026-05-28~30 | 운영진 자녀 dry-run (4시간) — **게이트** |
-| 2026-05-말 | SK바이오팜 수요조사용 제안서 제출 |
+| 2026-05-말 | [[sk-biopharma]] 수요조사용 제안서 제출 |
 | 2026-06-01 | Studio v0.1 release + 가족 안내 메일 |
-| 2026-06 (2~3주) | SK바이오팜 1회차 |
+| 2026-06 (2~3주) | [[sk-biopharma]] 1회차 |
 
 ---
 
@@ -62,4 +62,4 @@ tags:
 | 백엔드 | FastAPI + LangGraph + Gemini 2.5 Flash |
 | 프론트 | Next.js (App Router) |
 | 관측성 | Langfuse v2 self-hosted |
-| 교육 도구 | HypeProof Studio v0.1 (예정) / Cline (Plan B) |
+| 교육 도구 | [[hypeproof-studio]] v0.1 (예정) / Cline (Plan B) |

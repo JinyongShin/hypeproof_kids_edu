@@ -1,6 +1,6 @@
 ---
 type: deliverable
-status: delivered
+status: deferred
 priority: 1
 owner: "[[jinyong-shin]]"
 due_date: 2026-04-30
@@ -24,7 +24,7 @@ updated: 2026-05-15
 - [ ] 치명 장애 발견 시 당일 롤백 플랜 수립.
 
 ## 진행 현황
-- 미시작. 환경 구축(다음 주 목표) 완료 후 실행.
+- **보류(deferred)**: 국립암센터 소아암 병동 일정이 미뤄져 리허설 미진행. 새 일정 미정. 현재 포커스는 [[sk-biopharma]] 파일럿 (2026-06~07).
 
 ## 의존성
 - [[pilot-oauth-setup]] · [[pilot-cline-gemini-integration]] · [[pilot-game-starter-template]] 완료.

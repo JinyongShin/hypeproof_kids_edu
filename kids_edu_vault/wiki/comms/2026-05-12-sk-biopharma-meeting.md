@@ -13,7 +13,7 @@ status: ingested
 # SK바이오팜 × 비트리 × HypeProof Lab 미팅 — 2026-05-12
 
 **참석:** [[sk-biopharma]], [[bitree]], HypeProof Lab  
-**장소:** SK바이오팜 10층 내부 카페 예정  
+**장소:** [[sk-biopharma]] 10층 내부 카페 예정  
 **소스:** `meeting_notes/2026-05-12.md` (동일 내용: `meeting_notes/20260512_meeting.md`)
 
 ---
@@ -29,7 +29,7 @@ status: ingested
 
 | 항목 | 내용 |
 |---|---|
-| 장소 | SK바이오팜 10층 내부 카페 |
+| 장소 | [[sk-biopharma]] 10층 내부 카페 |
 | 규모 | 약 15가족, 최대 20가족 |
 | 기본 수업 단위 | 4시간 |
 | 하루 그룹 수 | 2개 (4h + 4h = 8h) |
@@ -108,7 +108,7 @@ status: ingested
 
 ## 확장 로드맵 ([[bitree]] 논의)
 
-1. SK바이오팜 파일럿
+1. [[sk-biopharma]] 파일럿
 2. 기업 임직원 가족 반복 프로그램
 3. 대치동형 프리미엄 AI 교육
 4. HypeProof 인증 강사 양성
@@ -124,7 +124,7 @@ status: ingested
 
 | 항목 | 기한 |
 |---|---|
-| SK바이오팜 수요조사용 제안서 작성 | 5월 중순 |
+| [[sk-biopharma]] 수요조사용 제안서 작성 | 5월 중순 |
 | 4시간 클래스 구성안 확정 | 5월 중순 |
 | 학년별 게임 제작 방향성 정의 | 5월 중순 |
 | [[sixteen-essence]]와 게임 제작 과정 매핑 | 5월 중순 |

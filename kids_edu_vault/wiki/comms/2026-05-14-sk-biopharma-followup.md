@@ -22,7 +22,7 @@ status: ingested
 | 항목 | 결정 |
 |---|---|
 | 도구 | **[[hypeproof-studio]]** — VS Code fork + 자체 chat panel |
-| 첫 데뷔 | SK바이오팜 1회차 (브랜드 100% HypeProof) |
+| 첫 데뷔 | [[sk-biopharma]] 1회차 (브랜드 100% HypeProof) |
 | 백엔드 | HypeProof Proxy (Anthropic API 중계 + 측정 데이터 자동 수집) |
 | 차별점 | STT(음성 입력) v0.2부터 통합 예정 — 8~12세 타이핑 부담 해소 |
 
@@ -85,7 +85,7 @@ status: ingested
 | 5월 15~30 | [[hypeproof-studio]] v0.1 압축 빌드 (Track A: VS Code fork / Track B: 자체 chat panel 병렬) |
 | 5월 28~30 | 운영진 자녀 대상 dry-run (4시간) |
 | 6월 1주 | Studio v0.1 release + 가족 안내 메일 |
-| 6월 2~3주 | SK바이오팜 1회차 |
+| 6월 2~3주 | [[sk-biopharma]] 1회차 |
 | **Plan B** | 5/28 dry-run 미달 시 → Cline + Proxy로 1회차 운영, Studio는 8월 데뷔 |
 | 7월 이후 | Studio v0.2 (STT, web 모드) — 국립암센터 대비 |
 

@@ -19,14 +19,14 @@ status: decided
 
 ## 맥락
 
-SK바이오팜 임직원 가족 대상 AI 교육 프로그램에서 사용할 도구 선택 필요.  
+[[sk-biopharma]] 임직원 가족 대상 AI 교육 프로그램에서 사용할 도구 선택 필요.  
 기존 파일럿(소아암 병동, 2026-05-05)은 Cline + VS Code 조합으로 진행했으나, 브랜드 정체성이 없고 8~12세 아이들이 사용하기에 UI/UX 최적화가 부족했음.
 
 ---
 
 ## 결정
 
-> **자체 IDE "HypeProof Studio"를 VS Code fork 기반으로 개발하여 SK바이오팜 1회차에서 첫 데뷔한다.**
+> **자체 IDE "[[hypeproof-studio]]"를 VS Code fork 기반으로 개발하여 [[sk-biopharma]] 1회차에서 첫 데뷔한다.**
 
 ---
 
