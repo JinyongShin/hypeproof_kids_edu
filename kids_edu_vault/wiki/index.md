@@ -34,7 +34,7 @@ tags:
 - [[2026-04-20-meeting-briefing]] (2026-04-20) — AI 기반 게임 제작 교육 전략 브리핑
 - [[2026-04-19-curriculum-v0.3]] (2026-04-19) — 커리큘럼 v0.3 전문 요약
 - [[2026-04-17-jay-jinyong-call]] (2026-04-17) · [[2026-04-12-jay-workshop-structure]] · [[2026-04-11-call-note]] · [[2026-02-09-meeting]] · [[2026-01-26-meeting]] · [[2026-01-19-meeting]] · [[2026-01-12-meeting]] · [[2026-01-05-meeting]]
-- Research/Ops: [[2026-04-12-team-briefing-research]] (2026-04-12) — 소아암 환아 AI 코딩 파일럿 근거 요약 · [[2026-04-22-hospital-filamentary-checklist]] (2026-04-22) — 병원/필라멘트리 사전 확인 체크리스트
+- Research/Ops: [[2026-04-12-team-briefing-research]] (2026-04-12) — 소아암 환아 AI 코딩 파일럿 근거 요약 · [[2026-04-22-hospital-filamentary-checklist]] (2026-04-22) — 병원/필라멘트리 사전 확인 체크리스트 · [[2026-04-21-hospital-inquiry-draft]] (2026-04-21) — 국립암센터 행사 사전 확인 요청 초안 (9개 항목)
 
 ### Decisions (18)
 - [[decisions/_index|_index]]

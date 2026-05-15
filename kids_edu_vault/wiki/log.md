@@ -13,6 +13,14 @@ tags:
 
 ---
 
+## 2026-05-15 | ingest | 국립암센터 행사 사전 확인 요청 초안
+- Source: `.raw/meeting_notes/2026-04-21-hospital-inquiry-draft.md`
+- Pages created: [[2026-04-21-hospital-inquiry-draft]]
+- Pages updated: [[comms/_index]], [[index]]
+- Key insight: 파일럿 당일 운영의 9개 핵심 체크포인트 (허가·감염관리·장비·콘텐츠 등)가 한 문서에 정리됨. [[game-content-guideline-pending]] 및 [[case-pediatric-onc-infection-control]] 과 직결.
+
+---
+
 ## 2026-05-14 | vault-migration | 볼트 구조 정렬 — 스킬 철학 일치
 - 작업: wiki/wiki-ingest/wiki-query/wiki-lint 스킬 철학과 볼트 구조 갭 해소
 - Phase 0: git commit + tag (`vault-pre-migration-2026-05-14`) + 파일시스템 백업
