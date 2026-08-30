@@ -13,6 +13,14 @@ tags:
 
 ---
 
+## [2026-08-30] synthesis | 미션 → 제품 사이의 층 정리 + 롱텀 문서
+- Pages created: [[four-learner-experiences]]
+- Pages updated: [[mission-product-alignment]](경험 척추·두 갈래·시간 지평 4구간·팀 공유 문서 포인터), [[hypeproof-business-strategy]](두 갈래 구조), [[concepts/_index]], [[index]], [[hot]], [[curriculum-hot]], [[log]]
+- 산출물: `HypeProof/_worklog/why-teen-startup-ir-20260915.html` — 롱텀 문서. 자립적으로 읽히도록 내부 용어와 정본 참조를 전부 풀어 썼고, 8축·신원 취급·라이선스·규제는 제품 트랙으로 내려 뺐다
+- Key insight: 미션과 제품 사이가 비어 있어서 프레임이 여섯 개로 흩어져 있었다. **네 가지 학습자 경험(A~D)**이 그 가운데 층이고, 출처는 "AI가 날려도 사람에게 남는 것" 넷을 학습자가 겪는 순서로 다시 놓은 것이다. 이 축을 놓자 커버리지 판정이 방향으로 바뀌었다 — **A와 D가 우리 고유의 자리인데 가장 덜 만들어져 있다.** 그리고 넷과 일곱(7 Assets)은 대체가 아니라 시간축과 능력축의 차이이므로, 대외는 넷 내부는 일곱으로 쓰기로 했다.
+- 두 번째 발견: **같은 도구로 초등 3학년과 치과 원장을 모두 돌렸고 바뀐 것은 프로필 파일 하나다.** 확장성을 주장이 아니라 기록으로 말할 수 있는 유일한 증거다. 다만 「업스킬링」은 정본의 「우리가 아닌 것」 첫 줄이라 **전문가 스트림**으로 부른다.
+- 경계: A~D는 **팀 확정 전**이다. 확정 여부가 열린 질문 1번이고, 흔들리면 커버리지·로드맵이 전부 다시 그려진다.
+
 ## [2026-08-30] save | 8/25 회의록 기반 미션 드리븐 렌즈 보강
 - Type: synthesis update
 - Location: wiki/questions/why-hypeproof-for-teen-startup-ir-20260915.md

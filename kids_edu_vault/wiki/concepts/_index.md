@@ -14,7 +14,8 @@ tags:
 
 ## Core
 - [[hypeproof-mission]] — ⭐ **미션·정체성 정본 (확정 2026-07-31 · 개정 2026-08-10).** 충돌 시 이 문서가 이긴다
-- [[mission-product-alignment]] — 정본과 제품 현실 대조. 정렬 4 / 부분 2 / 어긋남 3
+- [[mission-product-alignment]] — 정본과 제품 현실 대조. 두 갈래 · 시간 지평 4구간
+- [[four-learner-experiences]] — **A~D 학습자 경험.** 미션과 제품 사이의 가운데 층. 7 Assets와 층위가 다름
 - [[hypeproof-lab]] — 조직 정의와 미션
 - [[mission-driven]] — 미션 드리븐 운영 철학
 - [[tracks-a-b]] — 운영 시스템 트랙 A(브랜딩) / B(사업화)

@@ -105,7 +105,8 @@ tags:
 - [[seven-ai-native-assets-sk-strategy]] — SK바이오팜 제안서의 7 AI Native Assets를 HypeProof Studio/성장 리포트/가격 방어 논리와 매칭한 전략 업데이트
 - [[concepts/_index|_index]]
 - ⭐ [[hypeproof-mission]] — **미션·정체성 정본 (확정 2026-07-31 · 개정 2026-08-10).** 사교육 SW 회사 · 사용자/구매자 분리 · 증거 제품 라인
-- [[mission-product-alignment]] — 정본 ↔ 제품 대조. 규격 3분열 · 신원 취급 위험 · 세 칸 사다리
+- [[mission-product-alignment]] — 정본 ↔ 제품 대조. 두 갈래 · 시간 지평 · 규격 3분열
+- [[four-learner-experiences]] — A~D 학습자 경험. 대외는 넷, 측정은 일곱
 - [[hypeproof-lab]] · [[mission-driven]] · [[tracks-a-b]] · [[fundamental-content-teams]] · [[ai-native-workflow]]
 - Pedagogy: [[no-debug-philosophy]] · [[ai-persona-workflows]] · [[single-html-runtime]] · [[vibe-coding]] (2026-04-21)
 - Product IP (2026-05-14): [[sixteen-essence]] · [[hypeproof-studio]]
