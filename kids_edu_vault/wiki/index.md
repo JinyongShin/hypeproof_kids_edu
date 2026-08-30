@@ -2,7 +2,7 @@
 type: meta
 title: "Index"
 created: 2026-04-12
-updated: 2026-08-08
+updated: 2026-08-30
 tags:
   - meta/index
 ---
@@ -170,8 +170,9 @@ tags:
 - [[dental-homepage-seminar-feedback-20260607]] — [[boa-dental]] 이후 치과 AI 홈페이지 만들기 세미나 클라이언트 피드백 (요리교실식 진행, 재료 사전 준비, 실제 배포까지)
 - [[sources/_index|_index]]
 
-### Questions — 쿼리 응답 아카이브 (wiki-query 자동 파일링)
-- [[questions/_index|_index]] _(현재 비어있음 — wiki-query 사용 시 자동 생성)_
+### Questions — 쿼리 응답 아카이브
+- [[questions/_index|_index]]
+- [[why-hypeproof-for-teen-startup-ir-20260915]] (2026-08-30) — 왜 고1~2 창업/IR 교육을 HypeProof Lab이 해야 하는가: 9/15 피칭 렌즈와 팀 질문
 
 ## Recent Sources (ingested)
 - `hypeprooflab/MISSION.md` + `docs/decisions/2026-08-10-positioning-reset.md` (2026-08-10 정본 개정) → [[hypeproof-positioning-reset-20260810]] + [[hypeproof-mission]] + [[mission-product-alignment]] + [[chalk]] + [[sediment]]

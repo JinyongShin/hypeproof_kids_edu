@@ -3,7 +3,7 @@ type: meta
 title: "Questions Index"
 status: navigational
 created: 2026-05-14
-updated: 2026-05-14
+updated: 2026-08-30
 tags:
   - meta/index
 ---
@@ -15,4 +15,4 @@ wiki-query 스킬이 답변을 파일링하는 폴더.
 
 ## 인덱스
 
-_아직 파일링된 질의응답이 없습니다. `/wiki-query` 사용 후 "파일링할까요?" 프롬프트에 응답하면 자동 생성됩니다._
+- [[why-hypeproof-for-teen-startup-ir-20260915]] (2026-08-30) — 9/15 피칭 중심 질문: 왜 고1~2 창업/IR 교육을 HypeProof가 해야 하는가

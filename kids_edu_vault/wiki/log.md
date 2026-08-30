@@ -13,6 +13,18 @@ tags:
 
 ---
 
+## [2026-08-30] save | 8/25 회의록 기반 미션 드리븐 렌즈 보강
+- Type: synthesis update
+- Location: wiki/questions/why-hypeproof-for-teen-startup-ir-20260915.md
+- From: Telegram group discussion after re-reading the 8/25 meeting transcript only
+- Key insight: 앞선 질문은 제품 기능 점검에 가까웠다. 8/25 회의록 기준 핵심은 "우리 조직이 뭘 위해 달려가며, 그 미션이 왜 학생 창업교육이라는 첫 시장으로 내려오는가"다. G스택은 why-us가 아니라 참고 자료이고, HypeProof가 맡을 앞단은 문제 정의 -> AI 지시 -> 작동하는 것 제작 -> 반복 개선이다. 9/15 HTML은 기존 미션/제품 실사 문서가 아니라 이 렌즈로 전면 재작성되어야 한다.
+
+## [2026-08-30] save | 왜 HypeProof가 고1~2 창업/IR 교육을 해야 하는가
+- Type: synthesis
+- Location: wiki/questions/why-hypeproof-for-teen-startup-ir-20260915.md
+- From: Telegram group discussion on 9/15 pitching, mission-driven framing, and the weak link between HypeProof mission and student startup/IR education
+- Key insight: 9/15의 중심 질문은 "창업 교육을 할 것인가"가 아니라 **"왜 학생 창업/IR 교육을 HypeProof Lab이 해야 하는가"**다. HypeProof는 창업교육 회사가 아니라 AI 시대에 판단하는 인간을 기르는 제품 회사이고, 학생 창업/IR 교육은 그 미션을 가장 빨리 증명할 첫 포맷이다. 제품 차별점은 창업 이론 강의가 아니라 학생의 문제정의·AI 지휘·수정 로그·판단 근거를 Studio 안에 남기고, 이를 대입/이력서용 증거 패키지로 바꾸는 데 있다.
+
 ## [2026-08-30] ingest | 정본 8/10 포지셔닝 리셋 + 미션↔제품 정렬 점검
 - Sources: `hypeprooflab/MISSION.md`(확정 2026-07-31 · 개정 2026-08-10) · `hypeprooflab/docs/decisions/2026-08-10-positioning-reset.md`
 - Summary: [[hypeproof-positioning-reset-20260810]]
@@ -764,5 +776,3 @@ tags:
 - Pages: [[dental-supersearch-curriculum-v4]] · [[dental-supersearch-engine-workshop-v2]]
 - v3의 "원장님은 5분, 직원이 주인공" 구조를 유지하면서 산출물을 검색 웹앱 + 원장 검증 로그 + 병원 내부 검색 규칙으로 전환. "원장님을 이겨라" 게임 장치와 7 Assets를 검색스킬 제작 루프로 엮음
 - Note: 2026-08-30 hot 캐시 정리 시 log 기록이 없어 이관함
-
-
