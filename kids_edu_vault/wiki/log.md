@@ -2,7 +2,7 @@
 type: meta
 title: "Log"
 created: 2026-04-12
-updated: 2026-08-30
+updated: 2026-09-03
 tags:
   - meta/log
 ---
@@ -12,6 +12,18 @@ tags:
 볼트 변경 이력. 최신 항목이 위.
 
 ---
+
+## [2026-09-03] ingest | Weekly on HypeProof 2026-08-31
+- Source: `.raw/meeting_notes/Weekly on HypeProof - 2026_08_31 21_59 KST - Notes by Gemini.md` + 동 `(1).md` 스크립트(1,900여 줄). 회의 1건 / 파일 2개
+- Summary: [[weekly-on-hypeproof-20260831-source]] · [[2026-08-31-weekly-on-hypeproof]]
+- Pages created: [[weekly-on-hypeproof-20260831-source]], [[2026-08-31-weekly-on-hypeproof]], [[minhan-cho]], [[sales-ownership-by-vertical]], [[studio-subscription-league-model]], [[production-strategy-session-20260919]], [[action-items-20260831]]
+- Pages updated: [[four-learner-experiences]](팀 확정), [[chalk]](생성기 정정·게이트웨이론), [[sediment]]("크(?)" 해소), [[jesse-kim]], [[jay-lee]], [[jiwoong-kim]], [[bongho-tae]], [[jehyeong]], [[ir-20260915-plan]], [[comms/_index]], [[sources/_index]], [[decisions/_index]], [[deliverables/_index]], [[stakeholders/_index]], [[index]], [[hot]], [[log]]
+- Key insight: **[[four-learner-experiences]]의 "팀 확정 전"이 여기서 닫힌다.** 8/30에 혼자 세운 가운데 층을 8/31 회의에서 [[minhan-cho]]가 미션 → 네 경험 → 7 Assets → 제품 3종으로 발표했고 팀이 결정으로 채택했다. 커버리지 판정(A·D가 가장 덜 만들어짐)이 개인 분석에서 **팀이 공유하는 지도**로 승격됐다.
+- 두 번째: **[[chalk]]의 자리가 올라갔다.** 강의 생성기에서 **교육관 검증 게이트웨이**로 확장됐고, [[jesse-kim]]이 "크립토나이트는 스튜디오가 아니라 초크"라고 못 박았다 — 시간당 10만 원과 목표 20만 원의 간극을 메우는 자리다. 정본이 이미 "서사의 중심은 Chalk"라 한 것과 회의가 같은 방향으로 움직였다.
+- 세 번째: [[sediment]]에 남아 있던 미확인 항목("세디먼트 / 크(?) / Studio")이 **Chalk로 확정**됐다.
+- 운영 변화: 세일즈를 라인별로 쪼개 담당을 붙였고([[sales-ownership-by-vertical]]), 수익 모델이 단품 판매에서 **구독+리그**로 옮겨갔다([[studio-subscription-league-model]]). 최우선 개발이 **어드민/모니터링 페이지**로 지목됐는데, 이는 커버리지 ⛔ 인 **경험 D**를 메우는 일이다.
+- 열린 것: ⚠️ 성공 사례의 정의 미합의(대회 vs 실매출) · ⚠️ **AI-인간 거리감 지표** 제안이 창업 라인의 "8번째 Asset 신설 안 함"(D-3)과 표면상 충돌 · 파트너십을 채널로 볼지 공동 BM으로 볼지 미정
+- Note: 스크립트는 8/25 때와 같은 이유(공개 저장소 PII)로 커밋하지 않는다. 이번에는 삭제 대신 **`.gitignore` 규칙**(`*Notes by Gemini (1).md`)으로 로컬 보관만 한다. 요약본의 초대자 이메일·캘린더 링크는 마스킹 후 커밋. 회의록의 **"신제형"** 표기와 [[jehyeong]]의 동일 인물 여부는 확증 전이다.
 
 ## [2026-08-30] synthesis | 미션 → 제품 사이의 층 정리 + 롱텀 문서
 - Pages created: [[four-learner-experiences]]

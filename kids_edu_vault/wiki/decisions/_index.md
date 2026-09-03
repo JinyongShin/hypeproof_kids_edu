@@ -20,6 +20,10 @@ tags:
 - [[markdown-for-knowledge-share]] — 지식 공유는 MD/PDF (2026-01-19)
 - [[ai-onboarding-role]] — AI 온보딩 역할 신설 (2026-01-19)
 
+### Business / Sales (2026-08-31)
+- [[sales-ownership-by-vertical]] — 분야별 영업 담당자 지정 + 딜 대시보드 (2026-08-31, accepted)
+- [[studio-subscription-league-model]] — 스튜디오 구독 + 교육 리그 수익 모델 (2026-08-31, accepted)
+
 ### Content
 - [[podcast-format-host-panels-guest]] — 호스트1+패널2+게스트1 (2026-01-05)
 

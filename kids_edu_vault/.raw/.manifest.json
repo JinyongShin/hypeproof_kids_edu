@@ -340,6 +340,46 @@
         "curriculum_wiki/curriculum-hot.md",
         "curriculum_wiki/curriculum-log.md"
       ]
+    },
+    ".raw/meeting_notes/Weekly on HypeProof - 2026_08_31 21_59 KST - Notes by Gemini.md": {
+      "hash": "16c9a1923553bf6d9f5e2c8ce22dc45a (마스킹 전)",
+      "ingested_at": "2026-09-03",
+      "pages_created": [
+        "wiki/sources/weekly-on-hypeproof-20260831-source.md",
+        "wiki/comms/2026-08-31-weekly-on-hypeproof.md",
+        "wiki/stakeholders/minhan-cho.md",
+        "wiki/decisions/sales-ownership-by-vertical.md",
+        "wiki/decisions/studio-subscription-league-model.md",
+        "wiki/deliverables/production-strategy-session-20260919.md",
+        "wiki/deliverables/action-items-20260831.md"
+      ],
+      "pages_updated": [
+        "wiki/concepts/four-learner-experiences.md",
+        "wiki/components/chalk.md",
+        "wiki/components/sediment.md",
+        "wiki/stakeholders/jesse-kim.md",
+        "wiki/stakeholders/jay-lee.md",
+        "wiki/stakeholders/jiwoong-kim.md",
+        "wiki/stakeholders/bongho-tae.md",
+        "wiki/stakeholders/jehyeong.md",
+        "wiki/deliverables/ir-20260915-plan.md",
+        "wiki/comms/_index.md",
+        "wiki/sources/_index.md",
+        "wiki/decisions/_index.md",
+        "wiki/deliverables/_index.md",
+        "wiki/stakeholders/_index.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ],
+      "note": "커밋 전 초대자 이메일·캘린더 링크 마스킹."
+    },
+    ".raw/meeting_notes/Weekly on HypeProof - 2026_08_31 21_59 KST - Notes by Gemini (1).md": {
+      "hash": "9d24fac25384928c9b3ad8775f6c24d6",
+      "ingested_at": "2026-09-03",
+      "pages_created": [],
+      "pages_updated": [],
+      "note": "동일 회의의 전체 스크립트. gitignore 처리(공개 저장소 PII) — 로컬 보관만. 세부 인용은 요약 페이지에 반영."
     }
   }
 }

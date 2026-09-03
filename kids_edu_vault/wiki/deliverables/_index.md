@@ -24,6 +24,8 @@ tags:
 - [[boa-dental-526-briefing]] — 보아치과 5/26 미팅 브리핑
 
 ## Proposals & Design
+- [[production-strategy-session-20260919]] — 9/19 밤샘 프로덕션 전략 세션 (PR·브랜치 정비, 어드민 페이지 착수)
+- [[action-items-20260831]] — 8/31 Weekly 액션 아이템 25건
 - [[ir-20260915-plan]] — 9/15 IR 준비 계획 (롱텀 미션 / 숏텀 마켓 2축, 3주 타임라인)
 - [[sk-biopharma-family-workshop-design-v1]] — SK바이오팜 가족 워크숍 내부 설계안 v1 (내부 전용)
 - [[sk-biopharma-7assets-proposal-upgrade-20260601]] — SK바이오팜 7 Assets 제안서 보강안 (2026-06-01, draft)

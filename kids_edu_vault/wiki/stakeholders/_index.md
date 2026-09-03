@@ -22,6 +22,10 @@ tags:
 - [[ryan]] — Experience Designer / 측정 설계 (신규, 2026-04-12)
 - [[jehyeong]] — Web Infrastructure / 현장 기술 (신규, 2026-04-12)
 - [[jungwoo]] — Lead Facilitator / 현장 피드백 (신규, 2026-04-12)
+- [[minhan-cho]] — 미션·프레임워크 / IP·계약 (신규, 2026-08-31)
+
+### 세일즈 담당 (2026-08-31) → [[sales-ownership-by-vertical]]
+키즈 교육 [[jiwoong-kim]] · 치과 신제형([[jehyeong]]) · 변호사 [[bongho-tae]] · 딜 대시보드 [[jay-lee]]
 
 ## External
 - [[filamentary]] — 현장 교육 협력 기관. 커리큘럼 피드백 파트너 (2026-04-21 등장)
@@ -30,7 +34,7 @@ tags:
 - [[park-junghyun]] · [[lee-jaewon]] — 보아치과 이후 치과 AI 홈페이지 만들기 세미나 클라이언트 피드백 출처 (2026-06-07)
 - 이동훈 대표 · 문조일 대표 · 김성경 대표 · 박재현 소장 · 노수림 교수 — 필요 시 페이지 생성.
 
-- [[jesse-kim]] — 개발. 소스 구조 정리·기술 문서. 내부 병목 우선 관점
+- [[jesse-kim]] — 개발 / **제품 품질·고도화 총괄** (2026-08-31 지정). 내부 병목 우선 관점
 - [[ir-mentor-candidates-20260915]] — 9/15 IR 멘토 후보 4인 (미확인 정보)
 
 ## Notes

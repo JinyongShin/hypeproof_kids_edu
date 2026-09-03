@@ -18,7 +18,7 @@ tags:
 
 ## Domains
 
-### Stakeholders (21)
+### Stakeholders (22)
 - [[stakeholders/_index|_index]]
 - [[jay-lee]] · [[jay]] (별칭, 2026-04-17) · [[jinyong-shin]] · [[jiwoong-kim]] · [[tj]] · [[bongho-tae]] · [[kiwon-nam]]
 - Pilot (신규, 2026-04-12): [[ryan]] · [[jehyeong]] · [[jungwoo]]
@@ -26,9 +26,11 @@ tags:
 - Dental seminar feedback (2026-06-07): [[boa-dental]] · [[park-junghyun]] · [[lee-jaewon]]
 - SK바이오팜 (2026-05-14~06-08): [[sk-biopharma]] · [[bitree]] · [[oh-sungeun]] · [[kim-jinhyuk]]
 - 창업·IR (2026-08-25): [[jesse-kim]] · [[ir-mentor-candidates-20260915]] (미확인 정보)
+- 미션·IP (2026-08-31): [[minhan-cho]]
 
-### Comms — Meetings (17)
+### Comms — Meetings (18)
 - [[comms/_index|_index]]
+- [[2026-08-31-weekly-on-hypeproof]] (2026-08-31) — 미션-제품 프레임워크 팀 확정, 분야별 세일즈 담당, 구독+리그 모델, 9/19 프로덕션 세션
 - [[2026-08-25-weekly-on-hypeproof]] (2026-08-25) — AI 네이티브 창업 교육 채택, IR 미션 드리븐 전환, 롱텀/숏텀 2축
 - [[2026-07-11-legal-professional-channel-meeting]] (2026-07-11) — 변호사 전문직 채널: 준비서면 루프, truthworthy 요구, 이혼/GEO 니치 가설
 - [[2026-06-29-weekly-on-hypeproof]] (2026-06-29) — 보아치과 AI 강의 아웃풋/차별점과 HypeProof 포지셔닝 정리
@@ -41,11 +43,12 @@ tags:
 - [[2026-04-17-jay-jinyong-call]] (2026-04-17) · [[2026-04-12-jay-workshop-structure]] · [[2026-04-11-call-note]] · [[2026-02-09-meeting]] · [[2026-01-26-meeting]] · [[2026-01-19-meeting]] · [[2026-01-12-meeting]] · [[2026-01-05-meeting]]
 - Research/Ops: [[2026-04-12-team-briefing-research]] (2026-04-12) — 소아암 환아 AI 코딩 파일럿 근거 요약 · [[2026-04-22-hospital-filamentary-checklist]] (2026-04-22) — 병원/필라멘트리 사전 확인 체크리스트 · [[2026-04-21-hospital-inquiry-draft]] (2026-04-21) — 국립암센터 행사 사전 확인 요청 초안 (9개 항목)
 
-### Decisions (28)
+### Decisions (30)
 - [[decisions/_index|_index]]
 - [[regular-meeting-monday-930]] · [[discord-for-comms]] · [[podcast-format-host-panels-guest]] · [[markdown-for-knowledge-share]] · [[ai-onboarding-role]] · [[fast-implementation-mode]] · [[combat-vs-cooperative-framing]]
 - Pivot (2026-04-12): [[pivot-to-chat-preview-wrapper]] · [[iframe-sandbox-over-webcontainers]] · [[parent-gated-signup-first]]
 - Tooling (2026-04-12): [[subagent-team-structure]]
+- Business (2026-08-31): [[sales-ownership-by-vertical]] · [[studio-subscription-league-model]]
 - Workshop Structure (2026-04-12): [[track-a-primary-b-backup]] · [[stack-decision-after-curriculum]]
 - Architecture (2026-04-12): [[nextjs-fastapi-wrapper-architecture]]
 - Mobile UX (2026-04-13): [[mobile-swipe-navigation]]
@@ -59,8 +62,10 @@ tags:
 - Bug / Content (2026-04-18→2026-05-01): [[game-bug-fix-2026-05-01]] · [[game-content-guideline-pending]] (pending — 의료 전문가 확인 전 보류)
 - LLM Infra: [[llm-provider-scaling]] — LLM 제공사 스케일링 결정
 
-### Deliverables (16)
+### Deliverables (18)
 - [[deliverables/_index|_index]]
+- [[production-strategy-session-20260919]] (2026-09-19) — 밤샘 프로덕션 전략 세션: PR·브랜치 정비, 어드민 페이지 착수
+- [[action-items-20260831]] — 8/31 Weekly 액션 아이템 25건
 - [[ir-20260915-plan]] (2026-08-25) — 9/15 IR 준비 계획: 롱텀 미션 / 숏텀 마켓 2축, 3주 타임라인
 - [[okr-q2-jy]]
 - [[pilot-5-5-milestones]] — 전체 팀 마일스톤 (2026-04-12 확정)
@@ -158,6 +163,7 @@ tags:
 - [[hypeproof-hyrox-assets-v0.1]] (2026-05-03) — HYROX 작업 중 보존한 HypeProof AI 협업 원칙 자산
 
 ### Sources — 원본 소스 요약 (wiki-ingest 자동 생성)
+- [[weekly-on-hypeproof-20260831-source]] — Weekly on HypeProof 2026-08-31 (프레임워크 확정, 세일즈 R&R, Chalk 게이트웨이론)
 - [[hypeproof-positioning-reset-20260810]] — 포지셔닝 리셋 (정본 개정, 8/10)
 - [[hypeproof-mission-20260731-source]] — MISSION.md 7/31판 (대체됨)
 - [[weekly-on-hypeproof-20260825-source]] — Weekly on HypeProof 2026-08-25 (창업 교육 사업안, 미션 드리븐 전환, 160분 리텐션)
@@ -176,6 +182,7 @@ tags:
 - [[why-hypeproof-for-teen-startup-ir-20260915]] (2026-08-30) — 왜 고1~2 창업/IR 교육을 HypeProof Lab이 해야 하는가: 9/15 피칭 렌즈와 팀 질문
 
 ## Recent Sources (ingested)
+- `.raw/meeting_notes/Weekly on HypeProof - 2026_08_31 ...` 요약본 + 스크립트 (2026-08-31, 회의 1건 / 파일 2개, 스크립트는 gitignore) → [[weekly-on-hypeproof-20260831-source]] + [[2026-08-31-weekly-on-hypeproof]] + [[minhan-cho]] + [[sales-ownership-by-vertical]] + [[studio-subscription-league-model]] + [[production-strategy-session-20260919]] + [[action-items-20260831]]
 - `hypeprooflab/MISSION.md` + `docs/decisions/2026-08-10-positioning-reset.md` (2026-08-10 정본 개정) → [[hypeproof-positioning-reset-20260810]] + [[hypeproof-mission]] + [[mission-product-alignment]] + [[chalk]] + [[sediment]]
 - `hypeprooflab:MISSION.md` (2026-07-31 확정 — ⚠️ 8/10 개정으로 대체됨) → [[hypeproof-mission-20260731-source]] + [[hypeproof-mission]] + [[hypeproof-lab]] + [[mission-driven]] + [[hypeproof-business-strategy]]
 - `.raw/meeting_notes/Weekly on HypeProof - 2026_08_25 ...` 요약본 + 스크립트 (2026-08-25, 회의 1건 / 파일 2개) → [[weekly-on-hypeproof-20260825-source]] + [[2026-08-25-weekly-on-hypeproof]] + [[teen-ai-startup-camp-v0]] + [[ir-20260915-plan]] + [[ir-mentor-candidates-20260915]] + [[jesse-kim]] + [[g-stack]] + [[sediment]]

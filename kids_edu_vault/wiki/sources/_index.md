@@ -17,6 +17,7 @@ wiki-ingest 스킬이 소스를 처리할 때 생성하는 요약 페이지 목�
 
 - [[hypeproof-positioning-reset-20260810]] — ⭐ **포지셔닝 리셋 (정본 개정).** 미션 문장·세계관·방어 논리·사용자/구매자 분리
 - [[hypeproof-mission-20260731-source]] — MISSION.md 7/31판 (⚠️ 상위 판으로 대체됨)
+- [[weekly-on-hypeproof-20260831-source]] — Weekly on HypeProof 2026-08-31 (미션-제품 프레임워크 확정, 세일즈 R&R, Chalk 게이트웨이론)
 - [[weekly-on-hypeproof-20260825-source]] — Weekly on HypeProof 2026-08-25 (창업 교육 사업안, 미션 드리븐 전환, 160분 리텐션)
 - [[legal-professional-channel-meeting-20260711-source]] — 변호사 전문직 채널 미팅 메모 (준비서면 루프, truthworthy 요구, 이혼/GEO 니치 가설)
 - [[boa-dental-ai-homepage-cuesheet-20260706]] — 보아치과 AI 홈페이지 실습 큐시트 2026-07-06 (2시간 외부 공유용 정본)

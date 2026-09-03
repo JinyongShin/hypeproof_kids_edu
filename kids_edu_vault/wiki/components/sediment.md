@@ -7,7 +7,7 @@ tags:
   - product
   - internal
 created: 2026-08-29
-updated: 2026-08-30
+updated: 2026-09-03
 related:
   - "[[2026-08-25-weekly-on-hypeproof]]"
   - "[[hypeproof-studio]]"
@@ -42,8 +42,17 @@ related:
 ## 제품 축 분해 (미확정)
 
 [[jiwoong-kim]]이 롱텀/숏텀 외에 **제품 관점의 분해**도 가능하다고 언급했다 — 세디먼트 / 크(?) / [[hypeproof-studio]].
-> 스크립트 오인식으로 두 번째 항목명이 불확실하다. 확인 필요.
+> ~~스크립트 오인식으로 두 번째 항목명이 불확실하다. 확인 필요.~~
+> **해소 (2026-08-31)**: 두 번째 항목은 **[[chalk]](초크)** 다. 8/31 회의에서 [[minhan-cho]]가 제품 3종을 초크·스튜디오·세디먼트로 명시했다.
+
+## 8/31 회의에서 더해진 것
+
+- 제품 3종 중 **미구축**으로 재확인. 완성된 것은 [[hypeproof-studio]] 하나다.
+- 요구되는 것이 구체화됐다 — [[jiwoong-kim]]의 3단계 전략 2단계가 곧 세디먼트다: **기록의 형식을 하나로 통일**한다. 배포된 서비스 링크, 창업으로 이어진 경우 사용자 수·매출·운영 개월 수, 그리고 7 Assets가 기록에 반영된다.
+- 논문 대행·성과 확약 컨설팅이 법적 리스크로 배제된 상황에서, **표준화된 기록과 성과**가 학부모가 원하는 "스펙"을 대체하는 현실적 대안이라는 것이 근거다.
+- [[studio-subscription-league-model]]의 리더보드·심사 기록이 세디먼트를 요구한다.
+- [[sk-biopharma]] 파일럿에서 기록은 남았으나 세디먼트에 체계적으로 축적되지는 않았다.
 
 ## 관련
 
-- [[2026-08-25-weekly-on-hypeproof]] · [[hypeproof-studio]] · [[chalk]] · [[hypeproof-mission]] · [[mission-product-alignment]]
+- [[2026-08-25-weekly-on-hypeproof]] · [[2026-08-31-weekly-on-hypeproof]] · [[hypeproof-studio]] · [[chalk]] · [[hypeproof-mission]] · [[mission-product-alignment]]
