@@ -42,6 +42,11 @@ Chalk  ──만든다──▶  수업 설계 파일  ──돌린다──▶ 
 [[jesse-kim]]: **"저의 크립토나이트는 스튜디오가 아니라 초크가 돼야 한다. 결국 우리의 킥은 초크가 돼야 강남이든 어디든 시간당 20만 원을 받을 수 있다."**
 → 현재 단가 10만 원 / 목표 20만 원의 간극을 메우는 자리에 Chalk를 놓은 것이다 ([[2026-08-31-weekly-on-hypeproof]]).
 
+> [!contradiction] Philosophy 문서의 "Curriculum"과 같지 않다 (2026-09-06)
+> [[hypeproof-philosophy]]는 제품 3종을 **Curriculum · Studio · Community**로 쓰고 Chalk를 언급하지 않는다.
+> Chalk는 커리큘럼을 **만드는 생성기이자 게이트웨이**이지 커리큘럼 자체가 아니므로 1:1 대응이 아니다. 명칭 통일 판정 필요 → [[hypeproof-lab-philosophy-source]] 충돌 3.
+> 다만 그 문서의 Curriculum 설계 단위 `Asset → Behavioral Indicator → Exercise → Feedback → Reflection → Assessment`는 **Chalk가 생성해야 할 산출물 규격의 후보**다.
+
 ## 무엇을 만드나
 
 `주제 → 수업 설계 파일 → 보드·설명 카드 → 참가자 프롬프트 → 진행·대비 멘트 → 강사 스크립트 → Studio 코호트 설정`

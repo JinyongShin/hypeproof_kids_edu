@@ -53,6 +53,11 @@ related:
 - [[studio-subscription-league-model]]의 리더보드·심사 기록이 세디먼트를 요구한다.
 - [[sk-biopharma]] 파일럿에서 기록은 남았으나 세디먼트에 체계적으로 축적되지는 않았다.
 
+> [!contradiction] Philosophy 후보 문서에 대응 층이 없다 (2026-09-06)
+> [[hypeproof-philosophy]]는 제품 3종을 **Curriculum · Studio · Community**로 쓰며 **Sediment를 언급하지 않는다.**
+> 정본 [[hypeproof-mission]]은 Sediment를 미션 3층위 중 **혼란(disorder)**에 대응시키고 *"경계가 무너진 조직의 공통 판단 기준"*으로 못 박았다. 후보 문서는 evidence를 **루프의 단계**로만 다루고 그것을 담는 제품을 두지 않는다.
+> 반대로 후보 문서의 §12 매핑표는 **자산별로 관찰할 evidence 항목을 지정**한다 — 세디먼트가 무엇을 저장해야 하는지에 대해 볼트에서 가장 구체적인 목록이다. 판정 → [[hypeproof-lab-philosophy-source]] 충돌 3.
+
 ## 관련
 
-- [[2026-08-25-weekly-on-hypeproof]] · [[2026-08-31-weekly-on-hypeproof]] · [[hypeproof-studio]] · [[chalk]] · [[hypeproof-mission]] · [[mission-product-alignment]]
+- [[2026-08-25-weekly-on-hypeproof]] · [[2026-08-31-weekly-on-hypeproof]] · [[hypeproof-studio]] · [[chalk]] · [[hypeproof-mission]] · [[mission-product-alignment]] · [[hypeproof-philosophy]]

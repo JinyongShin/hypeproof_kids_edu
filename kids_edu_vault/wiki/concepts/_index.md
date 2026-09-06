@@ -3,7 +3,7 @@ type: index
 status: navigational
 title: "Concepts"
 created: 2026-04-12
-updated: 2026-08-29
+updated: 2026-09-06
 tags:
   - index/concepts
 ---
@@ -14,6 +14,9 @@ tags:
 
 ## Core
 - [[hypeproof-mission]] — ⭐ **미션·정체성 정본 (확정 2026-07-31 · 개정 2026-08-10).** 충돌 시 이 문서가 이긴다
+- [[hypeproof-philosophy]] — 🕯️ **통합 교육 철학 정본 후보 (2026-09-06, 팀 채택 전).** AKB(가칭) 자리. 정본과 충돌 3건
+- [[asset-pressure-map]] — 자산 재평가 4축. 학습자가 아니라 **우리 모델**을 잰다
+- [[community-epistemic-layer]] — Community는 제품이 아니라 판단 교정 층
 - [[mission-product-alignment]] — 정본과 제품 현실 대조. 두 갈래 · 시간 지평 4구간
 - [[four-learner-experiences]] — **A~D 학습자 경험.** 미션과 제품 사이의 가운데 층. 7 Assets와 층위가 다름
 - [[hypeproof-lab]] — 조직 정의와 미션

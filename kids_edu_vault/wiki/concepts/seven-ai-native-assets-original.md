@@ -46,6 +46,20 @@ related:
 | Taste | 결과를 그대로 받지 않고 더 나은 기준으로 거부/선택/수정하는지 본다 |
 | Ownership | 실패를 AI 탓으로 돌리는지, 자기 프롬프트/판단 개선으로 회고하는지 본다 |
 
+## 자산 위에 「변화 가설」 층이 붙었다 (2026-09-06)
+
+[[hypeproof-philosophy]]가 같은 7개에 **AI 발전에 따른 변화 가설**을 붙였다. 명칭·정의는 이 페이지와 동일하고, 새로운 것은 방향 판정이다.
+
+- **급증**: Taste · Intent · Verify · Ownership / **증가**: Delegate
+- **중립 / 재정의 필요**: **Context · Iterate** — Memory·RAG가 Context를, Agent loop가 Iterate를 흡수하는 중이다
+
+재평가 4축(Importance / AI Substitution / Atrophy Risk / Training Priority)은 [[asset-pressure-map]].
+
+> [!contradiction] 7개의 지위가 두 문서에서 다르다
+> [[hypeproof-mission]](정본)은 7개를 **명시**하므로 8번째 신설은 정본 개정 사안이다.
+> [[hypeproof-philosophy]]는 7개를 **"고정된 교리가 아니라 검증하고 발전시켜야 할 연구 모델"**로 규정하고 합병·세분화·추가를 열어 둔다.
+> 창업 라인의 D-3(**8번째 Asset 신설하지 않는다**, 2026-08-17)와 맞물리는 미판정 사안이다 → [[hypeproof-lab-philosophy-source]]
+
 ## SK바이오팜 커리큘럼에 대한 함의
 
 게임은 목적이 아니라 7 Assets를 드러내고 훈련하는 **행동 관찰 환경**이다. 따라서 수업 설계는 “어떤 게임을 만들었나”보다 “게임을 만드는 동안 어떤 Asset 행동이 발생했나”를 중심으로 구성되어야 한다.

@@ -123,6 +123,11 @@ related:
 
 Claude Code·Codex·Cursor가 프론티어라면 우리는 그 앞의 문이다. **사용자가 결국 그 툴로 갈아타는 것은 실패가 아니라 성공의 증거다.**
 
+> [!contradiction] 정본 후보 문서가 하나 들어왔다 (2026-09-06)
+> [[hypeproof-philosophy]] ([[jinyong-shin]] 작성)가 **AKB(가칭) 자리의 정본 후보**로 ingest됐다. 아직 팀 채택 전이며 **미션·정체성에 대해서는 이 문서가 계속 이긴다.**
+> 어긋나는 지점 3건: ①조직 정의 — 정본 "**글로벌 사교육 시장에 파는 AI 소프트웨어 회사**" ↔ 후보 "**실험실**" ②7 Assets 지위 — 정본은 명시적 7개 ↔ 후보는 "합쳐지거나 추가될 수 있는 **연구 모델**" ③제품 3종 — [[chalk]]·[[hypeproof-studio]]·[[sediment]] ↔ Curriculum·Studio·Community.
+> 후보 문서에는 **증거 제품 라인·사용자/구매자 분리·두 스트림·구조적 방어가 없다.** 전체 판정 → [[hypeproof-lab-philosophy-source]]
+
 ## 7가지 AI Native Assets (정본 명칭)
 
 보는 눈(Taste) · 의도(Intent) · 맥락(Context) · 검증(Verify) · 위임(Delegate) · 반복(Iterate) · 주인의식(Ownership)

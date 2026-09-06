@@ -380,6 +380,32 @@
       "pages_created": [],
       "pages_updated": [],
       "note": "동일 회의의 전체 스크립트. gitignore 처리(공개 저장소 PII) — 로컬 보관만. 세부 인용은 요약 페이지에 반영."
+    },
+    ".raw/philosophy/hypeproof-lab-philosophy-updated-2026-09-06.md": {
+      "hash": "dc7657fdb928476aec4097603293e232",
+      "hash_note": "md5 of the original .docx (binary not committed); converted text derived from it",
+      "ingested_at": "2026-09-06",
+      "pages_created": [
+        "wiki/sources/hypeproof-lab-philosophy-source.md",
+        "wiki/concepts/hypeproof-philosophy.md",
+        "wiki/concepts/asset-pressure-map.md",
+        "wiki/concepts/community-epistemic-layer.md"
+      ],
+      "pages_updated": [
+        "wiki/concepts/hypeproof-mission.md",
+        "wiki/concepts/seven-ai-native-assets-original.md",
+        "wiki/concepts/four-learner-experiences.md",
+        "wiki/concepts/mission-product-alignment.md",
+        "wiki/concepts/hypeproof-lab.md",
+        "wiki/components/chalk.md",
+        "wiki/components/sediment.md",
+        "wiki/stakeholders/jesse-kim.md",
+        "wiki/concepts/_index.md",
+        "wiki/sources/_index.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ]
     }
   }
 }

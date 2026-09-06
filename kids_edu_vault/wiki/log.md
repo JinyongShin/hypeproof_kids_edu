@@ -2,7 +2,7 @@
 type: meta
 title: "Log"
 created: 2026-04-12
-updated: 2026-09-03
+updated: 2026-09-06
 tags:
   - meta/log
 ---
@@ -12,6 +12,31 @@ tags:
 볼트 변경 이력. 최신 항목이 위.
 
 ---
+
+## [2026-09-06] ingest | HypeProof Lab Philosophy (updated) — 정본 후보
+- Source: `Hypeproof_Lab_Philosophy_updated.docx` ([[jinyong-shin]] 작성) → `.raw/philosophy/hypeproof-lab-philosophy-updated-2026-09-06.md` (textutil 변환. **바이너리 docx는 커밋하지 않는다** — 공개 저장소)
+- Summary: [[hypeproof-lab-philosophy-source]]
+- Pages created: [[hypeproof-philosophy]], [[asset-pressure-map]], [[community-epistemic-layer]], [[hypeproof-lab-philosophy-source]]
+- Pages updated: [[hypeproof-mission]], [[seven-ai-native-assets-original]], [[four-learner-experiences]], [[mission-product-alignment]], [[hypeproof-lab]], [[chalk]], [[sediment]], [[jesse-kim]], [[concepts/_index]], [[sources/_index]], [[index]], [[hot]], [[log]]
+- 계기: 2026-09-05 조사에서 **볼트에 "Philosophy"라는 이름의 정본이 없다**는 것이 확인됐고, 8/31 회의에서 [[jesse-kim]]이 발제한 **AKB(가칭)** 자리가 비어 있었다. 이 문서가 그 첫 후보다. **`status: candidate`로 등록했고 [[hypeproof-mission]]이 계속 이긴다.**
+- Key insight: **7 Assets에 「변화 가설」이라는 층이 붙었다.** 명칭·정의는 [[seven-ai-native-assets-original]]과 동일한데, 각 자산에 AI 발전에 따른 방향 판정이 달렸다 — 급증 다섯, **Context·Iterate만 "중립/재정의 필요"**다. Memory·RAG가 Context를, Agent loop가 Iterate를 흡수하는 중이기 때문이다. 그리고 이 둘은 [[four-learner-experiences]]에서 **커버리지가 ✅·🟡로 가장 좋은 B·C**에 대응한다. **되는 구간이 곧 AI가 흡수 중인 구간**이라는 읽기가 가능해진다.
+- 두 번째: **퇴화 위험 「높음」이 Intent·Verify·Ownership 셋**인데([[asset-pressure-map]]), 이는 **A와 D**에 대응하는 자산이다. "가장 우리다운 곳이 가장 덜 만들어져 있다"에 **"그리고 가장 빨리 퇴화한다"**가 붙는다.
+- 세 번째: **[[minhan-cho]]의 "AI-인간 거리감" 8번째 축 제안에 이론적 근거가 생겼다** — Atrophy & Substitution Hypothesis. Atrophy Risk 축이 곧 그 지표의 조작적 정의 후보다. 다만 창업 라인 **D-3("8번째 Asset 신설하지 않는다", 2026-08-17)**의 전제("7 Assets는 개인의 절차적 역량 체계로 유지")를 이 문서가 열어 두므로, **채택 시 D-3의 근거가 약해진다.** 사업 볼트 단독 판정 금지.
+- ⚠️ 충돌 3건을 양쪽 페이지에 `[!contradiction]`으로 달았다: ①조직 정의 "글로벌 사교육 시장에 파는 AI 소프트웨어 회사"(정본, 반론 차단용으로 설계된 문장) ↔ "실험실"(후보, 8/10에 폐기된 연구소 서사로 회귀) ②7 Assets 확정 체계 ↔ 연구 모델 ③제품 3종 [[chalk]]·[[hypeproof-studio]]·[[sediment]] ↔ **Curriculum·Studio·Community**. 셋째가 특히 크다 — Chalk는 커리큘럼 **생성기**라 Curriculum과 1:1이 아니고, **Sediment에 대응하는 층이 후보 문서에 없으며**, 역으로 Community에 대응하는 제품이 볼트에 없다.
+- ⛔ 공백: 후보 문서에 **증거 제품 라인·사용자/구매자 분리·두 스트림·구조적 방어·"왜 아이인가"·제3자 강사 0건 리스크**가 없다. 문서가 스스로 *"비즈니스 모델을 설명하는 문서가 아니다"*라 선언하므로 층의 차이지만, **정본 대체용으로 쓰면 사업 골격이 통째로 빠진다.**
+- 부수 수확: §18 **자기모순 6개**가 그대로 리뷰 체크리스트다 — "Studio의 성공을 결과물의 화려함이나 제작 속도로만 평가하는 경우", "7 Assets을 검증 가능한 가설이 아니라 브랜드 문구로 고정하는 경우" 등. 9/15 덱이 걸릴 만한 항목이 둘 있다.
+- 미확인: 문서 작성일(본문에 날짜 없음) · **AKB의 뜻**(8/31 회의록도 "가칭"으로만 표기) · Chalk·Sediment 미등장이 의도인지 8/31 이전 작성인지 · 8/31 액션 "미션 지향 문서 검토 후 텍스트 피드백"의 대상이 이 문서인지
+
+## [2026-09-05] audit | 9/15 덱 숫자 감사 — 인용 가능한 숫자와 깨지는 숫자
+- Pages created: [[ir-20260915-pricing-evidence-audit]]
+- Pages updated: [[teen-ai-startup-camp-v0]], [[ir-20260915-plan]], [[sk-biopharma-pilot]], [[index]], [[hot]], [[log]]
+- 계기: 9/15 피칭 덱 작성 에이전트들에게 위키 원문을 공급하다가, 요약본에서 인용한 숫자 세 건이 원본과 어긋나는 것을 발견했다.
+- Key insight: **요약이 원본을 앞지른 사례가 하나 있다.** "평균 160분 리텐션"에 붙은 **"3시간 기준"이 8/25 축어록에 없다** — ingest 단계에서 붙어 세 문서로 전파됐고, 정작 SK바이오팜 수업은 4시간 설계다. 분모에 따라 89%와 67%로 갈리는데, 이 숫자는 [[teen-ai-startup-camp-v0]]이 "가장 강한 제품 효과 증거"로 지목한 것이다. **가장 강한 증거의 분모가 미확인이었다.**
+- 두 번째: **기획 검토가가 실적가로 굳어 있었다.** "가족당 40~60만원, 50만원 앵커"는 2026-05-15경 검토값이고, 열흘 뒤 실제 견적은 **가족당 92만원**이다([[sk-biopharma-bitree-final-quotation-20260526]]). [[sk-biopharma-pilot]]이 `[!contradiction]`으로 이미 달아두었으나 후속 문서가 계속 검토가를 인용했다. 부수로 **"시간당 10만→20만"의 단위가 1인 기준**임이 풀렸다 — 92만 ÷ 4h ÷ 2인(부모+자녀 페어) = 11.5만/h. 목표가 환산은 가족당 160만원이다.
+- 세 번째: **견적서 안에 대응하지 않는 두 산식이 있다.** 원가 항목(918만)과 정산 제안(920만을 20/20/60 분할)이 서로 매핑되지 않는다 — Bitree 184만은 원가에 없고, 운영지원·교통비는 정산에 없다. 이것이 인력 절감 레버의 귀속을 결정한다: 2인 체제로 가면 인건비 918만 → 366만이지만, **비율 정산이면 절감분이 법인에 오지 않는다.** 게다가 견적서 판매자가 **Bitree Corporation**이고 우리는 계약 주체가 아니어서, "직영 전환"은 채널 선택이 아니라 계약 주체 변경이며 [[hypeproof-mission]]의 법인·IP 과제(시한 8/22 경과)가 선결이다.
+- 정리하면 자물쇠 셋에 순서가 있다 — ①2인 체제가 돌아가는가(리허설로 확인) ②절감분이 법인에 귀속되는가(정산 재협상은 지금 가능) ③법인이 계약 주체가 될 수 있는가(②의 직영 경로를 막는다).
+- 미확인으로 남긴 것: 160분의 분모([[bongho-tae]]) · 정산 제안의 집행 여부 · 견적서의 "이재원 디렉터"가 [[jay-lee]]인가(볼트에 [[lee-jaewon]] 스텁이 `external`·치과로 따로 있어 동명이인을 못 가른다) · 직영 전환 시 영업 원가
+- Note: 이번 감사는 위키 스킬을 Wiki Monkey 런타임에 등록한 직후 첫 작업이다. 규칙으로 남긴 것 — **숫자를 인용할 때는 `.raw/` 원본까지 내려가 분모·단위·시점을 확인한다.**
 
 ## [2026-09-03] ingest | Weekly on HypeProof 2026-08-31
 - Source: `.raw/meeting_notes/Weekly on HypeProof - 2026_08_31 21_59 KST - Notes by Gemini.md` + 동 `(1).md` 스크립트(1,900여 줄). 회의 1건 / 파일 2개

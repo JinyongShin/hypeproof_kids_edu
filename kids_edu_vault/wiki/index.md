@@ -2,7 +2,7 @@
 type: meta
 title: "Index"
 created: 2026-04-12
-updated: 2026-08-30
+updated: 2026-09-06
 tags:
   - meta/index
 ---
@@ -106,14 +106,16 @@ tags:
 - 제품 3종: [[hypeproof-studio]] (돌린다) · [[chalk]] (만든다, 제안 단계) · [[sediment]] (판단 정렬)
 - Dental homepage stack (2026-06-07): [[gabia]] · [[cafe24]] · [[claude-code]] · [[vercel]] · [[cloudflare]] · [[hypeproof-ai-xyz]]
 
-### Concepts (14)
+### Concepts (17)
 - [[seven-ai-native-assets-sk-strategy]] — SK바이오팜 제안서의 7 AI Native Assets를 HypeProof Studio/성장 리포트/가격 방어 논리와 매칭한 전략 업데이트
 - [[concepts/_index|_index]]
 - ⭐ [[hypeproof-mission]] — **미션·정체성 정본 (확정 2026-07-31 · 개정 2026-08-10).** 사교육 SW 회사 · 사용자/구매자 분리 · 증거 제품 라인
+- 🕯️ [[hypeproof-philosophy]] — **통합 교육 철학 정본 후보 (2026-09-06, 팀 채택 전).** Philosophy→Assets→Products→Evidence 파이프라인 · 자기모순 6개
 - [[mission-product-alignment]] — 정본 ↔ 제품 대조. 두 갈래 · 시간 지평 · 규격 3분열
 - [[four-learner-experiences]] — A~D 학습자 경험. 대외는 넷, 측정은 일곱
 - [[hypeproof-lab]] · [[mission-driven]] · [[tracks-a-b]] · [[fundamental-content-teams]] · [[ai-native-workflow]]
 - Pedagogy: [[no-debug-philosophy]] · [[ai-persona-workflows]] · [[single-html-runtime]] · [[vibe-coding]] (2026-04-21)
+- Philosophy 하위 (2026-09-06): [[asset-pressure-map]] — 자산 재평가 4축 · [[community-epistemic-layer]] — Community는 제품이 아니라 판단 교정 층
 - Product IP (2026-05-14): [[sixteen-essence]] · [[hypeproof-studio]]
 - Business: [[hypeproof-business-strategy]] (2026-05-04) — 2채널 수익 전략 (비트리 채널 / 다이렉트 채널)
 - Professional Channel: [[legal-brief-prep-loop]] — 변호사 준비서면 루프 (사실 추출, 해석 분기, truthworthy 교정, pass/fail 감각)
@@ -163,6 +165,7 @@ tags:
 - [[hypeproof-hyrox-assets-v0.1]] (2026-05-03) — HYROX 작업 중 보존한 HypeProof AI 협업 원칙 자산
 
 ### Sources — 원본 소스 요약 (wiki-ingest 자동 생성)
+- 🕯️ [[hypeproof-lab-philosophy-source]] — HypeProof Lab Philosophy (JY, 2026-09-06) — 정본 후보 · 충돌 3·중복 2·공백 1건 판정
 - [[weekly-on-hypeproof-20260831-source]] — Weekly on HypeProof 2026-08-31 (프레임워크 확정, 세일즈 R&R, Chalk 게이트웨이론)
 - [[hypeproof-positioning-reset-20260810]] — 포지셔닝 리셋 (정본 개정, 8/10)
 - [[hypeproof-mission-20260731-source]] — MISSION.md 7/31판 (대체됨)
@@ -180,6 +183,7 @@ tags:
 ### Questions — 쿼리 응답 아카이브
 - [[questions/_index|_index]]
 - [[why-hypeproof-for-teen-startup-ir-20260915]] (2026-08-30) — 왜 고1~2 창업/IR 교육을 HypeProof Lab이 해야 하는가: 9/15 피칭 렌즈와 팀 질문
+- [[ir-20260915-pricing-evidence-audit]] (2026-09-05) — 9/15 덱 숫자 감사: 160분 분모 미확인 · 검토가(50만) vs 실제 견적(92만) · 정산 제안이 원가와 대응하지 않음 · 자물쇠 3개
 
 ## Recent Sources (ingested)
 - `.raw/meeting_notes/Weekly on HypeProof - 2026_08_31 ...` 요약본 + 스크립트 (2026-08-31, 회의 1건 / 파일 2개, 스크립트는 gitignore) → [[weekly-on-hypeproof-20260831-source]] + [[2026-08-31-weekly-on-hypeproof]] + [[minhan-cho]] + [[sales-ownership-by-vertical]] + [[studio-subscription-league-model]] + [[production-strategy-session-20260919]] + [[action-items-20260831]]
