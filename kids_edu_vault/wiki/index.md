@@ -29,8 +29,9 @@ tags:
 - 미션·IP (2026-08-31): [[minhan-cho]]
 - IR 심사 대상 (2026-09-06): [[jeon-sangyeol]] (스텁, 소속 미확인)
 
-### Comms — Meetings (20)
+### Comms — Meetings (21)
 - [[comms/_index|_index]]
+- [[2026-09-14-weekly-on-hypeproof]] (2026-09-14) — ⭐ **"우리도 아무도 안 쓴다"** → 내부 제품화 결정, [[chalk]] 오너 = [[jinyong-shin]], [[tj]] 누락 해소, R&R 회신 9/16 24시
 - [[2026-09-14-weekly-prep]] (2026-09-14) — ⚠️ **사전자료(회의록 아님)**. R&R·KPI 제안, 7→6 역량, 측정 모듈, SK 입금 미확인, 9/16 회신
 - [[2026-09-06-weekly-on-hypeproof]] (2026-09-06) — 9/15 덱 4인 리허설→[[jiwoong-kim]] 안 수렴, 기록 발행 모델, 치과 홈페이지 전환, Bitree 공동 BM, 타임라인 3개월
 - [[2026-08-31-weekly-on-hypeproof]] (2026-08-31) — 미션-제품 프레임워크 팀 확정, 분야별 세일즈 담당, 구독+리그 모델, 9/19 프로덕션 세션
@@ -53,6 +54,7 @@ tags:
 - Tooling (2026-04-12): [[subagent-team-structure]]
 - Business (2026-08-31): [[sales-ownership-by-vertical]] · [[studio-subscription-league-model]]
 - Dental (2026-09-06): [[dental-website-over-blog]]
+- Product·Measurement (2026-09-14): [[internal-productization]] — 우리가 먼저 쓰고 먼저 측정한다
 - Workshop Structure (2026-04-12): [[track-a-primary-b-backup]] · [[stack-decision-after-curriculum]]
 - Architecture (2026-04-12): [[nextjs-fastapi-wrapper-architecture]]
 - Mobile UX (2026-04-13): [[mobile-swipe-navigation]]
@@ -66,8 +68,9 @@ tags:
 - Bug / Content (2026-04-18→2026-05-01): [[game-bug-fix-2026-05-01]] · [[game-content-guideline-pending]] (pending — 의료 전문가 확인 전 보류)
 - LLM Infra: [[llm-provider-scaling]] — LLM 제공사 스케일링 결정
 
-### Deliverables (20)
+### Deliverables (21)
 - [[deliverables/_index|_index]]
+- ⭐ [[chalk-target-shape-proposal]] (2026-09-14) — Chalk 완성형 제안: **관문(gateway)이 중심**. 요구사항 289건 ↔ 교육 설계 자산 48건 대조, 겹침 8쌍·충돌 3건 판정. 산출물은 볼트 밖 `_worklog/`
 - ⏰ [[roles-kpi-proposal-20260914]] (기한 2026-09-16) — R&R·KPI 제안 9역할 + 회신 양식. **제안이지 합의가 아님**. [[tj]] 배정 없음
 - [[dental-fullday-website-workshop]] (2026-09-06) — 치과 홈페이지 풀데이 워크숍 v0: Cloudflare CLI 배포, 디자인 템플릿 5종, 60만원안. 10/7(수) 워크숍은 별건
 - [[production-strategy-session-20260919]] (2026-09-19) — 밤샘 프로덕션 전략 세션: PR·브랜치 정비, 어드민 페이지 착수

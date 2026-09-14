@@ -544,6 +544,70 @@
         "wiki/hot.md",
         "wiki/log.md"
       ]
+    },
+    ".raw/meeting_notes/Weekly on HypeProof - 2026_09_14 21_53 KST - Notes by Gemini.md": {
+      "hash": "09ce58abdefef9d4c5f42f4b695d3638",
+      "ingested_at": "2026-09-14",
+      "note": "요약본",
+      "pages_created": [
+        "wiki/comms/2026-09-14-weekly-on-hypeproof.md",
+        "wiki/sources/weekly-on-hypeproof-20260914-source.md",
+        "wiki/decisions/internal-productization.md"
+      ],
+      "pages_updated": [
+        "wiki/concepts/sixteen-essence.md",
+        "wiki/concepts/six-human-capabilities.md",
+        "wiki/specs/capability-measurement-module.md",
+        "wiki/components/chalk.md",
+        "wiki/components/sediment.md",
+        "wiki/concepts/hypeproof-studio.md",
+        "wiki/concepts/record-issuance-model.md",
+        "wiki/deliverables/roles-kpi-proposal-20260914.md",
+        "wiki/deliverables/ir-20260915-plan.md",
+        "wiki/deliverables/dental-fullday-website-workshop.md",
+        "wiki/comms/2026-09-14-weekly-prep.md",
+        "wiki/stakeholders/tj.md",
+        "wiki/stakeholders/jinyong-shin.md",
+        "wiki/stakeholders/jiwoong-kim.md",
+        "wiki/stakeholders/bongho-tae.md",
+        "wiki/stakeholders/minhan-cho.md",
+        "wiki/stakeholders/jehyeong.md",
+        "wiki/comms/_index.md",
+        "wiki/sources/_index.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ]
+    },
+    ".raw/meeting_notes/Weekly on HypeProof - 2026_09_14 21_53 KST - Notes by Gemini (1).md": {
+      "hash": "381b71c9439ae55de07abfc5b075bb86",
+      "ingested_at": "2026-09-14",
+      "note": "스크립트본. gitignore·로컬 보관",
+      "pages_created": [],
+      "pages_updated": [
+        "wiki/concepts/sixteen-essence.md",
+        "wiki/concepts/six-human-capabilities.md",
+        "wiki/specs/capability-measurement-module.md",
+        "wiki/components/chalk.md",
+        "wiki/components/sediment.md",
+        "wiki/concepts/hypeproof-studio.md",
+        "wiki/concepts/record-issuance-model.md",
+        "wiki/deliverables/roles-kpi-proposal-20260914.md",
+        "wiki/deliverables/ir-20260915-plan.md",
+        "wiki/deliverables/dental-fullday-website-workshop.md",
+        "wiki/comms/2026-09-14-weekly-prep.md",
+        "wiki/stakeholders/tj.md",
+        "wiki/stakeholders/jinyong-shin.md",
+        "wiki/stakeholders/jiwoong-kim.md",
+        "wiki/stakeholders/bongho-tae.md",
+        "wiki/stakeholders/minhan-cho.md",
+        "wiki/stakeholders/jehyeong.md",
+        "wiki/comms/_index.md",
+        "wiki/sources/_index.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ]
     }
   }
 }

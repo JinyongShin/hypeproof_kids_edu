@@ -2,7 +2,7 @@
 type: concept
 title: "16 Essence 프레임워크"
 created: 2026-05-14
-updated: 2026-05-14
+updated: 2026-09-14
 tags:
   - concept/pedagogy
   - concept/hypeproof-ip
@@ -10,6 +10,13 @@ status: active
 ---
 
 # 16 Essence 프레임워크
+
+> [!contradiction] 저자가 출처와 근거 부족을 직접 밝혔다 (2026-09-14)
+> 이 페이지는 16 Essence를 **"HypeProof Lab의 핵심 교육 IP"**로 기록해 왔다. [[2026-09-14-weekly-on-hypeproof]]에서 [[jay-lee]]가 말했다:
+> *"이거 내가 그냥 **16개 여기서 주워 와 가지고** (…) 노정석 대표님 유튜브에 매번 나오시는 그 흰머리 아저씨 분, **그분이 생각하는 16개 에셋을 이제 내가 그냥 따온 건데**, 그게 과연 우리가 실제로 측정을 해야 되는 값이 맞을까? **철학적으로, 과학적으로 논거 이런 것들이 좀 없어 보인다.**"*
+> → 자체 개발 IP가 아니라 **외부 출처를 차용한 초안**이다. 원 출처 인물은 ⚠️ 미확인.
+> 이 진단이 [[internal-productization]]과 [[six-human-capabilities]]를 끌어낸 출발점이다. 16 → 7 → 6으로 줄어든 궤적 전체가 **"근거를 붙여 가는 과정"**으로 다시 읽힌다.
+> **기록은 폐기하지 않는다** — [[sk-biopharma-pilot]] 등 16 Essence 기반으로 실행된 것들이 있다. 다만 **IP로 인용할 때는 이 단서를 함께 붙인다.**
 
 HypeProof Lab의 핵심 교육 IP. AI 시대에 필요한 16개 핵심 역량(Essence)을 게임 제작 과정을 통해 자연스럽게 체득하게 하는 프레임워크.
 
