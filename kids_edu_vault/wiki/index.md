@@ -2,7 +2,7 @@
 type: meta
 title: "Index"
 created: 2026-04-12
-updated: 2026-09-06
+updated: 2026-09-14
 tags:
   - meta/index
 ---
@@ -27,9 +27,11 @@ tags:
 - SK바이오팜 (2026-05-14~06-08): [[sk-biopharma]] · [[bitree]] · [[oh-sungeun]] · [[kim-jinhyuk]]
 - 창업·IR (2026-08-25): [[jesse-kim]] · [[ir-mentor-candidates-20260915]] (미확인 정보)
 - 미션·IP (2026-08-31): [[minhan-cho]]
+- IR 심사 대상 (2026-09-06): [[jeon-sangyeol]] (스텁, 소속 미확인)
 
-### Comms — Meetings (18)
+### Comms — Meetings (19)
 - [[comms/_index|_index]]
+- [[2026-09-06-weekly-on-hypeproof]] (2026-09-06) — 9/15 덱 4인 리허설→[[jiwoong-kim]] 안 수렴, 기록 발행 모델, 치과 홈페이지 전환, Bitree 공동 BM, 타임라인 3개월
 - [[2026-08-31-weekly-on-hypeproof]] (2026-08-31) — 미션-제품 프레임워크 팀 확정, 분야별 세일즈 담당, 구독+리그 모델, 9/19 프로덕션 세션
 - [[2026-08-25-weekly-on-hypeproof]] (2026-08-25) — AI 네이티브 창업 교육 채택, IR 미션 드리븐 전환, 롱텀/숏텀 2축
 - [[2026-07-11-legal-professional-channel-meeting]] (2026-07-11) — 변호사 전문직 채널: 준비서면 루프, truthworthy 요구, 이혼/GEO 니치 가설
@@ -49,6 +51,7 @@ tags:
 - Pivot (2026-04-12): [[pivot-to-chat-preview-wrapper]] · [[iframe-sandbox-over-webcontainers]] · [[parent-gated-signup-first]]
 - Tooling (2026-04-12): [[subagent-team-structure]]
 - Business (2026-08-31): [[sales-ownership-by-vertical]] · [[studio-subscription-league-model]]
+- Dental (2026-09-06): [[dental-website-over-blog]]
 - Workshop Structure (2026-04-12): [[track-a-primary-b-backup]] · [[stack-decision-after-curriculum]]
 - Architecture (2026-04-12): [[nextjs-fastapi-wrapper-architecture]]
 - Mobile UX (2026-04-13): [[mobile-swipe-navigation]]
@@ -62,8 +65,9 @@ tags:
 - Bug / Content (2026-04-18→2026-05-01): [[game-bug-fix-2026-05-01]] · [[game-content-guideline-pending]] (pending — 의료 전문가 확인 전 보류)
 - LLM Infra: [[llm-provider-scaling]] — LLM 제공사 스케일링 결정
 
-### Deliverables (18)
+### Deliverables (19)
 - [[deliverables/_index|_index]]
+- [[dental-fullday-website-workshop]] (2026-09-06) — 치과 홈페이지 풀데이 워크숍 v0: Cloudflare CLI 배포, 디자인 템플릿 5종, 60만원안. 10/7(수) 워크숍은 별건
 - [[production-strategy-session-20260919]] (2026-09-19) — 밤샘 프로덕션 전략 세션: PR·브랜치 정비, 어드민 페이지 착수
 - [[action-items-20260831]] — 8/31 Weekly 액션 아이템 25건
 - [[ir-20260915-plan]] (2026-08-25) — 9/15 IR 준비 계획: 롱텀 미션 / 숏텀 마켓 2축, 3주 타임라인
@@ -106,7 +110,8 @@ tags:
 - 제품 3종: [[hypeproof-studio]] (돌린다) · [[chalk]] (만든다, 제안 단계) · [[sediment]] (판단 정렬)
 - Dental homepage stack (2026-06-07): [[gabia]] · [[cafe24]] · [[claude-code]] · [[vercel]] · [[cloudflare]] · [[hypeproof-ai-xyz]]
 
-### Concepts (17)
+### Concepts (18)
+- [[record-issuance-model]] (2026-09-06) — **기록 발행 모델.** 성과를 약속하지 않고 기록을 찍어낸다 · 운영 대시보드 + 실명 심사 · 성과 확약형 배제
 - [[seven-ai-native-assets-sk-strategy]] — SK바이오팜 제안서의 7 AI Native Assets를 HypeProof Studio/성장 리포트/가격 방어 논리와 매칭한 전략 업데이트
 - [[concepts/_index|_index]]
 - ⭐ [[hypeproof-mission]] — **미션·정체성 정본 (확정 2026-07-31 · 개정 2026-08-10).** 사교육 SW 회사 · 사용자/구매자 분리 · 증거 제품 라인

@@ -10,7 +10,7 @@ tags:
   - mission
   - philosophy
 created: 2026-09-06
-updated: 2026-09-06
+updated: 2026-09-14
 related:
   - "[[hypeproof-lab-philosophy-source]]"
   - "[[hypeproof-mission]]"
@@ -18,6 +18,7 @@ related:
   - "[[asset-pressure-map]]"
   - "[[community-epistemic-layer]]"
   - "[[four-learner-experiences]]"
+  - "[[2026-09-06-weekly-on-hypeproof]]"
 ---
 
 # HypeProof Lab Philosophy — 정본 후보
@@ -25,7 +26,12 @@ related:
 > [!important] 아직 정본이 아니다
 > **미션·정체성·사업 정의에 대해서는 [[hypeproof-mission]]이 여전히 이긴다.** 이 문서는 [[jesse-kim]]이 2026-08-31 회의에서 발제한 **"HypeProof 전체를 관통하는 통합 교육 철학(AKB 가칭)"** 자리를 채우는 **후보**로 등록됐다 ([[2026-08-31-weekly-on-hypeproof]] §5).
 > 팀 채택 절차를 거치기 전까지 `status: candidate`를 유지한다. 정본과 어긋나는 지점은 아래 §충돌·중복에 전부 열거했다.
-> 작성 [[jinyong-shin]] · 원문 [[hypeproof-lab-philosophy-source]]
+> 작성 [[jay-lee]] · 원문 [[hypeproof-lab-philosophy-source]]
+
+> [!contradiction] 작성자 표기 정정 (2026-09-14)
+> 최초 ingest는 작성자를 [[jinyong-shin]]으로 기록했다 — 파일 전달자가 JY였기 때문이다.
+> **2026-09-06 회의 축어록은 [[jay-lee]]가 작성자임을 명시한다**: "이게 내가 올린 문서인데… 내가 좀 고민을 담아 넣어서 한 거야", "요게 많이 제가 고민을 한 내용이니까". 같은 자리에서 [[jinyong-shin]]은 독자로 발언한다 — "오늘 살짝 봤는데 어렵더라고요".
+> 근거: [[2026-09-06-weekly-on-hypeproof]] §3 · [[weekly-on-hypeproof-20260906-source]] (00:25:18~00:29:17)
 
 ## 이 문서가 서 있는 층
 
@@ -188,3 +194,17 @@ Hypothesis → Human Asset → Product Experience → Human Behavior → Evidenc
 - 정본: [[hypeproof-mission]] · 하위: [[asset-pressure-map]] · [[community-epistemic-layer]]
 - [[seven-ai-native-assets-original]] · [[four-learner-experiences]] · [[mission-product-alignment]]
 - 발제: [[2026-08-31-weekly-on-hypeproof]] ([[jesse-kim]] AKB 가칭) · [[hypeproof-lab]]
+
+
+## 2026-09-06 회의에서 저자가 직접 덧붙인 것
+
+[[jay-lee]]가 팀에 이 문서를 읽히며 말로 보탠 층 ([[2026-09-06-weekly-on-hypeproof]] §3).
+
+- **"세븐 에셋도 중요한데, 결국 AI가 지금 제대로 못 하는 건 테이스트와 오너십이다."** 7 Assets 안에서도 무게가 균등하지 않다는 저자 본인의 서열이다. [[asset-pressure-map]]의 퇴화 위험 「높음」 셋(Intent·Verify·Ownership)과 겹친다.
+- **"우리는 실험을 증거로 남겨 가설을 리파이닝하는 팀이다."** 철학 → 대전제 → 에셋 → 프로덕트 → 증거의 파이프라인을 팀 정체성으로 다시 진술했다.
+- **제품 층위** — 이것이 [[hot]]에 열려 있던 **충돌 3번을 일부 닫는다**:
+  - **제품 = Studio + Curriculum**, 그리고 **"커리큘럼은 [[chalk|초크]]가 되겠죠"** → 후보 문서의 "Curriculum"은 [[chalk]]에 대응한다.
+  - **커뮤니티는 제품이 아니라 소셜 러닝 레이어다.** [[hyrox-license-model-research-20260515|HYROX]]는 *대회*를 프로덕트화한 것이고 커뮤니티는 그 결과로 형성됐다.
+  - 커리큘럼은 "휴먼 에셋을 훈련하고 시험하는 장치"이며 그 이상의 그릇이 아니다. 치과·아이 창업·일반 강의는 그 위의 스토리텔링이다.
+  - ⛔ **[[sediment]]는 이 정리에도 등장하지 않는다.** 충돌 3번은 완전히 닫히지 않았다.
+- **팀 액션**: 전원이 이 문서를 정독하고 **미션과 얼라인되는지** 검토한 뒤 질문·제안을 준비한다. [[jinyong-shin]]이 제안한 8번째 에셋도 이 기준으로 판정한다.

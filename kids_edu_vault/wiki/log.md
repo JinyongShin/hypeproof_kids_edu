@@ -2,7 +2,7 @@
 type: meta
 title: "Log"
 created: 2026-04-12
-updated: 2026-09-06
+updated: 2026-09-14
 tags:
   - meta/log
 ---
@@ -12,6 +12,21 @@ tags:
 볼트 변경 이력. 최신 항목이 위.
 
 ---
+
+## [2026-09-14] ingest | Weekly on HypeProof 2026-09-06 — 9/15 덱 리허설과 치과 선회
+- Source: `.raw/meeting_notes/Weekly on HypeProof - 2026_09_06 23_04 KST - Notes by Gemini.md` (요약본, 커밋) + 같은 이름의 `(1)` 스크립트본 (954줄, **gitignore·로컬 보관**)
+- Summary: [[weekly-on-hypeproof-20260906-source]]
+- Pages created: [[2026-09-06-weekly-on-hypeproof]], [[weekly-on-hypeproof-20260906-source]], [[record-issuance-model]], [[dental-website-over-blog]], [[dental-fullday-website-workshop]], [[jeon-sangyeol]]
+- Pages updated: [[hypeproof-philosophy]], [[hypeproof-lab-philosophy-source]], [[community-epistemic-layer]], [[ir-20260915-plan]], [[bitree]], [[boa-dental]], [[park-junghyun]], [[comms/_index]], [[sources/_index]], [[index]], [[hot]], [[log]]
+- 계기: 9/6 회의록이 `.raw/`에 들어와 있었으나 미ingest 상태였다. 같은 날 ingest된 것은 [[hypeproof-lab-philosophy-source|철학 문서]]이지 이 회의가 아니다. 정규 월요일(9/7) 미팅을 **하루 당겨 대체한** 회의다.
+- Key insight: **철학 문서의 작성자가 [[jinyong-shin]]이 아니라 [[jay-lee]]다.** 9/6 ingest는 파일 전달자(JY)를 작성자로 기록했는데, 축어록에서 [[jay-lee]]가 "내가 올린 문서", "제가 고민을 한 내용"이라 말하고 [[jinyong-shin]]은 같은 자리에서 독자로 발언한다("오늘 살짝 봤는데 어렵더라고요"). 두 페이지에 `[!contradiction]`으로 달고 정정했다. — **전달 경로를 저작으로 읽지 않는다**는 규칙이 하나 생겼다.
+- 두 번째: **[[hot]]의 충돌 3번(제품 3종 명칭)이 절반 닫혔다.** [[jay-lee]]가 말로 정리했다 — 제품 = Studio + Curriculum이고 **"커리큘럼은 [[chalk|초크]]가 되겠죠"**, 커뮤니티는 **소셜 러닝 레이어지 제품이 아니다**([[hyrox-license-model-research-20260515|HYROX]]는 *대회*를 프로덕트화했고 커뮤니티는 그 결과다). [[community-epistemic-layer]]의 기존 읽기가 저자 의도와 일치함이 확인된다. ⛔ 다만 **[[sediment]]는 여전히 이 정리에 없다** — 충돌은 완전히 닫히지 않았다.
+- 세 번째: **BM의 이름이 생겼다** → [[record-issuance-model]]. 성과를 약속하면 집단소송 리스크가 열리므로(파산 선례 있음, ⚠️회사명 미확인) **기록을 직접 찍어낸다** — 살아 있는 서비스 + 표준 매트릭 대시보드 + 실명 심사([[jeon-sangyeol]]). 이 대시보드가 [[four-learner-experiences]]의 **경험 D 커버리지 구멍**을 메우는 물건이며 8/31의 "최우선 개발 = 어드민/모니터링"과 같은 것이다. [[jay-lee]]는 여기에 **"실제로 돈을 벌었던 기록"**을 추가 요구했다 — 팀에 앱·게임으로 매출을 내 본 사람이 ⛔ 0명이라는 것도 함께 밝혔다.
+- 네 번째: **8/31에 열려 있던 "파트너는 채널인가 공동 BM인가"에 답이 나왔다 — 공동 BM.** [[bitree]]는 AI 에이전트 5종으로 연 10억 매출을 내지만 **프로덕타이제이션이 0**이다(온프레미스 바이브 코딩). 우리가 제품 구조화·운영 노하우를 주고 **프로덕션 엔지니어 리소스**를 받는 교환. 전문직 채널의 종착지가 **AX 케어**라는 전망이 여기 걸린다 — "강의만 할 순 없다, 결국 '해 줘'가 된다." 단 [[jay-lee]]는 "**계약직으로 뽑아서 돌리면 된다**"고도 말해 Bitree 경유가 유일 경로는 아니다.
+- 다섯 번째: **치과 라인이 블로그를 버렸다** → [[dental-website-over-blog]]. 판단 기준이 "할 수 있는가"가 아니라 **"우리여야만 하는가"**였다는 점이 중요하다 — 블로그는 성공하면 다음이 마케팅이고 그건 역량 밖이다. 그리고 이 결정은 추론이 아니라 **[[park-junghyun]] 원장에게 직접 물어서** 나왔다. 형태는 **풀데이 오프라인**으로 바뀌었다([[dental-fullday-website-workshop]]) — 2.5시간으로는 퍼블리싱 퀄리티가 안 나오고, 원장들을 5회 불러 모을 수 없기 때문. Cloudflare CLI 배포 자동화는 **[[hypeproof-studio]] 제품화 후보**다.
+- 여섯 번째: **타임라인이 처음 숫자로 나왔다 — 2027-01 공개 가정, 남은 3개월.** 9/15 IR 방향성에 프로덕션 내용이 들어가야 한다는 요구가 여기서 파생됐다.
+- ⚠️ **깨지는 숫자 5건**을 소스 페이지에 표로 모았다. 특히 TJ 덱의 **HYROX 연매출 "188 빌리언 달러"**는 명백한 오류이고, [[jiwoong-kim]] 덱의 **SK바이오팜 "1회차 800만원 / 21명"**은 볼트 확정 견적 **920만원 / 10가족**([[sk-biopharma-bitree-final-quotation-20260526]])과 어긋난다. [[ir-20260915-pricing-evidence-audit]]의 규칙이 그대로 적용된다.
+- 미확인: [[jeon-sangyeol]] 대표의 소속·직함 · 파산 사례 회사명("엠비전"/"엔비전") · [[park-junghyun]] 원장의 정산 법인 표기("오라센트") · [[bitree]] 문 대표 성명 · 치과 정산 예시의 개별 금액(축어록에서 150/152만원이 갈림)
 
 ## [2026-09-06] ingest | HypeProof Lab Philosophy (updated) — 정본 후보
 - Source: `Hypeproof_Lab_Philosophy_updated.docx` ([[jinyong-shin]] 작성) → `.raw/philosophy/hypeproof-lab-philosophy-updated-2026-09-06.md` (textutil 변환. **바이너리 docx는 커밋하지 않는다** — 공개 저장소)

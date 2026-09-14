@@ -4,7 +4,7 @@ title: "Source — HypeProof Lab Philosophy (updated)"
 status: summarized
 source_type: internal_doc
 source_date: 2026-09-06
-author: "[[jinyong-shin]]"
+author: "[[jay-lee]]"  # 2026-09-14 정정 (구: jinyong-shin)
 raw_path: ".raw/philosophy/hypeproof-lab-philosophy-updated-2026-09-06.md"
 original_file: "Hypeproof_Lab_Philosophy_updated.docx"
 tags:
@@ -12,7 +12,7 @@ tags:
   - mission
   - philosophy
 created: 2026-09-06
-updated: 2026-09-06
+updated: 2026-09-14
 related:
   - "[[hypeproof-philosophy]]"
   - "[[hypeproof-mission]]"
@@ -21,6 +21,10 @@ related:
 ---
 
 # Source — HypeProof Lab Philosophy (updated)
+
+> [!contradiction] 작성자 표기 정정 (2026-09-14)
+> 최초 기록은 `author: [[jinyong-shin]]`이었다 (파일 전달자 = JY). **2026-09-06 회의 축어록에서 [[jay-lee]]가 작성자임이 확인된다** — "내가 올린 문서", "제가 고민을 한 내용". [[jinyong-shin]]은 같은 자리에서 독자로 발언한다.
+> 근거: [[weekly-on-hypeproof-20260906-source]] (00:25:18~00:29:17)
 
 > [!note] 원본 취급
 > 입수 파일은 **`.docx` 바이너리**다. 공개 저장소에 바이너리를 넣지 않고 `textutil`로 변환한 텍스트만 `.raw/philosophy/`에 둔다.

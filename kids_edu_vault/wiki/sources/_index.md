@@ -3,7 +3,7 @@ type: meta
 title: "Sources Index"
 status: navigational
 created: 2026-05-14
-updated: 2026-09-06
+updated: 2026-09-14
 tags:
   - meta/index
 ---
@@ -15,7 +15,8 @@ wiki-ingest 스킬이 소스를 처리할 때 생성하는 요약 페이지 목�
 
 ## 인덱스
 
-- [[hypeproof-lab-philosophy-source]] — 🕯️ **HypeProof Lab Philosophy (JY 작성, 2026-09-06 입수).** 정본 후보 · 정본과 충돌 3·중복 2·공백 1건 판정
+- [[weekly-on-hypeproof-20260906-source]] — ⭐ **Weekly on HypeProof 2026-09-06.** 9/15 덱 4인 리허설, 기록 발행 모델, 제품 층위 정리, 치과 홈페이지 전환, Bitree 공동 BM · ⚠️ 깨지는 숫자 5건
+- [[hypeproof-lab-philosophy-source]] — 🕯️ **HypeProof Lab Philosophy ([[jay-lee]] 작성, 2026-09-06 입수).** 정본 후보 · 정본과 충돌 3·중복 2·공백 1건 판정
 - [[hypeproof-positioning-reset-20260810]] — ⭐ **포지셔닝 리셋 (정본 개정).** 미션 문장·세계관·방어 논리·사용자/구매자 분리
 - [[hypeproof-mission-20260731-source]] — MISSION.md 7/31판 (⚠️ 상위 판으로 대체됨)
 - [[weekly-on-hypeproof-20260831-source]] — Weekly on HypeProof 2026-08-31 (미션-제품 프레임워크 확정, 세일즈 R&R, Chalk 게이트웨이론)

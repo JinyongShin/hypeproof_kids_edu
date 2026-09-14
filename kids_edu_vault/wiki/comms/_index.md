@@ -3,7 +3,7 @@ type: index
 status: navigational
 title: "Comms"
 created: 2026-04-12
-updated: 2026-07-11
+updated: 2026-09-14
 tags:
   - index/comms
 ---
@@ -18,6 +18,7 @@ tags:
 - [[2026-04-22-hospital-filamentary-checklist]] (2026-04-22) — 병원/필라멘트리 사전 확인 체크리스트
 
 ## Weekly / Meetings
+- [[2026-09-06-weekly-on-hypeproof]] — 9/15 덱 4인 리허설→지웅 안 수렴, 기록 발행 모델, 치과 홈페이지 전환, Bitree 공동 BM
 - [[2026-08-31-weekly-on-hypeproof]] — 미션-제품 프레임워크 팀 확정, 분야별 세일즈 담당 지정, 구독+리그 모델, 9/19 프로덕션 세션
 - [[2026-08-25-weekly-on-hypeproof]] — AI 네이티브 창업 교육 채택, IR 미션 드리븐 전환, 롱텀/숏텀 2축
 - [[2026-07-11-legal-professional-channel-meeting]] — 변호사 전문직 채널 미팅: 준비서면 루프, truthworthy 요구, 이혼/GEO 니치 가설

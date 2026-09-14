@@ -406,6 +406,58 @@
         "wiki/hot.md",
         "wiki/log.md"
       ]
+    },
+    ".raw/meeting_notes/Weekly on HypeProof - 2026_09_06 23_04 KST - Notes by Gemini.md": {
+      "hash": "955bf83e1e6283dd47c67b3e0c91ef0e",
+      "ingested_at": "2026-09-14",
+      "pages_created": [
+        "wiki/comms/2026-09-06-weekly-on-hypeproof.md",
+        "wiki/sources/weekly-on-hypeproof-20260906-source.md",
+        "wiki/concepts/record-issuance-model.md",
+        "wiki/decisions/dental-website-over-blog.md",
+        "wiki/deliverables/dental-fullday-website-workshop.md",
+        "wiki/stakeholders/jeon-sangyeol.md"
+      ],
+      "pages_updated": [
+        "wiki/concepts/hypeproof-philosophy.md",
+        "wiki/sources/hypeproof-lab-philosophy-source.md",
+        "wiki/concepts/community-epistemic-layer.md",
+        "wiki/deliverables/ir-20260915-plan.md",
+        "wiki/stakeholders/bitree.md",
+        "wiki/stakeholders/boa-dental.md",
+        "wiki/stakeholders/park-junghyun.md",
+        "wiki/comms/_index.md",
+        "wiki/sources/_index.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ]
+    },
+    ".raw/meeting_notes/Weekly on HypeProof - 2026_09_06 23_04 KST - Notes by Gemini (1).md": {
+      "hash": "9f19884727799645c096f6fc531cd0b2",
+      "ingested_at": "2026-09-14",
+      "note": "스크립트본. gitignore·로컬 보관. 요약본과 동일 회의",
+      "pages_created": [],
+      "pages_updated": [
+        "wiki/comms/2026-09-06-weekly-on-hypeproof.md",
+        "wiki/sources/weekly-on-hypeproof-20260906-source.md",
+        "wiki/concepts/record-issuance-model.md",
+        "wiki/decisions/dental-website-over-blog.md",
+        "wiki/deliverables/dental-fullday-website-workshop.md",
+        "wiki/stakeholders/jeon-sangyeol.md",
+        "wiki/concepts/hypeproof-philosophy.md",
+        "wiki/sources/hypeproof-lab-philosophy-source.md",
+        "wiki/concepts/community-epistemic-layer.md",
+        "wiki/deliverables/ir-20260915-plan.md",
+        "wiki/stakeholders/bitree.md",
+        "wiki/stakeholders/boa-dental.md",
+        "wiki/stakeholders/park-junghyun.md",
+        "wiki/comms/_index.md",
+        "wiki/sources/_index.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ]
     }
   }
 }

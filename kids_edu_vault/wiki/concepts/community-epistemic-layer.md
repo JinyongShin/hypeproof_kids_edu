@@ -7,7 +7,7 @@ tags:
   - philosophy
   - product
 created: 2026-09-06
-updated: 2026-09-06
+updated: 2026-09-14
 related:
   - "[[hypeproof-philosophy]]"
   - "[[four-learner-experiences]]"
@@ -52,3 +52,13 @@ Community를 Studio·Curriculum과 같은 **Product로 분류하지 않는다.**
 ## 관련
 
 - [[hypeproof-philosophy]] · [[four-learner-experiences]] · [[studio-subscription-league-model]] · [[hypeproof-studio]]
+
+## 2026-09-06 — 저자가 말로 확인해 줬다
+
+[[jay-lee]]가 회의에서 같은 취지를 직접 진술했다 ([[2026-09-06-weekly-on-hypeproof]] §3):
+
+> "우리가 이야기하는 커뮤니티는 이 구조에서 **소셜 러닝 레이어지 프로덕트라고 얘기할 순 없다.** [[hyrox-license-model-research-20260515|하이록스]]는 **대회 자체를 프로덕타이제이션**한 거고, 커뮤니티는 그 결과로 자연스럽게 형성된 거다."
+
+이 페이지의 "Community는 제품이 아니라 판단 교정 층"이라는 읽기가 **저자 의도와 일치한다**는 것이 확인된다. 동시에 [[tj]]의 IR 덱(커뮤니티·HYROX를 미션 앞에 배치)이 반려된 근거이기도 하다 — "커뮤니티를 만들겠다는 게 우리 미션은 아니다."
+
+다만 **상품화 자체는 가능**하다는 단서가 붙었다: HYROX처럼 *대회*를 상품으로 만들면 커뮤니티는 그 뒤에 따라온다. [[studio-subscription-league-model]]의 "리그"가 정확히 그 자리다.
