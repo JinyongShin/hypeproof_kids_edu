@@ -2,7 +2,7 @@
 type: concept
 title: "7 AI Native Assets 원본 구조"
 created: 2026-06-01
-updated: 2026-06-01
+updated: 2026-09-14
 tags:
   - concept/pedagogy
   - framework/7-ai-native-assets
@@ -16,6 +16,12 @@ related:
 ---
 
 # 7 AI Native Assets 원본 구조
+
+> [!contradiction] 2026-09-13부로 신규 제품은 6개 역량 모델을 쓴다
+> **Intent+Context → Framing**, **Taste → Judgment**, **Delegate → Orchestrate**, **Iterate → Adapt**로 재구성됐다 → [[six-human-capabilities]].
+> 이유가 이 페이지의 주장과 **같은 곳에서 나왔다** — *"몇 번 위임하거나 반복했는지만으로는 사람의 역량을 설명하기 어렵다."* 이 페이지가 "Q&A로 측정하지 말고 과정 신호로 측정하라"고 했다면, 6개 모델은 **"과정 신호 중에서도 활동량은 역량이 아니다"**까지 나아간다.
+> **이 페이지의 기록은 폐기하지 않는다.** 원칙: 기존 7 Asset 기록은 당시 모델과 의미를 유지해 보존하고, **점수를 자동 변환하지 않으며**, 다시 해석할 때는 원근거를 재검토해 별도 버전으로 남긴다.
+> 대외·미션 서술([[hypeproof-mission]])은 여전히 7이다. 두 층이 병존한다.
 
 사용자가 지정한 원본 기준에서 7 AI Native Assets는 **질문에 답하게 만드는 지식 체계가 아니라 실제 작업 과정에서 드러나는 절차적 역량**이다.
 

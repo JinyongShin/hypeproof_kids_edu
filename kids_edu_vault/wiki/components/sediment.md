@@ -7,7 +7,7 @@ tags:
   - product
   - internal
 created: 2026-08-29
-updated: 2026-09-03
+updated: 2026-09-14
 related:
   - "[[2026-08-25-weekly-on-hypeproof]]"
   - "[[hypeproof-studio]]"
@@ -61,3 +61,19 @@ related:
 ## 관련
 
 - [[2026-08-25-weekly-on-hypeproof]] · [[2026-08-31-weekly-on-hypeproof]] · [[hypeproof-studio]] · [[chalk]] · [[hypeproof-mission]] · [[mission-product-alignment]] · [[hypeproof-philosophy]]
+
+## ⚠️ 2026-09-14 — 이번 주 개발 변화 0건
+
+출처 [[members-portal-20260914-source]].
+
+> *"Sediment — 조회 기간(9/7~9/14) **main 커밋과 머지 PR 없음.** 이번 주 개발 변화는 확인되지 않았습니다. 운영·사용 여부는 별도 확인 대상입니다."*
+
+제품 3종 중 유일하게 이번 주 변화가 없다. [[hypeproof-studio]]와 [[chalk]]는 둘 다 기능이 나갔다.
+
+- 한편 [[hypeproof-operating-model]]의 주간 루프는 **"회의록·문서·결과물이 Sediment에 인제스트되어 팀의 검색 가능한 기억이 된다"**를 5단계로 명시한다. **설계상 이미 운영 경로에 들어가 있는데 개발은 멈춰 있다.**
+- [[jay-lee]]는 9/6에 [[bitree]] 공동 BM을 설명하며 **"세디먼트랑 붙여서 뭔가 할 수 있는 구조"**를 언급했다 ([[2026-09-06-weekly-on-hypeproof]] §5). 대외 제안에는 들어가 있다.
+- ⛔ [[hypeproof-philosophy]] 후보 문서의 제품 3종(Curriculum·Studio·Community)에도 Sediment에 대응하는 층이 없다.
+
+> [!contradiction] 운영 설계·대외 제안에는 있는데 구현이 없다
+> 세 곳(주간 루프 5단계 · Bitree 제안 · 제품 라인업)이 Sediment를 전제하는데 **이번 주 커밋이 0**이고, 볼트·포털·Sediment 중 "팀의 기억"을 누가 맡는지도 정해지지 않았다 ([[hypeproof-operating-model]] §볼트에 주는 함의).
+> Sediment **제품 리드는 공모 중**이다 → [[roles-kpi-proposal-20260914]]

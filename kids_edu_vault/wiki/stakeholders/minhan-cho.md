@@ -7,7 +7,7 @@ tags:
   - stakeholder
   - internal
 created: 2026-09-03
-updated: 2026-09-03
+updated: 2026-09-14
 related:
   - "[[2026-08-31-weekly-on-hypeproof]]"
   - "[[four-learner-experiences]]"
@@ -37,3 +37,14 @@ related:
 
 - [[four-learner-experiences]] · [[mission-product-alignment]] · [[chalk]] · [[sediment]]
 - [[2026-08-31-weekly-on-hypeproof]] · [[ir-20260915-plan]]
+
+## 2026-09-14 — 법무·IP 책임자 (제안)
+
+출처 [[members-portal-20260914-source]] · 합의 전 → [[roles-kpi-proposal-20260914]]
+
+- **법무·IP 책임자** — 계약·IP 쟁점, 개인정보·동의·사용 권한 검토와 대응안
+- AI Crew에서 **Lens**(계약·IP·개인정보 쟁점 판단) 인간 책임자 → [[ai-crew-personas]]
+- KPI: 검토 결과 전달 / 약속 · 기한 내 쟁점 공유. 검토 대상·결과·**남은 위험**과 공유일
+- RACI: 계약·IP·개인정보 검토 단계의 **A**. 최종 사업 조건 수락의 A는 전략(=[[jay-lee]])
+
+> ⛔ 볼트가 ⛔로 달아 둔 **법인·IP 귀속(시한 8/22 경과)**이 이 역할의 첫 과제다. 9/14 문서에도 해소 기록이 없다.

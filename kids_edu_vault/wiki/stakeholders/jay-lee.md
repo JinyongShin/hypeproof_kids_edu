@@ -9,7 +9,7 @@ tags:
   - stakeholder
   - internal
 created: 2026-04-12
-updated: 2026-04-12
+updated: 2026-09-14
 ---
 
 # Jay Lee (Jaewon Lee)
@@ -43,3 +43,19 @@ updated: 2026-04-12
 - [[jinyong-shin]] — 펀더멘탈 팀 공동 리서처.
 - [[jiwoong-kim]] — 엔지니어 트리오.
 - [[hypeproof-lab]] · [[fundamental-content-teams]]
+
+## 2026-09-14 — 5개 역할 겸임 (제안)
+
+출처 [[members-portal-20260914-source]] · [[hypeproof-operating-model]]
+
+**전략 · 제품 총괄([[chalk]]·[[sediment]] 포함) · 브랜드·콘텐츠 · 사업관리**, 그리고 Harness/AI Crew 공용 방향까지 맡는 안이다.
+
+> *"고정 급여를 전제로 한 상근 조직이 아닌 기여 기반 운영입니다. 업무량을 똑같이 나누기보다, **Jay가 사업의 위험과 실행 공백을 맡고** 멤버는 수락한 범위·기간·시간 안에서 결과를 만듭니다."*
+
+- 최종 판단 영역: 방향·자원·주요 사업 약속, **제품의 시작과 중단**, 출시 판단, 정본 변경 여부
+- [[hypeproof-philosophy]]의 **작성자** (2026-09-14 정정 — 기존 [[jinyong-shin]] 표기는 오귀속)
+- [[capability-measurement-module]]의 **첫 사용자**. 실제 작업 한 건으로 기록→검토→제출→다음 작업 개선까지 확인
+- 9/16 R&R 회신을 **취합·조정**하는 사람
+- KPI: 주요 결정 대기 일수 · 제품별 목표 대비 실적 / 기한 지난 미결 쟁점 · 검토부터 결정까지 걸린 시간
+
+> ⚠️ **집중 리스크.** 9개 역할 중 5개가 한 사람이고, 제품 3종 중 2종의 리드가 공석이다. 문서 스스로 제품 리드를 공모한다 → [[roles-kpi-proposal-20260914]]

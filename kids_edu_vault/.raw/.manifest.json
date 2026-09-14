@@ -458,6 +458,92 @@
         "wiki/hot.md",
         "wiki/log.md"
       ]
+    },
+    ".raw/members/how-we-work.md": {
+      "hash": "95b4e697acb453773f83d9d3a7091644",
+      "ingested_at": "2026-09-14",
+      "source_url": "https://hypeproof-ai.xyz/members/how-we-work",
+      "note": "멤버 전용 OAuth 게이트. 로그인 상태에서 본문 추출",
+      "pages_created": [
+        "wiki/sources/members-portal-20260914-source.md",
+        "wiki/concepts/six-human-capabilities.md",
+        "wiki/concepts/hypeproof-operating-model.md",
+        "wiki/concepts/ai-crew-personas.md",
+        "wiki/specs/capability-measurement-module.md",
+        "wiki/deliverables/roles-kpi-proposal-20260914.md",
+        "wiki/comms/2026-09-14-weekly-prep.md"
+      ],
+      "pages_updated": [
+        "wiki/components/chalk.md",
+        "wiki/components/sediment.md",
+        "wiki/concepts/hypeproof-studio.md",
+        "wiki/concepts/seven-ai-native-assets-original.md",
+        "wiki/stakeholders/jehyeong.md",
+        "wiki/stakeholders/jesse-kim.md",
+        "wiki/stakeholders/jiwoong-kim.md",
+        "wiki/stakeholders/jinyong-shin.md",
+        "wiki/stakeholders/bongho-tae.md",
+        "wiki/stakeholders/minhan-cho.md",
+        "wiki/stakeholders/jay-lee.md",
+        "wiki/stakeholders/tj.md",
+        "wiki/comms/_index.md",
+        "wiki/sources/_index.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ]
+    },
+    ".raw/members/studio-features.md": {
+      "hash": "6993fd6b82c43e8eea92104764935599",
+      "ingested_at": "2026-09-14",
+      "source_url": "https://hypeproof-ai.xyz/members/studio/features",
+      "note": "멤버 전용 OAuth 게이트. 로그인 상태에서 본문 추출",
+      "pages_created": [],
+      "pages_updated": [
+        "wiki/components/chalk.md",
+        "wiki/components/sediment.md",
+        "wiki/concepts/hypeproof-studio.md",
+        "wiki/concepts/seven-ai-native-assets-original.md",
+        "wiki/stakeholders/jehyeong.md",
+        "wiki/stakeholders/jesse-kim.md",
+        "wiki/stakeholders/jiwoong-kim.md",
+        "wiki/stakeholders/jinyong-shin.md",
+        "wiki/stakeholders/bongho-tae.md",
+        "wiki/stakeholders/minhan-cho.md",
+        "wiki/stakeholders/jay-lee.md",
+        "wiki/stakeholders/tj.md",
+        "wiki/comms/_index.md",
+        "wiki/sources/_index.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ]
+    },
+    ".raw/members/meetings-2026-09-14.md": {
+      "hash": "5192509626720f5d157f0bfb5edf0ca0",
+      "ingested_at": "2026-09-14",
+      "source_url": "https://hypeproof-ai.xyz/members/meetings/2026-09-14",
+      "note": "멤버 전용 OAuth 게이트. 로그인 상태에서 본문 추출",
+      "pages_created": [],
+      "pages_updated": [
+        "wiki/components/chalk.md",
+        "wiki/components/sediment.md",
+        "wiki/concepts/hypeproof-studio.md",
+        "wiki/concepts/seven-ai-native-assets-original.md",
+        "wiki/stakeholders/jehyeong.md",
+        "wiki/stakeholders/jesse-kim.md",
+        "wiki/stakeholders/jiwoong-kim.md",
+        "wiki/stakeholders/jinyong-shin.md",
+        "wiki/stakeholders/bongho-tae.md",
+        "wiki/stakeholders/minhan-cho.md",
+        "wiki/stakeholders/jay-lee.md",
+        "wiki/stakeholders/tj.md",
+        "wiki/comms/_index.md",
+        "wiki/sources/_index.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ]
     }
   }
 }

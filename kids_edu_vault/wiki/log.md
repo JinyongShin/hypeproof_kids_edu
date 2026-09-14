@@ -13,6 +13,24 @@ tags:
 
 ---
 
+## [2026-09-14] ingest | HypeProof Members 포털 3페이지 — 7 Assets가 6개로 재구성됐다
+- Source: `.raw/members/how-we-work.md` · `studio-features.md` · `meetings-2026-09-14.md` (멤버 전용 OAuth 게이트. JY가 로그인 상태에서 추출)
+- Summary: [[members-portal-20260914-source]]
+- Pages created: [[six-human-capabilities]], [[hypeproof-operating-model]], [[ai-crew-personas]], [[capability-measurement-module]], [[roles-kpi-proposal-20260914]], [[2026-09-14-weekly-prep]], [[members-portal-20260914-source]]
+- Pages updated: [[chalk]], [[hypeproof-studio]], [[sediment]], [[seven-ai-native-assets-original]], [[jehyeong]], [[jesse-kim]], [[jiwoong-kim]], [[jinyong-shin]], [[bongho-tae]], [[minhan-cho]], [[jay-lee]], [[tj]], [[comms/_index]], [[sources/_index]], [[index]], [[hot]], [[log]]
+- 계기: 익명 fetch가 `NEXT_REDIRECT → /auth/signin`으로 끊겨 브라우저 경로를 시도했고, 최종적으로 JY가 본문을 `.raw/members/`에 넣었다. **포털은 정본이 아니라 정본을 연결하는 읽기 창구**임을 문서 스스로 선언하므로 여기 정리한 것도 미러다.
+- Key insight: ⭐ **7 Assets가 6개 역량으로 재구성됐다** (2026-09-13 제품 채택) → [[six-human-capabilities]]. 산술은 **Intent+Context = Framing** 하나뿐이고 나머지 셋은 이름이 아니라 **관점이 좁혀졌다** — Taste→Judgment(미감 → 설명 가능한 선택 근거), Delegate→Orchestrate(맡기기 → 권한·검토지점 설계), Iterate→Adapt(반복 → 전략 변경). 이유가 우리 볼트의 기존 진단과 정확히 맞물린다: **"몇 번 위임하거나 반복했는지만으로는 역량을 설명할 수 없다."** [[asset-pressure-map]]이 Context·Iterate만 "재정의 필요"로 판정했던 그 자리다. **AI가 흡수 중인 구간이 곧 측정이 무너지는 구간**이라는 읽기가 두 문서에서 독립적으로 나왔다.
+- 두 번째: 모델의 진짜 내용은 표가 아니라 **"이것만으로는 부족" 열**이다 — 에이전트 수·도구 호출 수·재시도 횟수·AI의 통과 선언·제출 버튼 클릭. **전부 자동 집계가 가능한 지표이고 전부 기각됐다.** 이것이 [[record-issuance-model]]에 직접 걸린다: 9/6에 [[jiwoong-kim]]이 제시한 대시보드 매트릭(제작자·사용자·이번 주 사용자·마지막 갱신)은 **전부 활동량**이고 여기서 기각된 종류다. 간극을 메우는 물건이 [[capability-measurement-module]]인데 **실사용 0건**이다.
+- 세 번째: ⚠️ **[[chalk]]가 `proposal`이 아니었다.** 볼트는 8/31 이후 "아이디어 단계"로 기록해 왔는데, 기능 페이지에 **현재 기능 3개**가 요구사항 원문·검증 기록과 함께 있고 수업 만들기 요구사항만 53개다. `status: active`로 정정. 다만 [[jesse-kim]]이 "크립토나이트"라 부른 **가격 방어 층(품질 게이트·학생 리허설·회고 루프)은 전부 로드맵**이다 — **킥은 아직 안 나왔다.**
+- 네 번째: **운영 모델이 처음 문서화됐다** → [[hypeproof-operating-model]]. 6단계 흐름·9역할·RACI 19행·주간 루프·6원칙. 구조의 핵심은 **제품의 논리를 조직에 적용한 것**이다 — 6단계 작업 흐름과 [[six-human-capabilities]]가 같은 뼈대다. 조직 형태는 **기여 기반**이며 "Jay가 사업의 위험과 실행 공백을 맡는다"고 명시한다. ⚠️ 9역할 중 **5개가 Jay**이고 제품 3종 중 2종의 리드가 공석이다.
+- 다섯 번째: **[[ai-crew-personas]]** 5종(Scout·Compass·Forge·Lens·Keeper)의 설계 핵심은 능력이 아니라 **월권 차단**이다 — "고객 한 명의 반응을 시장 전체로 확대하지 않는다", "자체 테스트를 고객 성과로 보고하지 않는다", "기준을 낮춰 통과시키지 않는다". **Keeper는 우리 `wiki-lint`+`hot`/`log`와 거의 같은 일**을 한다. 우리가 앞선 것은 `[!contradiction]` 기록 형식이고, 뒤진 것은 **재확인 기한(TTL) 필드가 없다**는 점이다.
+- ✅ **미결 하나가 닫혔다**: 8/31부터 열려 있던 **"회의록의 신제형 = [[jehyeong]]인가"**. How We Work가 "제형 — 홈페이지 만들기 강의"로 배정하고 10/7 담당으로 명시한다.
+- ⚠️ 충돌 4건을 `[!contradiction]`으로 달았다: ①정본은 여전히 7 Assets ↔ 신규 제품은 6 (**두 층 병존**, 언제 합쳐지는지 미결) ②[[jay-lee]]가 9/6에 "AI가 못 하는 건 **테이스트와 오너십**"이라 한 지 일주일 만에 **Taste가 Judgment로 재정의**됐다 — 가장 인간적이라 지목한 자산이 가장 먼저 조작적 정의로 끌려 나왔다 ③[[chalk]] 상태 오기 ④**[[tj]]에게 배정된 역할이 없다** (9/6에 덱을 발표하고 액션을 받은 사람인데 두 표 모두에 없다)
+- ⛔ [[sediment]]: **9/7~9/14 main 커밋·머지 PR 0건.** 그런데 주간 루프 5단계·[[bitree]] 공동 BM 제안·제품 라인업 **세 곳이 Sediment를 전제한다.** 설계와 대외 제안에는 있는데 구현이 멈춰 있고, 볼트·포털·Sediment 중 "팀의 기억"을 누가 맡는지도 미정이다.
+- ⏰ 액션: **9/16(수)까지 전원 R&R·KPI 회신** → [[roles-kpi-proposal-20260914]]. 무응답은 수락으로 처리되지 않는다.
+- ⚠️ 숫자: **SK 건 입금 미확인**(딜 원장 사실확인일 9/5). [[ir-20260915-pricing-evidence-audit]]의 정산 자물쇠와 직결된다.
+- 미확인: **광현**의 한글 표기와 [[jesse-kim]] 동일인 여부(역할·9/6 호명으로 강한 정황) · [[tj]] 누락이 의도인지 · 변호사 채널 담당이 표에서 사라진 이유 · `roadmap.strategy.json`·`deals.yaml`·`ROLES.md` 원문 미확보 · Studio 공개 배포 상태
+
 ## [2026-09-14] ingest | Weekly on HypeProof 2026-09-06 — 9/15 덱 리허설과 치과 선회
 - Source: `.raw/meeting_notes/Weekly on HypeProof - 2026_09_06 23_04 KST - Notes by Gemini.md` (요약본, 커밋) + 같은 이름의 `(1)` 스크립트본 (954줄, **gitignore·로컬 보관**)
 - Summary: [[weekly-on-hypeproof-20260906-source]]

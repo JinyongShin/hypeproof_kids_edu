@@ -9,7 +9,7 @@ tags:
   - stakeholder
   - internal
 created: 2026-04-12
-updated: 2026-04-12
+updated: 2026-09-14
 ---
 
 # JiWoong Kim (라이언)
@@ -36,3 +36,17 @@ updated: 2026-04-12
 ## 관련
 - [[jay-lee]] · [[jinyong-shin]] — 엔지니어 트리오.
 - [[ai-native-workflow]]
+
+## ⭐ 2026-09-14 — HypeProof Studio 제품 리드 (제안)
+
+출처 [[members-portal-20260914-source]] · 합의 전 → [[roles-kpi-proposal-20260914]]
+
+**볼트 기준 가장 큰 승격이다.** 8/31에는 키즈 라인 세일즈 담당이었고([[sales-ownership-by-vertical]]), 9/14 제안에서는 **[[hypeproof-studio]]의 제품 리드**다.
+
+- **제품 책임자 (Studio 리드)** — 고객 문제 정리 · 우선순위 제안 · 실행 조율 · 주간 진행 공유. [[jay-lee]]는 방향·자원·최종 판단
+- **고객·사업 책임자 (창업교육)** — 제안·고객 관계·프로그램 운영
+- AI Crew에서 **Compass**(Studio 우선순위)·**Scout**(고객 맥락) 인간 책임자 → [[ai-crew-personas]]
+- RACI: 제품 의도 / 피처 로드맵의 **R이 Studio에 한해 지웅**, A는 제품(=Jay)
+- 액션: **9/16 창업교육 제안** — AI Crew 첫 적용 대상 2건 중 하나
+
+> 9/6에 IR 덱이 이 사람 안으로 수렴했고([[2026-09-06-weekly-on-hypeproof]]), 일주일 뒤 제품 리드 제안이 붙었다.

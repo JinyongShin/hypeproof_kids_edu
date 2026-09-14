@@ -7,7 +7,7 @@ tags:
   - stakeholder
   - internal
 created: 2026-08-29
-updated: 2026-09-03
+updated: 2026-09-14
 related:
   - "[[2026-08-25-weekly-on-hypeproof]]"
 ---
@@ -54,3 +54,21 @@ HypeProof 개발. 2026-08-25 Weekly부터 회의록에 등장한다.
 ## 관련
 
 - [[2026-08-25-weekly-on-hypeproof]] · [[2026-08-31-weekly-on-hypeproof]] · [[sediment]] · [[chalk]] · [[g-stack]] · [[teen-ai-startup-camp-v0]]
+
+## 2026-09-14 — 품질·운영 책임자 (제안)
+
+출처 [[members-portal-20260914-source]].
+
+> [!note] 표기 대조 — "광현" = Jesse Kim (강한 정황, 확증 전)
+> `/members/how-we-work`의 **품질·운영 책임자 "광현"**이 맡는 범위(독립 품질 검증, 출시 준비, 서비스 안정성·장애 대응)가 8/31에 이 사람에게 배정된 **"제품 품질 관리·고도화 총괄"**과 정확히 일치한다.
+> [[2026-09-06-weekly-on-hypeproof]] 축어록에서 [[jay-lee]]가 **"광연, 뭔가 공유할 게 있다고"**라 부르자 Jesse Kim이 답한다.
+> ⚠️ 한글·영문 표기 병기는 아직 어느 문서에도 없다.
+
+### 제안된 역할 (합의 전 → [[roles-kpi-proposal-20260914]])
+
+- **품질·운영 책임자** — 독립 품질 검증, 출시 준비, 서비스 안정성과 장애 대응
+- **Harness / AI Crew** 공통 실행 기반의 합의된 품질·운영 범위
+- AI Crew에서 **Lens**(독립 검증)·**Keeper**(정리 운영) 인간 책임자 → [[ai-crew-personas]]
+- KPI: 검증·운영 완료 / 약속 · **막힘 발견부터 공유까지 걸린 시간** · PASS/FAIL/NOT RUN 구분
+
+> ⚠️ **범위가 좁아졌다.** 8/31에는 "제품 품질 관리·고도화 총괄"이었는데, 9/14 구조에서 **제품 총괄은 [[jay-lee]], Studio 제품 리드는 [[jiwoong-kim]]**이고 이 사람은 품질·운영으로 한정된다. 회신에서 조정 가능한 사안이다.

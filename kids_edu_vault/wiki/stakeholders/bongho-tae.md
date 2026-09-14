@@ -9,7 +9,7 @@ tags:
   - stakeholder
   - internal
 created: 2026-04-12
-updated: 2026-04-12
+updated: 2026-09-14
 ---
 
 # 봉호 태 (Bongho Tae)
@@ -38,3 +38,16 @@ updated: 2026-04-12
 
 ## 관련
 - [[ai-native-workflow]] · [[hypeproof-lab]]
+
+## 2026-09-14 — 교육·연구 책임자로 이동 (제안)
+
+출처 [[members-portal-20260914-source]] · 합의 전 → [[roles-kpi-proposal-20260914]]
+
+- **교육·연구 책임자** — 연구 가설과 근거, 학습 경험 설계, 효과 검증
+- AI Crew에서 **Scout**(연구 해석)·**Forge**(교육 설계) 인간 책임자 → [[ai-crew-personas]]
+- KPI: 교육안·연구 기록 완료 / 약속 · 기한 내 전달. 근거에 **반례**와 **과제·도움 수준을 붙인 학습 관찰**을 함께
+- RACI: 교육·역량 리서치 / 교육 설계 단계의 **A**
+
+> ⚠️ **변호사 채널 세일즈 담당이 표에서 사라졌다.** 8/31 [[sales-ownership-by-vertical]]에서 이 사람이 맡던 라인이다. 누락인지 이관인지 미확인 → [[legal-brief-prep-loop]]
+>
+> 미해결로 남아 있는 것: **"160분 리텐션"의 분모 확인**이 이 사람 몫이다 ([[ir-20260915-pricing-evidence-audit]]).

@@ -10,7 +10,7 @@ tags:
   - internal
   - owner
 created: 2026-04-12
-updated: 2026-04-12
+updated: 2026-09-14
 ---
 
 # 신진용 (JY)
@@ -36,3 +36,15 @@ updated: 2026-04-12
 ## 관련
 - [[jay-lee]] — 팀 리드 / 서포트 대상.
 - [[pilot-env-design]] — 주도하는 spec.
+
+## 2026-09-14 — 개발 책임자 (제안)
+
+출처 [[members-portal-20260914-source]] · 합의 전 → [[roles-kpi-proposal-20260914]]
+
+- **개발 책임자** — 기술 설계, 구현, 개발 테스트와 유지보수
+- AI Crew에서 **Forge**(기술 선택) 인간 책임자 → [[ai-crew-personas]]
+- KPI: **인수 기준을 충족한 산출물 / 약속** · 기한 내 전달 건수. 근거로 대상 버전·인수 기준·검사 결과를 붙인다
+- RACI: 기술 설계·개발 단계의 **A**
+
+> [!note] 저작 귀속 정정
+> [[hypeproof-philosophy]]의 작성자는 이 사람이 아니라 [[jay-lee]]다 (2026-09-14 정정, [[2026-09-06-weekly-on-hypeproof]] §3). 이 사람이 별도로 제안한 것은 **8번째 에셋**이다.

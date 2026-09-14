@@ -29,8 +29,9 @@ tags:
 - 미션·IP (2026-08-31): [[minhan-cho]]
 - IR 심사 대상 (2026-09-06): [[jeon-sangyeol]] (스텁, 소속 미확인)
 
-### Comms — Meetings (19)
+### Comms — Meetings (20)
 - [[comms/_index|_index]]
+- [[2026-09-14-weekly-prep]] (2026-09-14) — ⚠️ **사전자료(회의록 아님)**. R&R·KPI 제안, 7→6 역량, 측정 모듈, SK 입금 미확인, 9/16 회신
 - [[2026-09-06-weekly-on-hypeproof]] (2026-09-06) — 9/15 덱 4인 리허설→[[jiwoong-kim]] 안 수렴, 기록 발행 모델, 치과 홈페이지 전환, Bitree 공동 BM, 타임라인 3개월
 - [[2026-08-31-weekly-on-hypeproof]] (2026-08-31) — 미션-제품 프레임워크 팀 확정, 분야별 세일즈 담당, 구독+리그 모델, 9/19 프로덕션 세션
 - [[2026-08-25-weekly-on-hypeproof]] (2026-08-25) — AI 네이티브 창업 교육 채택, IR 미션 드리븐 전환, 롱텀/숏텀 2축
@@ -65,8 +66,9 @@ tags:
 - Bug / Content (2026-04-18→2026-05-01): [[game-bug-fix-2026-05-01]] · [[game-content-guideline-pending]] (pending — 의료 전문가 확인 전 보류)
 - LLM Infra: [[llm-provider-scaling]] — LLM 제공사 스케일링 결정
 
-### Deliverables (19)
+### Deliverables (20)
 - [[deliverables/_index|_index]]
+- ⏰ [[roles-kpi-proposal-20260914]] (기한 2026-09-16) — R&R·KPI 제안 9역할 + 회신 양식. **제안이지 합의가 아님**. [[tj]] 배정 없음
 - [[dental-fullday-website-workshop]] (2026-09-06) — 치과 홈페이지 풀데이 워크숍 v0: Cloudflare CLI 배포, 디자인 템플릿 5종, 60만원안. 10/7(수) 워크숍은 별건
 - [[production-strategy-session-20260919]] (2026-09-19) — 밤샘 프로덕션 전략 세션: PR·브랜치 정비, 어드민 페이지 착수
 - [[action-items-20260831]] — 8/31 Weekly 액션 아이템 25건
@@ -84,8 +86,9 @@ tags:
 - [[pilot-gemini-api-key]] · [[pilot-server-domain]] · [[pilot-oauth-setup]] · [[pilot-cline-gemini-integration]] · [[pilot-game-starter-template]] · [[pilot-rehearsal-late-april]] · [[pilot-operator-guide]]
 - [[curriculum-submission-v2]] (2026-04-22) — 커리큘럼 협력사 제출용 포맷 (final)
 
-### Specs (27)
+### Specs (28)
 - [[specs/_index|_index]]
+- [[capability-measurement-module]] (2026-09-14) — 역량 측정 모듈. Studio·Claude Code·Codex 공통 코어. 코어 머지 · **실사용 0건** · 첫 사용자 [[jay-lee]]
 - [[pilot-env-design]] · [[pilot-curriculum-adapted]] · [[sk-biopharma-bongho-curriculum-v2]] · [[sk-biopharma-curriculum-detail-v1]] · [[hypeproof-studio-game-skillpack-v1]]
 - [[curriculum-wizard-v1]] (2026-04-20) — 나만의 마법 게임 만들기 커리큘럼 상세 스펙 (게임 타이틀 카드)
 - [[ai-prompting-literacy-input]] (2026-04-12) — BH 커리큘럼 인풋: 블록별 AI 프롬프팅 스킬 매핑
@@ -110,7 +113,10 @@ tags:
 - 제품 3종: [[hypeproof-studio]] (돌린다) · [[chalk]] (만든다, 제안 단계) · [[sediment]] (판단 정렬)
 - Dental homepage stack (2026-06-07): [[gabia]] · [[cafe24]] · [[claude-code]] · [[vercel]] · [[cloudflare]] · [[hypeproof-ai-xyz]]
 
-### Concepts (18)
+### Concepts (21)
+- ⭐ [[six-human-capabilities]] (2026-09-13 채택) — **7 Assets → 6 역량 재구성.** Framing·Judgment·Orchestrate·Verify·Adapt·Ownership. 정본(7)과 병존
+- ⭐ [[hypeproof-operating-model]] (2026-09-14) — How We Work: 6단계 흐름 · 9역할 · RACI 19행 · 주간 루프 · 6원칙
+- [[ai-crew-personas]] (2026-09-14) — Scout·Compass·Forge·Lens·Keeper + 위임 3등급 (자동/검토후/인간주도)
 - [[record-issuance-model]] (2026-09-06) — **기록 발행 모델.** 성과를 약속하지 않고 기록을 찍어낸다 · 운영 대시보드 + 실명 심사 · 성과 확약형 배제
 - [[seven-ai-native-assets-sk-strategy]] — SK바이오팜 제안서의 7 AI Native Assets를 HypeProof Studio/성장 리포트/가격 방어 논리와 매칭한 전략 업데이트
 - [[concepts/_index|_index]]

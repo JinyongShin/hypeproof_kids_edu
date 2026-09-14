@@ -15,6 +15,7 @@ wiki-ingest 스킬이 소스를 처리할 때 생성하는 요약 페이지 목�
 
 ## 인덱스
 
+- [[members-portal-20260914-source]] — ⭐ **Members 포털 스냅샷 2026-09-14** (3페이지: How We Work · Studio/Chalk 기능 · 9/14 사전자료). 7→6 역량 · 운영 모델 · AI Crew · 289개 요구사항
 - [[weekly-on-hypeproof-20260906-source]] — ⭐ **Weekly on HypeProof 2026-09-06.** 9/15 덱 4인 리허설, 기록 발행 모델, 제품 층위 정리, 치과 홈페이지 전환, Bitree 공동 BM · ⚠️ 깨지는 숫자 5건
 - [[hypeproof-lab-philosophy-source]] — 🕯️ **HypeProof Lab Philosophy ([[jay-lee]] 작성, 2026-09-06 입수).** 정본 후보 · 정본과 충돌 3·중복 2·공백 1건 판정
 - [[hypeproof-positioning-reset-20260810]] — ⭐ **포지셔닝 리셋 (정본 개정).** 미션 문장·세계관·방어 논리·사용자/구매자 분리
