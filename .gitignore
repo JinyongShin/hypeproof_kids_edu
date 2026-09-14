@@ -59,3 +59,8 @@ kids_edu_vault/.raw/sources/
 # 회의 축어록 (Gemini 스크립트) — 참석자 이메일·사담 포함. 공개 저장소이므로 요약본만 커밋한다.
 # 2026-08-29 결정. 원본은 Google Docs 회의 기록(접근 제한)에서 다시 받는다.
 kids_edu_vault/.raw/meeting_notes/*Notes by Gemini (1).md
+
+# 멤버 전용 포털 원문 (hypeproof-ai.xyz/members/*, noindex + OAuth 게이트)
+# 조직이 의도적으로 비공개한 문서이므로 공개 저장소에 원문을 두지 않는다.
+# 2026-09-14 결정. 볼트에는 우리가 쓴 분석만 남기고, 원본은 포털에서 다시 받는다.
+kids_edu_vault/.raw/members/
