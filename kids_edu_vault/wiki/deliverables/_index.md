@@ -3,7 +3,7 @@ type: index
 status: navigational
 title: "Deliverables"
 created: 2026-04-12
-updated: 2026-06-27
+updated: 2026-09-14
 tags:
   - index/deliverables
 ---
@@ -24,6 +24,7 @@ tags:
 - [[boa-dental-526-briefing]] — 보아치과 5/26 미팅 브리핑
 
 ## Proposals & Design
+- [[chalk-target-shape-proposal]] — Chalk 완성형 제안 (2026-09-14, 관문 정의 + 3단계 + 요청 결정 4개). 파일은 `_worklog/`
 - [[production-strategy-session-20260919]] — 9/19 밤샘 프로덕션 전략 세션 (PR·브랜치 정비, 어드민 페이지 착수)
 - [[action-items-20260831]] — 8/31 Weekly 액션 아이템 25건
 - [[ir-20260915-plan]] — 9/15 IR 준비 계획 (롱텀 미션 / 숏텀 마켓 2축, 3주 타임라인)
