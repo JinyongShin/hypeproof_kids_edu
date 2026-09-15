@@ -13,7 +13,7 @@ related:
   - "[[2026-08-25-weekly-on-hypeproof]]"
   - "[[hypeproof-mission]]"
   - "[[hypeproof-studio]]"
-  - "[[ir-20260915-plan]]"
+  - "[[jeon-sangyeol-meeting-20260916]]"
 ---
 
 # 중고등 AI 창업 캠프 v0
@@ -96,5 +96,5 @@ related:
 
 - 회의: [[2026-08-25-weekly-on-hypeproof]]
 - 정본 미션: [[hypeproof-mission]]
-- IR: [[ir-20260915-plan]]
+- IR: [[jeon-sangyeol-meeting-20260916]]
 - 커리큘럼 지식: [[startup-hot]] · [[startup-minor-legal-boundary-kr]] · [[startup-modoo-project-kr]]

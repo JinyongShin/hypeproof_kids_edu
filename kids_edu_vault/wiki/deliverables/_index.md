@@ -27,7 +27,7 @@ tags:
 - [[chalk-target-shape-proposal]] — Chalk 완성형 제안 (2026-09-14, 관문 정의 + 3단계 + 요청 결정 4개). 파일은 `_worklog/`
 - [[production-strategy-session-20260919]] — 9/19 밤샘 프로덕션 전략 세션 (PR·브랜치 정비, 어드민 페이지 착수)
 - [[action-items-20260831]] — 8/31 Weekly 액션 아이템 25건
-- [[ir-20260915-plan]] — 9/15 IR 준비 계획 (롱텀 미션 / 숏텀 마켓 2축, 3주 타임라인)
+- [[jeon-sangyeol-meeting-20260916]] — **9/16(수)** 전상열 대표 미팅 준비 (롱텀 미션 / 숏텀 마켓 2축, 3주 타임라인). 구 `ir-20260915-plan`
 - [[sk-biopharma-family-workshop-design-v1]] — SK바이오팜 가족 워크숍 내부 설계안 v1 (내부 전용)
 - [[sk-biopharma-7assets-proposal-upgrade-20260601]] — SK바이오팜 7 Assets 제안서 보강안 (2026-06-01, draft)
 

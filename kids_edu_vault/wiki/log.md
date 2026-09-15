@@ -2,7 +2,7 @@
 type: meta
 title: "Log"
 created: 2026-04-12
-updated: 2026-09-14
+updated: 2026-09-15
 tags:
   - meta/log
 ---
@@ -10,6 +10,19 @@ tags:
 # Log
 
 볼트 변경 이력. 최신 항목이 위.
+
+---
+
+## [2026-09-15] fix | 9/15 vs 9/16 혼동 해소 — 전상열 미팅은 9/16, 9/15는 덱 기한
+- Type: correction (날짜·명명)
+- 계기: JY가 *"wiki에 15일 16일 관련 혼동이 있었던 것 같은데?"* — 직전 ingest가 플래그만 걸고 남겨 둔 건.
+- 판정: **8/25~9/6 볼트 기록은 틀리지 않았다.** 원문 3회 연속 "9월 15일 IR"이었고(8/25 요약·8/31 요약·9/6 축어록 *"이번 15일 날 9월 15일 날"*), **9/14 회의에서 날짜가 옮겨졌다** — 지웅: *"16일 날 내일 모레 미팅을 하기로 했고요."* 9/14가 월요일이므로 **9/16(수)**.
+- ⭐ **날짜만 바뀐 게 아니라 자리의 성격이 바뀌었다** — *"간단히 식사를 하고 그다음에 카페에서 대화를 나누는 (…) 어디 앞에서 스크린 띄우고 발표한 자리는 아니에요."* 그래서 "IR"이라는 이름 자체가 부정확했다. [[jay-lee]]의 "슬라이드 프레임에 갇히지 말 것 · 이미지 · 소셜 캐피탈" 피드백이 이 성격 변화와 같은 것을 가리킨다.
+- 두 번째: **9/15는 사라진 날짜가 아니라 다른 마감이 됐다** — [[jiwoong-kim]]의 덱 최종 수정 기한. 9/16은 R&R·KPI 회신 기한([[roles-kpi-proposal-20260914]], 24:00)과 겹친다. **하루에 마감 둘 + 미팅 하나.**
+- 부수 오류 1건: `ir-20260915-plan`과 [[weekly-on-hypeproof-20260914-source]]가 9/16을 **"(화)"**로 적었다. 9/16은 **수요일**이다.
+- 조치: `wiki/deliverables/ir-20260915-plan.md` → **`jeon-sangyeol-meeting-20260916.md`** 리네임(`aliases`로 구 이름 보존), 인바운드 위키링크 **26개 파일** 치환, `due: 2026-09-16`, [[hot]]·[[index]]·[[deliverables/_index]]·[[2026-09-14-weekly-on-hypeproof]]·[[weekly-on-hypeproof-20260914-source]]·[[jiwoong-kim]]·[[startup-hot]]의 "확정 필요" 플래그 해소.
+- ⚠️ 남은 것: `ir-mentor-candidates-20260915` · `why-hypeproof-for-teen-startup-ir-20260915` · `ir-20260915-pricing-evidence-audit` **3건은 파일명에 20260915를 그대로 둔다** — 9/16 미팅이 아니라 *그 미팅용 덱*에 대한 문서이고 리네임 이득이 링크 치환 비용보다 작다. 날짜로 검색할 때 걸릴 수 있다는 점만 기록.
+- Pages updated: [[jeon-sangyeol-meeting-20260916]](리네임+정정), [[hot]], [[index]], [[deliverables/_index]], [[2026-09-14-weekly-on-hypeproof]], [[weekly-on-hypeproof-20260914-source]], [[jiwoong-kim]], [[startup-hot]], [[log]] + 링크 치환 18건
 
 ---
 
@@ -33,7 +46,7 @@ tags:
 - Source: `.raw/meeting_notes/Weekly on HypeProof - 2026_09_14 21_53 KST - Notes by Gemini.md` (요약본, 커밋) + `(1)` 스크립트본 1,204줄 (gitignore)
 - Summary: [[weekly-on-hypeproof-20260914-source]]
 - Pages created: [[2026-09-14-weekly-on-hypeproof]], [[weekly-on-hypeproof-20260914-source]], [[internal-productization]]
-- Pages updated: [[sixteen-essence]], [[six-human-capabilities]], [[capability-measurement-module]], [[chalk]], [[sediment]], [[hypeproof-studio]], [[record-issuance-model]], [[roles-kpi-proposal-20260914]], [[ir-20260915-plan]], [[dental-fullday-website-workshop]], [[2026-09-14-weekly-prep]], [[tj]], [[jinyong-shin]], [[jiwoong-kim]], [[bongho-tae]], [[minhan-cho]], [[jehyeong]], [[comms/_index]], [[sources/_index]], [[index]], [[hot]], [[log]]
+- Pages updated: [[sixteen-essence]], [[six-human-capabilities]], [[capability-measurement-module]], [[chalk]], [[sediment]], [[hypeproof-studio]], [[record-issuance-model]], [[roles-kpi-proposal-20260914]], [[jeon-sangyeol-meeting-20260916]], [[dental-fullday-website-workshop]], [[2026-09-14-weekly-prep]], [[tj]], [[jinyong-shin]], [[jiwoong-kim]], [[bongho-tae]], [[minhan-cho]], [[jehyeong]], [[comms/_index]], [[sources/_index]], [[index]], [[hot]], [[log]]
 - 계기: 사전자료([[2026-09-14-weekly-prep]])가 *"회의록이 나오면 사전자료는 보존하고 별도로 추가한다"*고 지시한 대로, 실제 회의록을 별도 페이지로 만들었다. **사전자료와 회의록의 온도 차가 이 ingest의 핵심**이다 — 사전자료가 "완료 증거가 없다"로 에둘러 쓴 것을 회의에서는 "아무도 안 쓴다"로 말했다.
 - Key insight: ⭐ **[[jay-lee]]가 미국에서 Studio를 직접 결제해 쓰고 내린 진단이 회의 전체를 끌었다.** *"스튜디오를 우리는 지금 아무도 안 쓴다"* · *"체험판을 다 빌드했음에도 그 사람을 통해 우리가 원하는 것을 전달할 수 없었다 — **무엇을 깨닫게 해야 하는지 나조차도 모르겠더라**"* · *"우리는 **바이브 코딩하는 사람들이랑 똑같았어요**"*. 처방이 [[internal-productization]]이다 — **우리가 먼저 쓰고 먼저 측정한다.**
 - 두 번째: ⚠️ **[[sixteen-essence]]의 근거가 없다고 저자가 직접 밝혔다.** *"이거 내가 그냥 16개 여기서 주워 와 가지고… 노정석 대표님 유튜브에 나오시는 그 흰머리 아저씨 분, 그분이 생각하는 16개 에셋을 그냥 따온 건데, **철학적으로 과학적으로 논거가 좀 없어 보인다**."* 볼트는 이것을 **"HypeProof Lab의 핵심 교육 IP"**로 기록해 왔다. 양쪽에 `[!contradiction]`을 달았다. **16 → 7 → 6의 궤적이 개수를 줄인 역사가 아니라 근거를 붙여 온 역사**로 다시 읽힌다 — 그래서 아레나 연구 에픽이 [[minhan-cho]]·[[bongho-tae]]에게 어사인됐다.
@@ -41,7 +54,7 @@ tags:
 - 네 번째: ⭐ **[[sediment]]가 왜 멈췄는지 밝혀졌다.** *"내가 세디먼트를 만들었던 이유는 사실 그거(내부 제품화)였는데, **나조차도 잊어먹고 있었고, 프로덕트 오너가 지금 아무도 없죠.** 내가 그거를 진용이한테 줬지만… **한번 내 미스지.**"* 직전 ingest가 "설계·대외 제안에는 있는데 구현이 없다"고 적었던 것의 답이다 — **방치가 아니라 목적 상실**이었다. 다만 되살아난 목적의 실행이 [[capability-measurement-module]]이라는 **별개 모듈**로 가고 있어 Sediment와의 관계는 미정리다.
 - ✅ **충돌 하나가 해소됐다**: [[tj]] 역할 누락. TJ가 직접 물었고 Jay가 **사과**했다 — *"일부러 그런 건 아니고."* 덧붙인 말이 날카롭다: ***"태진이가 제일 많이 측정이 돼야 된다."*** 브랜드·콘텐츠와 법무·IP를 제외하고 **하고 싶은 역할을 직접 고르라**는 것. 부수로 [[bongho-tae]]가 초안에서 빠졌던 이유도 나왔다 — **"뭘 하고 있는지 리포트가 안 돼서"**. 볼트가 "이동"으로 읽었던 것은 **제외 후 재배치**였다.
 - 정정 1건: **"5단계 커리큘럼"은 강의 5개가 아니었다.** [[jay-lee]]: *"다섯 개를 하라고 한 게 아니라 **수강생의 페르소나를 다섯 단계로 정의하라**고 한 거고요."* 그리고 **이탈자 KPI**가 붙었다 — *"그만두는 사람들에 대한 KPI도 있어야 돼. **그때는 AX 케어로 이어져야 된다 — AX 케어는 홈페이지 빌딩**이지."* [[dental-fullday-website-workshop]] 갱신.
-- ⚠️ **날짜**: [[jeon-sangyeol]] 대표 미팅이 축어록상 **9/16**이다(*"16일 내일모레"*). 볼트는 8/25부터 [[ir-20260915-plan]]으로 9/15를 써 왔다. R&R 회신 기한(9/16 24:00)과 같은 날이 된다. **확정 필요.**
+- ⚠️ **날짜**: [[jeon-sangyeol]] 대표 미팅이 축어록상 **9/16**이다(*"16일 내일모레"*). 볼트는 8/25부터 `ir-20260915-plan`으로 9/15를 써 왔다. R&R 회신 기한(9/16 24:00)과 같은 날이 된다. ✅ **2026-09-15 해소** → 아래 [2026-09-15] 항목.
 - ⚠️ **요약본 오탈자**: Gemini가 채널 파트너 결정을 *"…지향하기로 결정했다"*로 적었으나 같은 문서 제목은 **"도입 보류"**이고 축어록은 *"채널 얘기할 수준은 아직 아니거든"*이다. **"지양"의 오기**.
 - ⏰ 기한: **R&R 회신 9/16(수) 24:00** — 역할 수용 여부 + 위클리 보고 양식 의견. [[tj]]는 희망 역할 제안. [[jiwoong-kim]]은 9/15까지 덱 최종 수정(킬러 센텐스·유기적 연결 다이어그램). [[jesse-kim]] 해커톤 초안 금주 말.
 - 미확인: Jay가 쓴 **논문급 문서·칼럼** 실물 · **"아레나"**의 의미(⚠️ **R&R의 음성 오인식** 가능성이 높은데 요약본이 "아레나 연구"로 그대로 옮겼다) · 16 Assets 원 출처 인물 · 레포 분리 시점 · 데모데이 12~1월 가능 여부(질의만) · How We Work의 맥락관리 담당이 신제형인지 광현인지(포털 표기와 어긋남)
@@ -68,7 +81,7 @@ tags:
 - Source: `.raw/meeting_notes/Weekly on HypeProof - 2026_09_06 23_04 KST - Notes by Gemini.md` (요약본, 커밋) + 같은 이름의 `(1)` 스크립트본 (954줄, **gitignore·로컬 보관**)
 - Summary: [[weekly-on-hypeproof-20260906-source]]
 - Pages created: [[2026-09-06-weekly-on-hypeproof]], [[weekly-on-hypeproof-20260906-source]], [[record-issuance-model]], [[dental-website-over-blog]], [[dental-fullday-website-workshop]], [[jeon-sangyeol]]
-- Pages updated: [[hypeproof-philosophy]], [[hypeproof-lab-philosophy-source]], [[community-epistemic-layer]], [[ir-20260915-plan]], [[bitree]], [[boa-dental]], [[park-junghyun]], [[comms/_index]], [[sources/_index]], [[index]], [[hot]], [[log]]
+- Pages updated: [[hypeproof-philosophy]], [[hypeproof-lab-philosophy-source]], [[community-epistemic-layer]], [[jeon-sangyeol-meeting-20260916]], [[bitree]], [[boa-dental]], [[park-junghyun]], [[comms/_index]], [[sources/_index]], [[index]], [[hot]], [[log]]
 - 계기: 9/6 회의록이 `.raw/`에 들어와 있었으나 미ingest 상태였다. 같은 날 ingest된 것은 [[hypeproof-lab-philosophy-source|철학 문서]]이지 이 회의가 아니다. 정규 월요일(9/7) 미팅을 **하루 당겨 대체한** 회의다.
 - Key insight: **철학 문서의 작성자가 [[jinyong-shin]]이 아니라 [[jay-lee]]다.** 9/6 ingest는 파일 전달자(JY)를 작성자로 기록했는데, 축어록에서 [[jay-lee]]가 "내가 올린 문서", "제가 고민을 한 내용"이라 말하고 [[jinyong-shin]]은 같은 자리에서 독자로 발언한다("오늘 살짝 봤는데 어렵더라고요"). 두 페이지에 `[!contradiction]`으로 달고 정정했다. — **전달 경로를 저작으로 읽지 않는다**는 규칙이 하나 생겼다.
 - 두 번째: **[[hot]]의 충돌 3번(제품 3종 명칭)이 절반 닫혔다.** [[jay-lee]]가 말로 정리했다 — 제품 = Studio + Curriculum이고 **"커리큘럼은 [[chalk|초크]]가 되겠죠"**, 커뮤니티는 **소셜 러닝 레이어지 제품이 아니다**([[hyrox-license-model-research-20260515|HYROX]]는 *대회*를 프로덕트화했고 커뮤니티는 그 결과다). [[community-epistemic-layer]]의 기존 읽기가 저자 의도와 일치함이 확인된다. ⛔ 다만 **[[sediment]]는 여전히 이 정리에 없다** — 충돌은 완전히 닫히지 않았다.
@@ -95,7 +108,7 @@ tags:
 
 ## [2026-09-05] audit | 9/15 덱 숫자 감사 — 인용 가능한 숫자와 깨지는 숫자
 - Pages created: [[ir-20260915-pricing-evidence-audit]]
-- Pages updated: [[teen-ai-startup-camp-v0]], [[ir-20260915-plan]], [[sk-biopharma-pilot]], [[index]], [[hot]], [[log]]
+- Pages updated: [[teen-ai-startup-camp-v0]], [[jeon-sangyeol-meeting-20260916]], [[sk-biopharma-pilot]], [[index]], [[hot]], [[log]]
 - 계기: 9/15 피칭 덱 작성 에이전트들에게 위키 원문을 공급하다가, 요약본에서 인용한 숫자 세 건이 원본과 어긋나는 것을 발견했다.
 - Key insight: **요약이 원본을 앞지른 사례가 하나 있다.** "평균 160분 리텐션"에 붙은 **"3시간 기준"이 8/25 축어록에 없다** — ingest 단계에서 붙어 세 문서로 전파됐고, 정작 SK바이오팜 수업은 4시간 설계다. 분모에 따라 89%와 67%로 갈리는데, 이 숫자는 [[teen-ai-startup-camp-v0]]이 "가장 강한 제품 효과 증거"로 지목한 것이다. **가장 강한 증거의 분모가 미확인이었다.**
 - 두 번째: **기획 검토가가 실적가로 굳어 있었다.** "가족당 40~60만원, 50만원 앵커"는 2026-05-15경 검토값이고, 열흘 뒤 실제 견적은 **가족당 92만원**이다([[sk-biopharma-bitree-final-quotation-20260526]]). [[sk-biopharma-pilot]]이 `[!contradiction]`으로 이미 달아두었으나 후속 문서가 계속 검토가를 인용했다. 부수로 **"시간당 10만→20만"의 단위가 1인 기준**임이 풀렸다 — 92만 ÷ 4h ÷ 2인(부모+자녀 페어) = 11.5만/h. 목표가 환산은 가족당 160만원이다.
@@ -108,7 +121,7 @@ tags:
 - Source: `.raw/meeting_notes/Weekly on HypeProof - 2026_08_31 21_59 KST - Notes by Gemini.md` + 동 `(1).md` 스크립트(1,900여 줄). 회의 1건 / 파일 2개
 - Summary: [[weekly-on-hypeproof-20260831-source]] · [[2026-08-31-weekly-on-hypeproof]]
 - Pages created: [[weekly-on-hypeproof-20260831-source]], [[2026-08-31-weekly-on-hypeproof]], [[minhan-cho]], [[sales-ownership-by-vertical]], [[studio-subscription-league-model]], [[production-strategy-session-20260919]], [[action-items-20260831]]
-- Pages updated: [[four-learner-experiences]](팀 확정), [[chalk]](생성기 정정·게이트웨이론), [[sediment]]("크(?)" 해소), [[jesse-kim]], [[jay-lee]], [[jiwoong-kim]], [[bongho-tae]], [[jehyeong]], [[ir-20260915-plan]], [[comms/_index]], [[sources/_index]], [[decisions/_index]], [[deliverables/_index]], [[stakeholders/_index]], [[index]], [[hot]], [[log]]
+- Pages updated: [[four-learner-experiences]](팀 확정), [[chalk]](생성기 정정·게이트웨이론), [[sediment]]("크(?)" 해소), [[jesse-kim]], [[jay-lee]], [[jiwoong-kim]], [[bongho-tae]], [[jehyeong]], [[jeon-sangyeol-meeting-20260916]], [[comms/_index]], [[sources/_index]], [[decisions/_index]], [[deliverables/_index]], [[stakeholders/_index]], [[index]], [[hot]], [[log]]
 - Key insight: **[[four-learner-experiences]]의 "팀 확정 전"이 여기서 닫힌다.** 8/30에 혼자 세운 가운데 층을 8/31 회의에서 [[minhan-cho]]가 미션 → 네 경험 → 7 Assets → 제품 3종으로 발표했고 팀이 결정으로 채택했다. 커버리지 판정(A·D가 가장 덜 만들어짐)이 개인 분석에서 **팀이 공유하는 지도**로 승격됐다.
 - 두 번째: **[[chalk]]의 자리가 올라갔다.** 강의 생성기에서 **교육관 검증 게이트웨이**로 확장됐고, [[jesse-kim]]이 "크립토나이트는 스튜디오가 아니라 초크"라고 못 박았다 — 시간당 10만 원과 목표 20만 원의 간극을 메우는 자리다. 정본이 이미 "서사의 중심은 Chalk"라 한 것과 회의가 같은 방향으로 움직였다.
 - 세 번째: [[sediment]]에 남아 있던 미확인 항목("세디먼트 / 크(?) / Studio")이 **Chalk로 확정**됐다.
@@ -147,7 +160,7 @@ tags:
 ## [2026-08-29] ingest | HypeProof Lab MISSION.md (정본) + Weekly 2026-08-25
 - Sources: `/Users/jj_home/Git/HypeProof/hypeprooflab/MISSION.md` (별도 레포, 2026-07-31 확정 정본) · `.raw/meeting_notes/Weekly on HypeProof - 2026_08_25 20_58 KST - Notes by Gemini.md` + 동 `(1).md` 스크립트
 - Summaries: [[hypeproof-mission-20260731-source]] · [[weekly-on-hypeproof-20260825-source]]
-- Pages created: [[hypeproof-mission]], [[hypeproof-mission-20260731-source]], [[2026-08-25-weekly-on-hypeproof]], [[weekly-on-hypeproof-20260825-source]], [[teen-ai-startup-camp-v0]], [[ir-20260915-plan]], [[ir-mentor-candidates-20260915]], [[jesse-kim]], [[g-stack]], [[sediment]]
+- Pages created: [[hypeproof-mission]], [[hypeproof-mission-20260731-source]], [[2026-08-25-weekly-on-hypeproof]], [[weekly-on-hypeproof-20260825-source]], [[teen-ai-startup-camp-v0]], [[jeon-sangyeol-meeting-20260916]], [[ir-mentor-candidates-20260915]], [[jesse-kim]], [[g-stack]], [[sediment]]
 - Pages updated: [[hypeproof-lab]], [[mission-driven]], [[hypeproof-business-strategy]], [[startup-hot]], [[startup-log]], [[concepts/_index]], [[comms/_index]], [[sources/_index]], [[stakeholders/_index]], [[specs/_index]], [[deliverables/_index]], [[intel/_index]], [[components/_index]], [[index]], [[hot]], [[log]]
 - Key insight: 미션 정본이 조직 정체성을 **콘텐츠 조직 → AI 제품 조직**으로 정정한다. 강의는 목적이 아니라 제품을 성숙시키고 고객을 얻는 수단이며, 그래서 강의 산출물은 부산물이 아니라 제품 자산이고 IP 귀속이 급하다. 법인·IP·라이선스 최우선 과제는 시한(2026-08-22)을 넘겼다. 8/25 회의는 이 정본과 정확히 같은 방향으로 움직였다 — Jay Lee가 IR을 마켓 드리븐에서 미션 드리븐으로 틀었고, 팀은 롱텀(미션)/숏텀(창업 교육) 2축을 채택했다. 다만 숏텀 축의 사업 가설은 전부 2차 정보이고 G스택 차별점에는 내부 반론이 있다. 현재 가장 단단한 근거는 SK바이오팜 세션의 평균 160분 리텐션 하나다.
 - Note: 파일 2개는 별개 회의가 아니라 **한 회의의 요약본 + 스크립트**였고, **스크립트는 2026-08-29 삭제**했다(공개 저장소 PII). 요약본의 초대자 이메일·캘린더 링크도 마스킹 후 커밋. `wiki/` 안에 "IR"이 회사 IR과 학생 IR 두 뜻으로 존재하게 되었으므로 문서 간 이동 시 주의.

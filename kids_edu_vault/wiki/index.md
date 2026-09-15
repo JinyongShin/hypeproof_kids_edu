@@ -75,7 +75,7 @@ tags:
 - [[dental-fullday-website-workshop]] (2026-09-06) — 치과 홈페이지 풀데이 워크숍 v0: Cloudflare CLI 배포, 디자인 템플릿 5종, 60만원안. 10/7(수) 워크숍은 별건
 - [[production-strategy-session-20260919]] (2026-09-19) — 밤샘 프로덕션 전략 세션: PR·브랜치 정비, 어드민 페이지 착수
 - [[action-items-20260831]] — 8/31 Weekly 액션 아이템 25건
-- [[ir-20260915-plan]] (2026-08-25) — 9/15 IR 준비 계획: 롱텀 미션 / 숏텀 마켓 2축, 3주 타임라인
+- [[jeon-sangyeol-meeting-20260916]] (2026-08-25) — **9/16(수)** 전상열 대표 미팅 준비: 롱텀 미션 / 숏텀 마켓 2축, 3주 타임라인. ⚠️ 8/25~9/6에는 9/15 IR로 기록됐다가 9/14 회의에서 날짜·성격이 바뀌었다
 - [[okr-q2-jy]]
 - [[pilot-5-5-milestones]] — 전체 팀 마일스톤 (2026-04-12 확정)
 - [[2026-05-05-pilot]] — 파일럿 실행 현황 페이지 (2026-04-17 신규)
@@ -203,7 +203,7 @@ tags:
 - `.raw/meeting_notes/Weekly on HypeProof - 2026_08_31 ...` 요약본 + 스크립트 (2026-08-31, 회의 1건 / 파일 2개, 스크립트는 gitignore) → [[weekly-on-hypeproof-20260831-source]] + [[2026-08-31-weekly-on-hypeproof]] + [[minhan-cho]] + [[sales-ownership-by-vertical]] + [[studio-subscription-league-model]] + [[production-strategy-session-20260919]] + [[action-items-20260831]]
 - `hypeprooflab/MISSION.md` + `docs/decisions/2026-08-10-positioning-reset.md` (2026-08-10 정본 개정) → [[hypeproof-positioning-reset-20260810]] + [[hypeproof-mission]] + [[mission-product-alignment]] + [[chalk]] + [[sediment]]
 - `hypeprooflab:MISSION.md` (2026-07-31 확정 — ⚠️ 8/10 개정으로 대체됨) → [[hypeproof-mission-20260731-source]] + [[hypeproof-mission]] + [[hypeproof-lab]] + [[mission-driven]] + [[hypeproof-business-strategy]]
-- `.raw/meeting_notes/Weekly on HypeProof - 2026_08_25 ...` 요약본 + 스크립트 (2026-08-25, 회의 1건 / 파일 2개) → [[weekly-on-hypeproof-20260825-source]] + [[2026-08-25-weekly-on-hypeproof]] + [[teen-ai-startup-camp-v0]] + [[ir-20260915-plan]] + [[ir-mentor-candidates-20260915]] + [[jesse-kim]] + [[g-stack]] + [[sediment]]
+- `.raw/meeting_notes/Weekly on HypeProof - 2026_08_25 ...` 요약본 + 스크립트 (2026-08-25, 회의 1건 / 파일 2개) → [[weekly-on-hypeproof-20260825-source]] + [[2026-08-25-weekly-on-hypeproof]] + [[teen-ai-startup-camp-v0]] + [[jeon-sangyeol-meeting-20260916]] + [[ir-mentor-candidates-20260915]] + [[jesse-kim]] + [[g-stack]] + [[sediment]]
 - `.raw/telegram/2026-07-11-legal-professional-channel-meeting.md` (2026-07-11, 변호사 전문직 채널 미팅 메모) → [[legal-professional-channel-meeting-20260711-source]] + [[2026-07-11-legal-professional-channel-meeting]] + [[legal-brief-prep-loop]] + [[legal-divorce-brief-prep-consulting]]
 - `.raw/documents/boa-dental-ai-homepage-cuesheet-20260706.pdf` + `.html` + `.txt` (2026-07-06, 보아치과 AI 홈페이지 실습 큐시트) → [[boa-dental-ai-homepage-cuesheet-20260706]] + [[boa-dental-ai-homepage-cuesheet-20260706-spec]] + [[boa-dental]]
 - `.raw/meeting_notes/2026-06-29-weekly-on-hypeproof-gemini.md` (2026-06-29, Weekly on HypeProof) → [[weekly-on-hypeproof-20260629-source]] + [[2026-06-29-weekly-on-hypeproof]] + [[boa-dental]] + [[dental-website-copyclone-v3]] + [[hypeproof-studio]]

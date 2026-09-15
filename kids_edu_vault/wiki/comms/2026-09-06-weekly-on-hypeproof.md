@@ -101,7 +101,7 @@ HYROX의 경우  = 대회를 프로덕트화했고, 커뮤니티는 그 결과�
 | 2 | **제품 프로덕션과 커리큘럼을 병행 추진** — 타임라인이 촉박해 직렬로 못 간다 | |
 | 3 | **치과 커리큘럼 주제를 블로그 만들기 → 홈페이지 만들기로 변경** | [[dental-website-over-blog]] |
 | 4 | **주말 풀데이 오프라인 웹페이지 제작 워크숍 채택** (60만원안) | [[dental-fullday-website-workshop]] |
-| 5 | 9/15 덱은 **[[jiwoong-kim]] 안으로 수렴**, 잔여 결정은 15일까지 | [[ir-20260915-plan]] |
+| 5 | 9/15 덱은 **[[jiwoong-kim]] 안으로 수렴**, 잔여 결정은 15일까지 | [[jeon-sangyeol-meeting-20260916]] |
 
 ## 5. 파트너십 — 숫자가 처음 나왔다
 
@@ -149,4 +149,4 @@ HYROX의 경우  = 대회를 프로덕트화했고, 커뮤니티는 그 결과�
 
 ## 관련
 
-[[weekly-on-hypeproof-20260906-source]] · [[2026-08-31-weekly-on-hypeproof]] · [[ir-20260915-plan]] · [[record-issuance-model]] · [[dental-website-over-blog]] · [[dental-fullday-website-workshop]] · [[hypeproof-philosophy]] · [[bitree]] · [[boa-dental]]
+[[weekly-on-hypeproof-20260906-source]] · [[2026-08-31-weekly-on-hypeproof]] · [[jeon-sangyeol-meeting-20260916]] · [[record-issuance-model]] · [[dental-website-over-blog]] · [[dental-fullday-website-workshop]] · [[hypeproof-philosophy]] · [[bitree]] · [[boa-dental]]

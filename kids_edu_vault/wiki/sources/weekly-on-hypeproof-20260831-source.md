@@ -18,7 +18,7 @@ related:
   - "[[four-learner-experiences]]"
   - "[[chalk]]"
   - "[[sediment]]"
-  - "[[ir-20260915-plan]]"
+  - "[[jeon-sangyeol-meeting-20260916]]"
 ---
 
 # Source — Weekly on HypeProof 2026-08-31

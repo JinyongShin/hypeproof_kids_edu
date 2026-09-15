@@ -16,7 +16,7 @@ updated: 2026-08-29
 related:
   - "[[2026-08-25-weekly-on-hypeproof]]"
   - "[[teen-ai-startup-camp-v0]]"
-  - "[[ir-20260915-plan]]"
+  - "[[jeon-sangyeol-meeting-20260916]]"
   - "[[hypeproof-mission]]"
 ---
 

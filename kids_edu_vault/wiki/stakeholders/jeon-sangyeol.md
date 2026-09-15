@@ -6,18 +6,18 @@ tags:
   - stakeholder/external
   - ir
 created: 2026-09-14
-updated: 2026-09-14
+updated: 2026-09-15
 related:
   - "[[2026-09-06-weekly-on-hypeproof]]"
   - "[[record-issuance-model]]"
-  - "[[ir-20260915-plan]]"
+  - "[[jeon-sangyeol-meeting-20260916]]"
 ---
 
 # 전상열 대표
 
 > ⚠️ **스텁.** 소속·직함·연락 경로 모두 미확인. 표기는 2026-09-06 회의록 요약본을 따랐다.
 
-9/15 IR의 **제안 상대**이자, [[record-issuance-model]]의 첫 심사자로 지목된 인물.
+**9/16(수) 미팅**([[jeon-sangyeol-meeting-20260916]])의 상대이자, [[record-issuance-model]]의 첫 심사자로 지목된 인물. 자리는 **식사+카페 대화**이고 스크린 발표가 아니다.
 
 ## 왜 이 사람인가
 

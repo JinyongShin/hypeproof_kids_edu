@@ -18,7 +18,7 @@ related:
   - "[[capability-measurement-module]]"
   - "[[record-issuance-model]]"
   - "[[hypeproof-operating-model]]"
-  - "[[ir-20260915-plan]]"
+  - "[[jeon-sangyeol-meeting-20260916]]"
 ---
 
 # Chalk 완성형 제안 (2026-09-14)

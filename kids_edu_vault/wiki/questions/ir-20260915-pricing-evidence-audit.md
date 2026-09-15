@@ -13,7 +13,7 @@ status: developing
 question: "9/15 IR 덱에 쓸 수 있는 숫자는 무엇이고, 위키의 어느 숫자가 그대로 쓰면 깨지는가?"
 answer_quality: solid
 related:
-  - "[[ir-20260915-plan]]"
+  - "[[jeon-sangyeol-meeting-20260916]]"
   - "[[sk-biopharma-pilot]]"
   - "[[sk-biopharma-bitree-final-quotation-20260526]]"
   - "[[hypeproof-business-strategy]]"
@@ -29,7 +29,7 @@ related:
 
 ## 1. "160분 리텐션"의 분모가 원 소스에 없다
 
-위키 세 곳이 **"3시간 기준 평균 약 160분"**으로 쓴다 — [[teen-ai-startup-camp-v0]], [[ir-20260915-plan]], [[2026-08-25-weekly-on-hypeproof]].
+위키 세 곳이 **"3시간 기준 평균 약 160분"**으로 쓴다 — [[teen-ai-startup-camp-v0]], [[jeon-sangyeol-meeting-20260916]], [[2026-08-25-weekly-on-hypeproof]].
 
 그런데 축어록 원문(`.raw/meeting_notes/Weekly on HypeProof - 2026_08_25 ...`, 00:51:24)은 이렇다:
 
@@ -44,7 +44,7 @@ related:
 | 3시간(180분) | 89% |
 | 4시간(240분) | 67% |
 
-[[ir-20260915-plan]]이 이 숫자를 "제품 효과 근거"로 지정했고 [[teen-ai-startup-camp-v0]]은 "**현재 우리가 가진 가장 강한 제품 효과 증거**"라고 쓴다. **가장 강한 증거의 분모가 미확인이다.**
+[[jeon-sangyeol-meeting-20260916]]이 이 숫자를 "제품 효과 근거"로 지정했고 [[teen-ai-startup-camp-v0]]은 "**현재 우리가 가진 가장 강한 제품 효과 증거**"라고 쓴다. **가장 강한 증거의 분모가 미확인이다.**
 
 - **조치**: 분모 확인 전까지 비율을 말하지 않는다. **"평균 160분 몰입"** 까지가 위키가 지지할 수 있는 최대치다.
 - **미확인**: 160분의 분모(3h/4h), 측정 대상(세션 전체인지 특정 그룹인지). 출처는 [[bongho-tae]] 한 사람.
@@ -137,6 +137,6 @@ HypeProof Lab은 견적서에 계약 주체로 등장하지 않고, 정산표에
 
 ## 관련
 
-- [[ir-20260915-plan]] · [[sk-biopharma-pilot]] · [[sk-biopharma-bitree-final-quotation-20260526]]
+- [[jeon-sangyeol-meeting-20260916]] · [[sk-biopharma-pilot]] · [[sk-biopharma-bitree-final-quotation-20260526]]
 - [[hypeproof-business-strategy]] · [[hypeproof-mission]] · [[teen-ai-startup-camp-v0]]
 - [[2026-08-25-weekly-on-hypeproof]] · [[2026-08-31-weekly-on-hypeproof]]

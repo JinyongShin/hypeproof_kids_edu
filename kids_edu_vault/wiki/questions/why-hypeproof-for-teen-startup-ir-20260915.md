@@ -17,7 +17,7 @@ related:
   - "[[hypeproof-mission]]"
   - "[[mission-product-alignment]]"
   - "[[2026-08-25-weekly-on-hypeproof]]"
-  - "[[ir-20260915-plan]]"
+  - "[[jeon-sangyeol-meeting-20260916]]"
   - "[[teen-ai-startup-camp-v0]]"
   - "[[hypeproof-studio]]"
   - "[[chalk]]"

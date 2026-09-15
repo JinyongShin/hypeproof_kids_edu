@@ -10,7 +10,7 @@ created: 2026-09-14
 updated: 2026-09-14
 related:
   - "[[2026-09-06-weekly-on-hypeproof]]"
-  - "[[ir-20260915-plan]]"
+  - "[[jeon-sangyeol-meeting-20260916]]"
   - "[[studio-subscription-league-model]]"
   - "[[hypeproof-mission]]"
   - "[[jeon-sangyeol]]"

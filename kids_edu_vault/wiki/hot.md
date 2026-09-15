@@ -2,7 +2,7 @@
 type: meta
 title: "Hot Cache"
 created: 2026-04-12
-updated: 2026-09-14
+updated: 2026-09-15
 tags:
   - meta/cache
 ---
@@ -26,7 +26,7 @@ tags:
 ## ⏰ 지금 급한 것
 
 1. ⏰ **R&R 회신 — 9/16(수) 밤 12시.** 역할 수용 여부 + 위클리 보고 양식 의견 → [[roles-kpi-proposal-20260914]]. **무응답은 수락이 아니다**
-2. ⏰ **[[jeon-sangyeol]] 대표 미팅** — ⚠️ 축어록은 **9/16**, 볼트는 9/15로 기록 ([[ir-20260915-plan]]). **날짜 확정 필요.** 덱의 빈칸은 **"Why us" 킬러 센텐스**와 유기적 연결 다이어그램
+2. ⏰ **[[jeon-sangyeol]] 대표 미팅 — 9/16(수)**, 식사+카페 (스크린 발표 아님) → [[jeon-sangyeol-meeting-20260916]]. 덱의 빈칸은 **"Why us" 킬러 센텐스**와 유기적 연결 다이어그램. **오늘 9/15는 [[jiwoong-kim]] 덱 최종 수정 기한**
 3. **다음 Weekly 첫 아젠다 = [[jinyong-shin]]의 [[chalk]] 제안서·개발 진행**
 4. **10/3** [[bongho-tae]] 변호사+치과 원장 미팅 (케이스별 사업구조 + 1·2·3차 리뷰) · **10/7** [[jehyeong]] 치과 워크숍
 5. 워크숍(팀) **추석 이후로 연기** — [[jinyong-shin]]이 일정 투표·장소 예약
@@ -95,4 +95,4 @@ KPI 2개: **연간 캠프 횟수** · **고객당 평균 유료 구매 전환율
 
 ## 자주 여는 곳
 
-[[2026-09-14-weekly-on-hypeproof]] · [[internal-productization]] · [[roles-kpi-proposal-20260914]] · [[chalk]] · [[six-human-capabilities]] · [[hypeproof-operating-model]] · [[ir-20260915-plan]] · [[hypeproof-mission]]
+[[2026-09-14-weekly-on-hypeproof]] · [[internal-productization]] · [[roles-kpi-proposal-20260914]] · [[chalk]] · [[six-human-capabilities]] · [[hypeproof-operating-model]] · [[jeon-sangyeol-meeting-20260916]] · [[hypeproof-mission]]

@@ -58,7 +58,7 @@ updated: 2026-09-03
 | 3 | **제품 품질·고도화 책임자 = [[jesse-kim]]** |
 | 4 | **스튜디오 구독 + 교육 리그 수익화** → [[studio-subscription-league-model]] |
 | 5 | **공통 IR 덱 + 프로덕트 소개서 제작** (2종 분리) |
-| 6 | **9/15 피칭 문서와 장기 미션 문서를 분리** 관리 → [[ir-20260915-plan]] |
+| 6 | **9/15 피칭 문서와 장기 미션 문서를 분리** 관리 → [[jeon-sangyeol-meeting-20260916]] |
 | 7 | **장기 타겟 확장** — 학생 창업 교육 → 전문직 포함 범용 교육 |
 | 8 | **외부 교육 대응 방식** — 커리큘럼 제출 → 유료 인원 모집 → 수익성 검증 후 진행 결정 |
 | 9 | **강의 운영 2인 체제** — 메인 강사 1 + 보조 1로 최적화 |
@@ -133,4 +133,4 @@ updated: 2026-09-03
 - [[weekly-on-hypeproof-20260831-source]] · 직전 회의 [[2026-08-25-weekly-on-hypeproof]]
 - [[four-learner-experiences]] · [[mission-product-alignment]] · [[hypeproof-mission]]
 - [[chalk]] · [[hypeproof-studio]] · [[sediment]]
-- [[ir-20260915-plan]] · [[production-strategy-session-20260919]]
+- [[jeon-sangyeol-meeting-20260916]] · [[production-strategy-session-20260919]]

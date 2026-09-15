@@ -50,4 +50,4 @@ G스택에 **없는 것**을 커리큘럼에서 채운다는 것이 회의의 �
 
 ## 관련
 
-- [[2026-08-25-weekly-on-hypeproof]] · [[teen-ai-startup-camp-v0]] · [[hypeproof-studio]] · [[ir-20260915-plan]]
+- [[2026-08-25-weekly-on-hypeproof]] · [[teen-ai-startup-camp-v0]] · [[hypeproof-studio]] · [[jeon-sangyeol-meeting-20260916]]

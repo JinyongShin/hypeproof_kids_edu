@@ -127,7 +127,7 @@ updated: 2026-08-29
 ## 관련
 
 - 소스: [[weekly-on-hypeproof-20260825-source]]
-- 산출: [[teen-ai-startup-camp-v0]] · [[ir-20260915-plan]] · [[ir-mentor-candidates-20260915]]
+- 산출: [[teen-ai-startup-camp-v0]] · [[jeon-sangyeol-meeting-20260916]] · [[ir-mentor-candidates-20260915]]
 - 정본: [[hypeproof-mission]]
 - 이전 회의: [[2026-06-29-weekly-on-hypeproof]]
 - 커리큘럼 라인: [[startup-hot]] · [[ruling-startup-ir-target-and-scope]]

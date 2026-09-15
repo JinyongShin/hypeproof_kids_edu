@@ -36,7 +36,7 @@ related:
 ## 관련
 
 - [[four-learner-experiences]] · [[mission-product-alignment]] · [[chalk]] · [[sediment]]
-- [[2026-08-31-weekly-on-hypeproof]] · [[ir-20260915-plan]]
+- [[2026-08-31-weekly-on-hypeproof]] · [[jeon-sangyeol-meeting-20260916]]
 
 ## 2026-09-14 — 법무·IP 책임자 (제안)
 

@@ -1,6 +1,6 @@
 ---
 type: stakeholder
-title: "9/15 IR 멘토 후보 4인"
+title: "IR 멘토 후보 4인 (9/16 미팅 대상 선정용)"
 status: draft
 confidence: low
 tags:
@@ -8,13 +8,15 @@ tags:
   - ir
   - candidate
 created: 2026-08-29
-updated: 2026-08-29
+updated: 2026-09-15
 related:
-  - "[[ir-20260915-plan]]"
+  - "[[jeon-sangyeol-meeting-20260916]]"
   - "[[2026-08-25-weekly-on-hypeproof]]"
 ---
 
-# 9/15 IR 멘토 후보 4인
+# IR 멘토 후보 4인
+
+> 8/25 시점에 "9/15 IR" 대상 선정을 위해 만든 목록이다. 미팅은 이후 **9/16(수)**로 확정됐다 → [[jeon-sangyeol-meeting-20260916]].
 
 > [!warning] 확인되지 않은 정보다
 > [[jiwoong-kim]]이 **조사 엔진으로 찾은 내용**이며 본인이 회의 중 "정확할지 모르겠다"고 단서를 달았다.
@@ -45,4 +47,4 @@ related:
 
 ## 관련
 
-- [[ir-20260915-plan]] · [[2026-08-25-weekly-on-hypeproof]] · [[jiwoong-kim]] · [[lee-jaewon]]
+- [[jeon-sangyeol-meeting-20260916]] · [[2026-08-25-weekly-on-hypeproof]] · [[jiwoong-kim]] · [[lee-jaewon]]

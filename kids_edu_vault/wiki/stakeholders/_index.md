@@ -35,7 +35,7 @@ tags:
 - 이동훈 대표 · 문조일 대표 · 김성경 대표 · 박재현 소장 · 노수림 교수 — 필요 시 페이지 생성.
 
 - [[jesse-kim]] — 개발 / **제품 품질·고도화 총괄** (2026-08-31 지정). 내부 병목 우선 관점
-- [[ir-mentor-candidates-20260915]] — 9/15 IR 멘토 후보 4인 (미확인 정보)
+- [[ir-mentor-candidates-20260915]] — IR 멘토 후보 4인, 9/16 미팅 대상 선정용 (미확인 정보)
 
 ## Notes
 - 새 stakeholder는 `_templates/stakeholder.md`로 생성.
