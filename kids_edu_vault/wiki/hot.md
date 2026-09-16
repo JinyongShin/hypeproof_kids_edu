@@ -7,7 +7,7 @@ tags:
   - meta/cache
 ---
 
-# Hot Cache — 2026-09-14
+# Hot Cache — 2026-09-15
 
 세션 시작 시 가장 먼저 읽는 캐시. **500단어 이내로 유지하고 작업이 끝날 때 덮어쓴다.** 이력은 [[log]], 목록은 [[index]].
 
@@ -31,6 +31,26 @@ tags:
 4. **10/3** [[bongho-tae]] 변호사+치과 원장 미팅 (케이스별 사업구조 + 1·2·3차 리뷰) · **10/7** [[jehyeong]] 치과 워크숍
 5. 워크숍(팀) **추석 이후로 연기** — [[jinyong-shin]]이 일정 투표·장소 예약
 6. ⛔ **법인·IP 귀속**(시한 8/22 경과) — Jay가 법무·IP를 회수할 의향을 밝혀 담당이 다시 Jay로 몰린다
+
+## 🧱 Chalk — 요구사항/현황 두 장이 섰다 (2026-09-15)
+
+[[chalk-requirements]] (필요한 것 · `CR-*` **89건**) ↔ [[chalk-implementation-status]] (되어 있는 것 · `04f03d0`) ↔ [[chalk-requirement-coverage-audit]] (**전수 대조: 구현 19 / 부분 32 / 미구현 17 / 미확인 7**) ↔ 🆕 [[requirement-id-index]] (**정본 ID 767개 전수**)
+
+- ★ **관문이 필요하다는 합의는 있고, 통과시키는 규칙은 어디에도 없다** — 합격선의 주체·항목·임계값·재판정·근거 공개가 전부 `미확인`. `HC-08` 때문에 **역량 기반 합격선은 연구 전 불가** → 지금 세울 수 있는 축은 **계약 준수**
+- ★ **가장 큰 칸은 미구현이 아니라 "부분" 42.7%** — 상태는 *안 만들었다*가 아니라 **연결은 했고 계약을 아직 못 지켰다**. 미구현 17건 중 **12건은 이미 #1012·#1015·#1016·#1017 안에 있다**
+- ★ **관문 재료 3개(`RUN-01`·`RUN-02`·`VER-02`)는 전부 미구현이며 한 이슈 #1012에 있다**. 확정 문서가 `rehearsal:not_run`·`activated:false`를 값으로 들고 있다
+- ⚠️ **`CLS-04`는 미구현이 아니라 요구사항끼리 부딪친 상태** — "학생 허용 후 강사 수정" ↔ "학생 파일 원격 수정 불허"(`classroom-admin.md`)
+- ⚠️ **`HC-04`의 actor가 `user|policy` 둘뿐** — *강사가 손댄 부분을 독립 수행 증거에서 제외*가 **지금 스키마로는 표현 불가**
+- ⚠️ **`config/traceability.json`에 Chalk 요구사항 ID 0건** (노드 89개 전수). 이슈 #996 사각지대 — 감사 근거는 전부 코드·테스트에서 직접 찾았다
+- ★ **머지 ≠ 운영** — Chalk 운영은 main보다 PR 4건(#813·#839·#866·#1027), Service는 28커밋 뒤. **의도된 보류인지 누락인지 기록 없음**
+- ⚠️ **#1036**: `/authoring`이 화면에 없는 단계 키를 저장 시 지운다 — 제목만 고쳐도 `steps[].help` 소실. PR #1028이 막혀 있다
+- ⛔ 활성 실행 템플릿 **운영 0개**(PR #1027 자기 진술) — 관리자 활성화 전엔 안 열린다
+- 충돌 3: **`status: active` ↔ 라인업 정본 "제안 단계·대외 언급 금지"** / **session-design "소비자 없음" ↔ #740 이후 소비자 3곳**(스키마 소유 전제가 바뀜) / **#1049는 여섯 역량을 "versioned candidate"로만 본다**
+- 🆕 **ID 전수 인덱스가 섰다** ([[jay-lee]] 요청) — 두 저장소 정본 **767개 ID, 62계열, ID 하나 = 한 행.** **번호 구멍 0** · 중복 정의 **`REQ-M30` 1건**(서로 다른 요구사항이 같은 코드) · **lab 미러(`2d96413`)에 `HC-09`·`SS-01~14` 없음** · **studio main에 `IC-01~07` 없음**(열린 PR #1024에만) · `MC-07/21/27/34`는 **양쪽 다 정의 없음**
+- 숫자: 요구사항 **289**(정본) / 296(PR #1024) / 284(직접 추출) — 인용 시 **289 + 출처 병기**
+- 🆕 **`HC-09` — `HAIN7` 폐지** (PR #1066 머지). 진입점은 6역량 워크벤치, 7축은 **과거 재생 전용**. **7→6 변환 없음이 코드로 집행된다**(`measurement-core`: *"deliberately no conversion table"*). 단 **`MR-02/03`은 studio에 0건** — `HC-09` 흡수인지 `미확인`
+- ⚠️ **파트너 수수료 20%는 가설이다** — 9/14 결과부가 "합의된 계약·딜 조건 아님"으로 분류. 확정 수치로 인용 금지
+- ⚠️ **측정 모듈 임포트 대상에 Chalk가 있는지 `미확인`** — 볼트는 "Studio+Chalk", lab 결과부는 "Studio·Claude Code·Codex"
 
 ## ⭐ 오너십이 움직였다
 
@@ -65,7 +85,7 @@ Intent+Context→**Framing** · Taste→**Judgment** · Delegate→**Orchestrate
 
 ## BM — 숫자가 붙었다
 
-[[record-issuance-model]]: Chalk로 강의 생성 → Studio 학습 → 운영 게시판. **파트너 수수료 20%.**
+[[record-issuance-model]]: Chalk로 강의 생성 → Studio 학습 → 운영 게시판. ⚠️ **파트너 수수료 20%는 가설이다** — 9/14 결과부가 "합의된 계약·딜 조건 아님"으로 분류. **9/16 자리에서 확정 조건처럼 말하지 않는다.**
 KPI 2개: **연간 캠프 횟수** · **고객당 평균 유료 구매 전환율**.
 ⚠️ [[bongho-tae]]: **파트너 서비스 바운더리 미정**이면 KPI 1번이 통째로 틀어진다.
 **채널 파트너(대행사 경유) 보류** — *"채널 얘기할 수준은 아직 아니다."*
@@ -81,6 +101,7 @@ KPI 2개: **연간 캠프 횟수** · **고객당 평균 유료 구매 전환율
 
 ## 열린 질문
 
+- ⛔ **Chalk 관문의 합격선을 누가 어떤 기준으로 정하는가** → [[chalk-requirements]] §5 · **Chalk 별도 저장소 분리**(PR #1005 요청, 결정 기록 없음)
 - **[[sediment]]와 [[capability-measurement-module]]의 관계** — 되살아난 목적이 별개 모듈로 가고 있다
 - **7과 6은 언제 합쳐지는가** (커리큘럼 라인 `rules/`는 7 기준 — **사업 볼트 단독 판정 금지**)
 - **볼트·포털·Sediment 중 "팀의 기억"은 누구 몫인가**
@@ -95,4 +116,4 @@ KPI 2개: **연간 캠프 횟수** · **고객당 평균 유료 구매 전환율
 
 ## 자주 여는 곳
 
-[[2026-09-14-weekly-on-hypeproof]] · [[internal-productization]] · [[roles-kpi-proposal-20260914]] · [[chalk]] · [[six-human-capabilities]] · [[hypeproof-operating-model]] · [[jeon-sangyeol-meeting-20260916]] · [[hypeproof-mission]]
+[[2026-09-14-weekly-on-hypeproof]] · [[internal-productization]] · [[roles-kpi-proposal-20260914]] · [[chalk]] · [[chalk-requirements]] · [[chalk-implementation-status]] · [[chalk-requirement-coverage-audit]] · [[requirement-id-index]] · [[six-human-capabilities]] · [[hypeproof-operating-model]] · [[jeon-sangyeol-meeting-20260916]] · [[hypeproof-mission]]

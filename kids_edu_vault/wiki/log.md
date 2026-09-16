@@ -13,6 +13,64 @@ tags:
 
 ---
 
+## [2026-09-15] spec | 요구사항 ID 전수 인덱스 — 767개 ID, 한 행씩
+- Type: spec (신규) · 요청자 [[jay-lee]]: *"lab에 코드 기반으로 요구사항이 정의돼 있으니, 위키에서도 그 코드와 함께 빠짐없이 모든 코드에 해당하는 요구사항을 확인할 수 있게 해달라"*
+- Page created: [[requirement-id-index]] (`wiki/specs/`, 약 259KB / 표 행 704개)
+- Sources: 🆕 `.raw/lab-requirement-id-inventory-20260915.md` (lab 전수 인벤토리, 625정의 / 546고유 / 62계열) + studio 정본 직접 추출(`04f03d0`) + [[chalk-requirement-coverage-audit]](구현 상태 75건)
+- 규칙: **구현 상태·근거는 감사된 ID에만 채우고 나머지는 비웠다.** `—`는 "미구현"이 아니라 **"아직 안 봤다"**임을 페이지 머리에 못 박았다. 원문은 230자에서 문장 경계 절단(아카이브 150자) + **정의 위치 `파일:라인`**을 실어 정확한 인수 기준은 정본에서 읽게 했다
+- 총계: **고유 767** = studio 497(요구사항 303 + 행동 계약 190 + 명명 계약 3 + Intent 4 중복 제외) + Intent 21 + lab 546 (교집합 제외 후 합)
+- ★ **번호 구멍 0건.** 두 저장소 62계열 전부가 1번부터 최대 번호까지 연속이다 — `XX-01 XX-02 XX-04` 식 누락은 없다
+- ⚠️ **중복 정의 진짜 충돌 1건 — `REQ-M30`이 두 개다.** `studio-requirements.md:299`("매칭된 탭을 운전 대상으로 고정", #523)와 `:302`("능력 상실은 보여야 한다 — 무성 폴백 금지", #476)가 **서로 다른 요구사항인데 같은 코드**를 쓴다. `REQ-M` 계열은 행 43 / 최대 번호 42. **개번 판정 필요**
+- ⚠️ **같은 내용의 두 벌 79건** — lab `studio-prd/catalog.json` ↔ `requirements.json`. 지금은 원문 불일치 0건이지만 **한쪽만 갱신되면 즉시 갈라진다**
+- ★ **미러가 양방향으로 벌어져 있다** — lab 미러는 `hypeproof-studio@2d96413`(9/14) 스냅샷이라 **`HC-09`(HAIN7 폐지)와 `SS-01~14`(9/15 신규 `session-sync.md`)가 없다.** 반대로 **`IC-01~07`(독립 강의 개설 계약)은 lab 미러에만 있고 studio main에는 없다** — 열린 PR #1024·이슈 #1006 안에만 있다. **정본 미러가 아직 머지되지 않은 계약을 이미 담고 있다**
+- ⛔ **양쪽 어디에도 정의가 없는데 참조되는 ID 4건** — `MC-07`·`MC-21`·`MC-27`·`MC-34`. `requirements/local-task-review.md`가 *"MC-07, MC-21–25, MC-27–32, MC-34–35의 한정 구현"*이라 적지만 그 ID는 **제안 상태인 #1025 계약**의 것이다. **지금 구현 중인 슬라이스가 읽을 수 없는 코드를 참조한다**
+- ⚠️ **Intent 계열이 두 저장소로 쪼개져 있다** — `INT-ACCESS-*`는 lab, `INT-AE-*`·`INT-US-*`는 studio `docs/design/`. 같은 접두사인데 정본 저장소가 다르고 **어디가 Intent의 집인지 판정 기록이 없다**
+- 경계 선언: 테스트 시나리오 ID(`T-*`·`AT-*`·`DT-*`·`AE-T*`·`VO-T*`·`US-T*`·`CA-T*`·`EFF-T*`·`MR-T*`), 아카이브 작업 단계(`S-1~320` 등), 운영 레지스트리(`KI-*`·`BUG-*`), 법률·헌법 검토 지적(`A-*`·`Z-*`), 오탐(`GPT-4`·`UTF-8`·`K-12`)은 **건수를 적고 제외**했다 — 빠뜨린 게 아니라 다른 층이라는 것을 페이지에서 확인할 수 있게
+- 내 1차 추출에서 **`TUX-A11Y-01~04` 4건과 `TUX-COPY-01`이 빠져 있었다** — lab 인벤토리의 문서별 건수(55)와 대조해 잡았다. ID 정규식이 `A11Y`처럼 **숫자를 품은 접두사 조각**을 못 받던 버그. 교차 대조가 실제로 누락을 잡아냈다
+- Pages updated: [[chalk-requirements]] · [[chalk-implementation-status]] · [[chalk-requirement-coverage-audit]] · [[chalk]] · [[specs/_index]] · [[index]] · [[hot]] · [[log]] · `.raw/.manifest.json`
+
+---
+
+## [2026-09-15] ingest | Chalk 3부작 완성 — 전수 감사로 "부분 42.7%"가 드러났다
+- Type: re-ingest (1건 갱신 반영) + ingest (1건 신규)
+- Sources: `.raw/chalk-requirements-20260915.md`(2차 갱신판 — 이미 직전 ingest에서 반영 완료, 재확인 시 해시 동일) · 🆕 `.raw/chalk-traceability-audit-20260915.md`(studio 세션 전수 감사) · `.raw/chalk-studio-issues-prs-20260915.md`(헤더 3줄 갱신 = 기준 커밋 `4195faa` → `04f03d0`)
+- Pages created: [[chalk-requirement-coverage-audit]] (`wiki/validation/`)
+- ⭐ **판정: `wiki/validation/`.** 요구사항 페이지도 현황 페이지도 아니다 — *요구사항 단위로 반영됐나*를 묻는 **검증 결과**이고, 세 페이지가 3부작으로 선다: **필요한 것(specs) / 되어 있는 것(specs) / 대조 결과(validation)**
+- ★ **가장 큰 칸은 미구현이 아니라 "부분" 42.7%다** (구현 19 · 부분 32 · 미구현 17 · 미확인 7 / 75개). 이 제품의 실제 상태는 *안 만들었다*가 아니라 **"연결은 했고 계약을 아직 못 지켰다"**다 — `classroom-admin.md`의 구현 범위 표가 행마다 남은 인수를 적고 문서가 스스로 *"표의 구현 범위는 전체 ADM 합격을 의미하지 않는다"*고 쓴다. [[chalk-target-shape-proposal]]의 *"기계는 다 만들었고 부품이 없다"*를 요구사항 단위로 본 그림
+- ★ **미구현 17건 중 12건이 이미 열린 실행 단위 4개(#1012·#1015·#1016·#1017) 안에 있다.** 관문 재료 세 줄(`RUN-01`·`RUN-02`·`VER-02`)이 전부 **#1012** 하나에 모여 있다 — 관문을 세우는 일이 흩어진 과제가 아니라 **한 이슈**라는 뜻
+- ★ **7→6을 하지 않는다는 원칙이 문장이 아니라 코드다** — `measurement-core/capability-models.ts`가 *"deliberately no conversion table"*·*"values are never re-mapped"*를 주석으로 박고 `interpretation.ts`가 `CONVERSION_KEYS`를 `legacy_conversion`으로 거절한다. `HC-01/02/03/09` 모두 `구현됨`. `HC-09`는 PR **#1066** 머지 + `test_hain7_signal.py`가 근거
+- ⚠️ **`CLS-04`는 미구현이 아니라 요구사항끼리 부딪친 상태다** — `CLS-04`(학생 허용 후 강사 수정, P1) ↔ `classroom-admin.md:55`("학생 파일 원격 수정은 이 계약으로 허용하지 않는다"). [[chalk-target-shape-proposal]] 충돌 1이 정확히 이 자리이며 **판정 없이 구현으로 갈 수 없다**
+- ⚠️ **`HC-04`의 actor가 `user|policy` 둘뿐이다** — AI 제안·강사 개입을 구분하는 칸이 저장 스키마에 없어 *"강사가 손댄 부분도 독립 수행 증거에서 제외"*(CR-CAP-10)가 **지금 스키마로는 표현될 수 없다.** `HC-05`도 상태 집합 이름·구성이 계약과 다르고 정합 판정 기록이 없다
+- ⚠️ **쓸 수 있는 traceability 매핑이 없었다** — `config/traceability.json` 노드 89개 전수 조회에 Chalk 요구사항 ID **0건**. 파일 자신이 *"Bootstrap scope only"*라 적는다(이슈 #996의 사각지대). 감사 근거는 전부 요구사항 문서·코드·테스트에서 직접 찾은 것
+- ⚠️ **1차 조사는 clean이었지만 최신이 아니었다** — 로컬 main이 origin/main보다 **9커밋 뒤**(ahead 0). fast-forward 후 `04f03d0`. 다만 그 9커밋은 `chalk/`를 0건 건드렸고 Chalk 요구사항·테스트·ADR·마이그레이션은 **바이트 동일**, 운영 health도 동일 → **기존 사실 유효**. 예외 1건이 `HC-09` 신설. 볼트 규약의 *"오래된 체크아웃은 없는 것보다 나쁘다"*가 그대로 적용됐고, 이번엔 `gh`가 원격 직접 질의였기 때문에 이슈·PR 사실만 살았다
+- **20% 가설 표기를 전파했다** — [[record-issuance-model]](정본 개념) + [[jeon-sangyeol-meeting-20260916]](**9/16 자리 자료** — 확정 조건처럼 말하지 않도록 경고). 나머지 인용 3건([[jiwoong-kim]]·[[2026-09-14-weekly-on-hypeproof]]·[[park-junghyun]])은 회의 발언 인용이라 원문 그대로 둠
+- Pages updated: [[chalk-requirements]](§0 반영 현황 + `CLS-04` 충돌 행 + `HC-04/05` 불일치 + `MR-02/03` 미확인) · [[chalk-implementation-status]](기준 커밋 `04f03d0` + 9커밋 재검증 + §1.5 + 열린 질문 3건) · [[chalk]](전수 감사 분포) · [[record-issuance-model]] · [[jeon-sangyeol-meeting-20260916]] · [[index]] · [[hot]] · [[log]] · `.raw/.manifest.json`
+
+---
+
+## [2026-09-15] ingest | Chalk 짝 문서 2벌 — 요구사항(CR-* 89건)과 구현 현황(4195faa)
+- Type: ingest (2 sources, paired)
+- Sources: `.raw/chalk-requirements-20260915.md` (lab 세션) · `.raw/chalk-studio-issues-prs-20260915.md` (studio 세션)
+- 판정: **`wiki/` 트리.** 지금 굴러가는 제품 실행 맥락이고 3년 뒤 다른 강의를 만들 때 볼 문서가 아니다. `curriculum_wiki/`로 가지 않는다.
+- 기존 페이지를 새로 만들지 않고 이어 붙였다 — [[chalk]]·[[chalk-target-shape-proposal]]·[[capability-measurement-module]]·[[2026-09-14-weekly-on-hypeproof]]. 새 페이지는 **성격이 다른 두 벌**(요구사항 정본 정리 / 시점 현황 기록)이라 각각 세웠다.
+- Pages created: [[chalk-requirements]] (`CR-*` 89건 / 9묶음, 정본 15문서 매핑, 개념 사전 8항, 근거 지도 11시점) · [[chalk-implementation-status]] (기준 커밋 `4195faa`, 화면 10개·D1 3테이블·테스트 16종, 이슈·PR 전수, 차단 체인 7줄)
+- Key insight ①: ⭐ **관문이 필요하다는 합의는 있고, 통과시키는 규칙은 어디에도 없다.** 합격선의 **주체·항목·임계값·재판정 절차·근거 공개 범위가 전부 `미확인`**이다. 그리고 `HC-08`(연구 construct audit를 통과한 정의만 쓴다) 때문에 **역량 기반 합격선은 연구가 끝나기 전에 세울 수 없다** → 지금 세울 수 있는 관문은 역량이 아니라 **계약 준수** 축
+- Key insight ②: ⭐ **관문의 재료 3개가 전부 `planned` 리터럴이다** — 리허설 증거·설정 핀·활성화. 확정 문서가 `rehearsal:not_run`·`activated:false`를 **값으로** 들고 있고 ADR 0004가 *"Freezing stores an unverified snapshot, not a deployable class"*라고 적는다. [[chalk-target-shape-proposal]]의 "확정에 내용 검사가 없다"는 판정이 원문으로 확증됐다
+- Key insight ③: **머지된 것과 강사가 보는 것이 다르다** — 운영 Chalk `f5939d9`는 main보다 **PR 4건**(#813·#839·#866·#1027), Service는 **28커밋** 뒤. 볼트의 "구현됨(active)" 판정은 main 기준으로 맞지만 운영 기준으로는 아니다. **의도된 보류인지 누락인지 결정 기록이 없다**
+- Key insight ④: **CR-DEF-04(Service가 권한·토큰 서명 소유)는 요구사항이기 전에 이미 구조다** — `chalk/src/index.ts` 헤더 주석이 Chalk에 상태 쓰기·토큰 서명이 **없음**을 명시하고 drift lock이 단언한다. 7층 그림의 "브릿지 구현됨"이 정확했다
+- 충돌·모순 5건 (§아래 페이지에 `[!contradiction]`으로 기록)
+  1. **`status: active` ↔ 라인업 정본 "제안 단계·대외 언급 금지"** — 층이 다르다(코드가 있다 / 팔 수 있다고 말하지 않는다). 대외 문서·IR에서 완료 제품으로 쓰면 정본 위반 → [[chalk-requirements]] §1
+  2. **session-design "소비자 없음" ↔ #740 이후 소비자 3곳** (`/learn`·Studio 수업 패널·두 LLM 경로). 저장소 문서가 한 단계 낡았고, 이것이 **스키마 소유 결정의 전제를 바꾼다** → [[chalk-implementation-status]] §8
+  3. **여섯 역량의 확정 여부** — #1049 본문은 *"versioned candidate definitions"* + "확정 리브랜드 아님"이라 명시. [[hot]]·[[six-human-capabilities]]의 "2026-09-13 제품 채택"이라는 표현보다 저장소가 더 보수적이다
+  4. **요구사항 총건수 3종** — 289(정본 표기) / 296(PR #1024, 12문서) / 284(9-14 JY 직접 추출). 경계 처리 차이. **인용 시 289 + 출처 병기**로 통일
+  5. **건수 표기 오류** — 라우터가 "9묶음 66건"이라 했으나 실제 `CR-*`는 **89건**이다(1차 87 → 2차 재검증에서 `HC-09` 반영으로 CR-CAP-12·13 추가). 66은 PR #1024의 시나리오 수(79/79 → 66개 시나리오)와 섞인 것으로 보인다
+- 🆕 **ingest 중 원본이 2차 재검증판으로 갱신됐다** — `hypeprooflab@5c0a0859`·`hypeproof-studio@04f03d0` 기준으로 다시 훑어 3건이 들어왔다: **`HC-09` 신설(HAIN7 폐지)** · lab **`measurement-retirement.md`(MR-01~04)** · **9/14 회의 결과부 게시**(확정/가설/미결 구분). 세 건 모두 페이지에 반영. 파생 판정 3개 — ① **파트너 수수료 20%는 가설이며 합의된 딜 조건이 아니다**(결과부 명시, [[record-issuance-model]] 인용 주의) ② **제품 오너는 확정이나 `PRODUCT-LINEUP.md`가 9/11 이후 미갱신** — 정본 표기 갱신이 남은 작업 ③ **저장소 분리는 "사용자 전달 경험을 먼저 정의한 뒤 결정"**으로 순서가 못 박혔다 (PR #1005 요청이 여기 걸린다)
+- ⚠️ **CR-CAP-11 표기 두 갈래** — 볼트는 측정 모듈을 「Studio와 **Chalk** 양쪽 임포트」로 기록했는데 lab 회의 결과부는 「Studio·Claude Code·Codex」만 적고 **Chalk를 임포트 대상에 넣지 않았다**(`미확인`). [[capability-measurement-module]]에 기록
+- ⚠️ 지금 강사에게 손상을 주는 결함: **#1036** — `/authoring` 편집기가 **화면에 없는 단계 키를 저장 시 조용히 지운다.** 제목만 고쳐도 `steps[].help`가 사라져 확정 수업이 도움 제안을 못 싣는다. PR #1028이 여기 막혀 있다
+- Pages updated: [[chalk]](2026-09-15절 신설 + 미결 5건 상태 갱신) · [[chalk-target-shape-proposal]](확증 4건 / 갱신 필요 2건 / 미다룬 축 1건) · [[capability-measurement-module]](#1020·#1049 + HC-08 제약) · [[2026-09-14-weekly-on-hypeproof]](오너 조건의 착수 기록) · [[specs/_index]] · [[index]] · [[hot]] · [[log]] · `.raw/.manifest.json`
+
+---
+
 ## [2026-09-15] fix | 9/15 vs 9/16 혼동 해소 — 전상열 미팅은 9/16, 9/15는 덱 기한
 - Type: correction (날짜·명명)
 - 계기: JY가 *"wiki에 15일 16일 관련 혼동이 있었던 것 같은데?"* — 직전 ingest가 플래그만 걸고 남겨 둔 건.

@@ -89,8 +89,11 @@ tags:
 - [[pilot-gemini-api-key]] · [[pilot-server-domain]] · [[pilot-oauth-setup]] · [[pilot-cline-gemini-integration]] · [[pilot-game-starter-template]] · [[pilot-rehearsal-late-april]] · [[pilot-operator-guide]]
 - [[curriculum-submission-v2]] (2026-04-22) — 커리큘럼 협력사 제출용 포맷 (final)
 
-### Specs (28)
+### Specs (31)
 - [[specs/_index|_index]]
+- ⭐ [[requirement-id-index]] (2026-09-15) — **정본 요구사항 ID 767개 전수 인덱스** (`studio@04f03d0` · `lab@5c0a0859`). 계열 62 · 번호 구멍 **0** · 중복 정의 `REQ-M30` **1건** · lab 미러에 **`HC-09`·`SS-*` 없음** / studio main에 **`IC-01~07` 없음**
+- ⭐ [[chalk-requirements]] (2026-09-15) — Chalk 요구사항 정본 정리 `CR-*` 89건 / 9묶음. 정본 15문서 매핑 · 개념 사전 · 근거 지도 · **합격선의 주체·기준·임계값 전부 미확인**
+- ⭐ [[chalk-implementation-status]] (2026-09-15) — Chalk 구현 현황 (`04f03d0`). 화면 10개·D1 3테이블 / **리허설·설정핀·활성화 전부 미구현** · 이슈·PR 전수 · **운영이 main보다 PR 4건 뒤**
 - [[capability-measurement-module]] (2026-09-14) — 역량 측정 모듈. Studio·Claude Code·Codex 공통 코어. 코어 머지 · **실사용 0건** · 첫 사용자 [[jay-lee]]
 - [[pilot-env-design]] · [[pilot-curriculum-adapted]] · [[sk-biopharma-bongho-curriculum-v2]] · [[sk-biopharma-curriculum-detail-v1]] · [[hypeproof-studio-game-skillpack-v1]]
 - [[curriculum-wizard-v1]] (2026-04-20) — 나만의 마법 게임 만들기 커리큘럼 상세 스펙 (게임 타이틀 카드)
@@ -151,7 +154,8 @@ tags:
 - [[llm-pulse-update]] — LLM Pulse 업데이트 런북
 - [[pilot-deploy]] — /pilot-deploy 슬래시 커맨드 런북 (stub)
 
-### Validation (8) — QA·커리큘럼 검증 결과
+### Validation (9) — QA·커리큘럼 검증 결과
+- ⭐ [[chalk-requirement-coverage-audit]] (2026-09-15) — Chalk 요구사항 정본 ID 75개 전수 대조. **구현 19 / 부분 32 / 미구현 17 / 미확인 7**. `traceability.json`에 Chalk ID 0건 · `CLS-04` 요구사항 충돌 · `HC-04` actor 2종
 - [[test-quality-review-2026-05-15]] (2026-05-15) — LangGraph 전환 후 테스트 수정 + 3-Phase 품질 개선 완료 (111 BE / 19 FE = 130 tests, HIGH 3건 해소)
 - [[e2e-curriculum-results]] — E2E 커리큘럼 6블록 전체 실행 결과
 - [[edge-case-findings]] — 엣지케이스 발견 사항 (priority-ranked)
@@ -200,6 +204,8 @@ tags:
 - [[ir-20260915-pricing-evidence-audit]] (2026-09-05) — 9/15 덱 숫자 감사: 160분 분모 미확인 · 검토가(50만) vs 실제 견적(92만) · 정산 제안이 원가와 대응하지 않음 · 자물쇠 3개
 
 ## Recent Sources (ingested)
+- `.raw/lab-requirement-id-inventory-20260915.md` (2026-09-15, lab 정본 ID 전수 인벤토리 625정의/546고유) → [[requirement-id-index]]
+- `.raw/chalk-requirements-20260915.md` + `.raw/chalk-studio-issues-prs-20260915.md` + `.raw/chalk-traceability-audit-20260915.md` (2026-09-15, 3부작 — 요구사항 / 현황 / 전수 감사) → [[chalk-requirements]] + [[chalk-implementation-status]] + [[chalk-requirement-coverage-audit]] + [[chalk]] + [[chalk-target-shape-proposal]] + [[capability-measurement-module]] + [[record-issuance-model]] + [[2026-09-14-weekly-on-hypeproof]]
 - `.raw/meeting_notes/Weekly on HypeProof - 2026_08_31 ...` 요약본 + 스크립트 (2026-08-31, 회의 1건 / 파일 2개, 스크립트는 gitignore) → [[weekly-on-hypeproof-20260831-source]] + [[2026-08-31-weekly-on-hypeproof]] + [[minhan-cho]] + [[sales-ownership-by-vertical]] + [[studio-subscription-league-model]] + [[production-strategy-session-20260919]] + [[action-items-20260831]]
 - `hypeprooflab/MISSION.md` + `docs/decisions/2026-08-10-positioning-reset.md` (2026-08-10 정본 개정) → [[hypeproof-positioning-reset-20260810]] + [[hypeproof-mission]] + [[mission-product-alignment]] + [[chalk]] + [[sediment]]
 - `hypeprooflab:MISSION.md` (2026-07-31 확정 — ⚠️ 8/10 개정으로 대체됨) → [[hypeproof-mission-20260731-source]] + [[hypeproof-mission]] + [[hypeproof-lab]] + [[mission-driven]] + [[hypeproof-business-strategy]]

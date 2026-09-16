@@ -4,7 +4,7 @@ title: "Chalk 완성형 제안 (2026-09-14)"
 status: in-progress
 owner: "[[jinyong-shin]]"
 created: 2026-09-14
-updated: 2026-09-14
+updated: 2026-09-15
 tags:
   - deliverable
   - chalk
@@ -12,6 +12,8 @@ tags:
   - proposal
 related:
   - "[[chalk]]"
+  - "[[chalk-requirements]]"
+  - "[[chalk-implementation-status]]"
   - "[[hypeproof-studio]]"
   - "[[production-strategy-session-20260919]]"
   - "[[six-human-capabilities]]"
@@ -170,6 +172,23 @@ Studio · 학생                        구현됨
 `_worklog/`는 git 저장소가 아닌 로컬 작업 폴더이며 같은 형태의 산출물(`why-teen-startup-ir-20260915.html` 등)이 이미 쌓여 있다.
 
 > 인용한 요구사항 원문 자체는 `jayleekr/hypeproof-studio`가 **공개 저장소**라 공개 정보다. 옮긴 이유는 인용이 아니라 **내부 판단** 때문이다.
+
+## 2026-09-15 — 근거가 붙은 것 / 갱신이 필요한 것
+
+이 제안의 판정 3개가 원본 조사로 확증됐다. 상세는 [[chalk-requirements]] · [[chalk-implementation-status]].
+
+| 이 문서의 주장 | 2026-09-15 확증 |
+|---|---|
+| 검수된 실행 템플릿 **0개**라 독립 강의가 안 열린다 | ✅ PR #1027 본문: **"배포되는 레지스트리에서 활성화된 템플릿은 0개이며 활성화는 별도의 관리자 결정"** |
+| 확정에 내용 검사가 없다 | ✅ `rehearsal:not_run`·`activated:false` **리터럴** + ADR 0004 "no activation". 관문 재료 3개(리허설 증거·설정 핀·활성화) 전부 미구현, 실행 단위는 **#1012** |
+| 강사 수정을 증거에서 분리해야 한다 (충돌 1) | ⚠️ 더 급한 것이 앞에 있다 — **#1036**: 편집기가 화면에 없는 단계 키를 저장 시 지운다. *증거 분리*를 논하기 전에 *설정 보존*이 깨져 있다 |
+| 7층 구성에서 "관문 = 자리만 있음" | ✅ 정확했다. 다만 **Service 소유 경계는 이미 코드로 집행된다** — `chalk/src/index.ts` 헤더 주석이 Chalk에 토큰 서명·상태 쓰기가 **없음**을 명시하고 drift lock이 단언한다 |
+
+**갱신이 필요한 것 2건**
+- 요청 결정 4번(**수업 설계 형식 소유자를 Service로 확정**)의 전제가 바뀌었다 — 저장소 문서는 "session-design은 소비자가 없다"고 적었지만 **#740 이후 `/learn`·Studio 수업 패널·두 LLM 경로가 실제 소비자**다. 소유권 논의를 "소비자 없는 envelope"에서 **"이미 3곳이 읽는 계약"**으로 다시 써야 한다
+- 이 문서가 인용한 **요구사항 289건**은 정본 표기이나, PR #1024는 **12문서 296건**으로 센다 → [[chalk-requirements]] §3 주석
+
+**이 문서가 아직 다루지 않은 축 1개**: 배포 부채. 운영 Chalk가 main보다 PR 4건, Service가 28커밋 뒤처져 있다. 3단계 계획은 *만드는 순서*만 말하고 *운영에 도달하는 순서*는 말하지 않는다.
 
 ## 열린 것
 

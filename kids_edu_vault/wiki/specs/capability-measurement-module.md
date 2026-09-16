@@ -7,9 +7,11 @@ tags:
   - measurement
   - product
 created: 2026-09-14
-updated: 2026-09-14
+updated: 2026-09-15
 related:
   - "[[six-human-capabilities]]"
+  - "[[chalk-requirements]]"
+  - "[[chalk-implementation-status]]"
   - "[[hypeproof-studio]]"
   - "[[members-portal-20260914-source]]"
   - "[[2026-09-14-weekly-prep]]"
@@ -112,3 +114,30 @@ related:
 ### 상위 결정
 
 이 모듈은 [[internal-productization]]의 실행 수단이다. *"우리 모두가 이거에 매달려서 측정하는 게 **매일매일 프로세스화** 돼 있어야 돼요. 그게 가장 중요하다."*
+
+## 2026-09-15 — 저장소 쪽 사실 2건
+
+출처 [[chalk-implementation-status]] (`jayleekr/hypeproof-studio` 기준 커밋 `4195faa`).
+
+- **Epic #1020** "측정 코어 분리와 Studio·Claude Code·Codex 플러그인 — Jay dogfood" (OPEN) + **Epic #1049** "Capability Evidence: member work review, conditional measurement, next-task improvement" (OPEN). #1049는 **Studio·Chalk를 host product로 유지**한다고 명시한다 — 측정 코어는 제품이 아니라 부품이다.
+- ⚠️ **여섯 역량은 확정이 아니다.** #1049 본문: 여섯 역량(Framing/Judgment/Orchestrate/Verify/Adapt/Ownership)은 *"versioned candidate definitions, open to future revision"*이며 작업명 "HypeProof Capability Evidence / HypeProof 역량 관찰"도 **확정 리브랜드가 아니라고 명시**한다. 7 AI Native Assets와의 관계는 `미확인`. → [[six-human-capabilities]]
+
+> [!warning] 관문이 이 모듈을 기다릴 수는 없다
+> [[chalk-requirements]] CR-CAP-08(=`HC-08`)이 **"연구의 최소 construct audit를 통과한 정의만 새 측정 구현에 쓴다"**고 걸어 둔다. 후보 역량 6종의 타당성 검증이 끝나기 전에는 **역량 기반 합격선을 세울 수 없다.**
+> 따라서 [[chalk]]의 관문이 지금 세울 수 있는 축은 역량 판정이 아니라 **수업 설계·운영 계약의 준수**다. 이 구분은 라인업 정본의 문구와도 같다 — *관문이 판정하는 것은 계약 준수이고 학습자 역량 해석과 구분한다*.
+
+### ⚠️ 이 페이지의 "Studio·Chalk 양쪽 임포트"가 lab 결과부와 어긋난다
+
+> [!contradiction] 연결 대상 표기가 두 갈래
+> 볼트(이 페이지·[[2026-09-14-weekly-on-hypeproof]])는 **「Studio와 Chalk 양쪽에 임포트」**로 적었다.
+> 2026-09-15에 게시된 2026-09-14 회의 **결과부**는 **「공통 코어를 Studio·Claude Code·Codex에 연결하고 Jay의 실제 작업으로 먼저 검증」**이라 적고 **Chalk를 임포트 대상에 넣지 않았다.**
+> 어느 쪽이 맞는지 `미확인`. [[chalk-requirements]] CR-CAP-11에 같은 항목으로 기록했다. **Chalk 관문이 이 모듈을 재료로 쓴다는 전제가 여기에 걸려 있으므로 확인이 필요하다.**
+
+### 🆕 `HAIN7` 폐지 (2026-09-15) — `HC-09` + `MR-01~04`
+
+제품 요구사항(`capability-model-contract.md`의 `HC-09`)과 lab 제품 문서(`measurement-retirement.md`의 `MR-01~04`)에 **동시에** 들어왔다.
+
+- 새 측정과 권장 에이전트 흐름에서 **`HAIN7`은 폐지**. 진입점은 **6역량 워크벤치와 그 버전 있는 방법론**
+- 과거 scorer·rubric·결과는 **명시적으로 선택한 과거 재생/내보내기에서만** 열린다
+- ★ **7→6 변환이 일어나지 않는다.** 과거 기록은 **당시 7축 정의를 유지**하며 6축 점수가 되지 않고, 원자료는 덮어쓰지 않으며 과거 방법론 판은 **바이트 보존**해 보관용으로 표시한다 (`MR-02`·`MR-03`)
+- 이것이 [[six-human-capabilities]]의 "이름 통일이 아니라 버전으로 푼다"는 판정을 **정본 수준에서 집행한 첫 조항**이다. 측정 축 분열이 한 겹 좁혀졌지만 — **두 층이 언제 합쳐지는지는 여전히 미결**이고 6역량이 7보다 우수하다는 검증은 없다

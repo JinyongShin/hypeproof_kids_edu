@@ -19,7 +19,7 @@ tags:
   - measurement
   - roles
 created: 2026-09-14
-updated: 2026-09-14
+updated: 2026-09-15
 ---
 
 # Weekly on HypeProof — 2026-09-14
@@ -86,6 +86,7 @@ updated: 2026-09-14
 같이 나온 지적: *"내가 진용이한테 뭐라고 한 건 **개발한 게 아무것도 없어서**예요. **너는 개발을 할 수 있는데 안 한 거잖아.** (…) 그거는 **안 하겠다고 하는 거랑 별다를 게 없다**고 느껴서."*
 
 **조건**: Intent부터 요구사항까지 제대로 발현하고, **요구사항 매핑 페이지에 트래킹**할 것. 프로덕트 오너의 일이다.
+→ 2026-09-15 착수: [[chalk-requirements]](요구사항 `CR-*` 89건) + [[chalk-implementation-status]](현황·이슈·PR 전수). 저장소 쪽 대응은 이슈 **#1007** / PR **#1024**(11문서 289건 → 38개 실행 단위).
 
 > 이 자리는 1시간 전 본인이 지목한 구멍과 이어진다 — *"**강의를 우리가 아니라 누군가 한다고 했을 때 그 자격을 어떻게 줄 거냐**는 측정 축이 빠져 있었다. [[chalk|초크]]에 **게이트 역할**을 부여하면 좋지 않을까."* 8/31 Chalk 게이트웨이론의 연장이다.
 
@@ -162,4 +163,4 @@ updated: 2026-09-14
 
 ## 관련
 
-[[weekly-on-hypeproof-20260914-source]] · [[2026-09-14-weekly-prep]] · [[internal-productization]] · [[six-human-capabilities]] · [[capability-measurement-module]] · [[chalk]] · [[sediment]] · [[roles-kpi-proposal-20260914]] · [[2026-09-06-weekly-on-hypeproof]]
+[[weekly-on-hypeproof-20260914-source]] · [[2026-09-14-weekly-prep]] · [[internal-productization]] · [[six-human-capabilities]] · [[capability-measurement-module]] · [[chalk]] · [[chalk-requirements]] · [[chalk-implementation-status]] · [[sediment]] · [[roles-kpi-proposal-20260914]] · [[2026-09-06-weekly-on-hypeproof]]
