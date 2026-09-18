@@ -21,6 +21,7 @@ related:
   - "[[chalk-entry-point-20260918]]"
   - "[[chalk-target-shape-proposal]]"
   - "[[ruling-pedagogy-gate-implementation]]"
+  - "[[chalk-ci-coverage-census]]"
 ---
 
 # Chalk 교육 원칙 관문 — 검사기 v0
@@ -129,6 +130,12 @@ related:
 - **관문 판정(`pedagogy`)이 저장되지 않는다.** 확정 응답에 실려 나갈 뿐 `module_json`에 들어가지 않으며, `#1114`의 read-back 대조 테스트가 **그 사실을 주석과 함께 고정**한다 — 빠뜨린 필드가 아니라 설계다. 판정은 **확정 시점의 사건**이지 저장된 버전의 속성이 아니다. → *"그때 무엇을 통과했나"를 되물을 곳이 없다.*
 - **화면이 판정을 못 보여 준다.** `authoring.html`의 `call()`이 `j.error` 문자열만 쓰므로 `reason`도 `findings`도 화면에 닿지 않는다. 판정과 "무엇을 채우면 열리는가"를 띄우는 브랜치가 있으나 **아직 미머지**(`feat/chalk-pedagogy-verdict-ui`, 커밋 `4c74217`, 이슈 미발행).
 - **규칙 술어가 코드에 있다.** 정본은 이 저장소의 커리큘럼 위키이고 주석에 조항 ID·경로·짧은 인용만 남겼다. 장기적으로는 외부 정본에서 읽는 구조(엔진/데이터 분리)로 가야 하며, 모양은 `worker/scripts/cohort-harness/`의 `validate.py`/`rules.yaml`에 이미 있다. 단 **그 mini-YAML 파서가 list-of-maps를 지원하지 않아 규칙 표는 JSON이어야 한다.**
+
+> [!warning] 🆕 2026-09-19 — **관문 코드가 브라우저 검사의 사각지대에 있다**
+> `worker/src/lib/lesson-pedagogy.ts`가 `dental-reference.yml`의 `paths` 필터에 **없다.** 그 시험이 실제로 지나는 파일인데도 그렇다.
+> → **관문만 고치는 PR은 브라우저 저작 시험이 아예 돌지 않는다.** `#1115`가 걸리지 않고 지나간 것은 그 PR이 `authoring.ts`도 함께 고쳤기 때문 — **운이었다.**
+> 같은 작업에서 **손으로 배선하는 쪽의 시험 하나를 깨뜨렸고 검사는 초록이었다. 열흘 뒤 우연히 발견됐다.**
+> 원인·전수·수정 우선순위 → [[chalk-ci-coverage-census]] (목록에 파일 추가만 하면 되고 **비용 0**)
 
 ## 7. 추적
 

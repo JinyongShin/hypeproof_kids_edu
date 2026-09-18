@@ -13,6 +13,7 @@ tags:
   - product
   - implementation
 related:
+  - "[[chalk-ci-coverage-census]]"
   - "[[chalk-pedagogy-gate]]"
   - "[[chalk-studio-architecture]]"
   - "[[chalk-entry-point-20260918]]"

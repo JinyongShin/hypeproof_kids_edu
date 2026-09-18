@@ -122,7 +122,8 @@ tags:
 - 제품 3종: [[hypeproof-studio]] (돌린다) · [[chalk]] (만든다, 제안 단계) · [[sediment]] (판단 정렬)
 - Dental homepage stack (2026-06-07): [[gabia]] · [[cafe24]] · [[claude-code]] · [[vercel]] · [[cloudflare]] · [[hypeproof-ai-xyz]]
 
-### Concepts (21)
+### Concepts (22)
+- 🆕 [[verification-discipline]] (2026-09-19) — **검증 규율 3개.** 부분만 보고 "없다" 단정 금지 · 워킹트리 아니라 **푸시된 것**을 읽기 · 음성 결과 전에 **양성 대조군**. 하루에 세 사람이 각자 틀린 자국
 - ⭐ [[six-human-capabilities]] (2026-09-13 채택) — **7 Assets → 6 역량 재구성.** Framing·Judgment·Orchestrate·Verify·Adapt·Ownership. 정본(7)과 병존
 - ⭐ [[hypeproof-operating-model]] (2026-09-14) — How We Work: 6단계 흐름 · 9역할 · RACI 19행 · 주간 루프 · 6원칙
 - [[ai-crew-personas]] (2026-09-14) — Scout·Compass·Forge·Lens·Keeper + 위임 3등급 (자동/검토후/인간주도)
@@ -158,7 +159,8 @@ tags:
 - [[llm-pulse-update]] — LLM Pulse 업데이트 런북
 - [[pilot-deploy]] — /pilot-deploy 슬래시 커맨드 런북 (stub)
 
-### Validation (9) — QA·커리큘럼 검증 결과
+### Validation (10) — QA·커리큘럼 검증 결과
+- 🆕 ⭐ [[chalk-ci-coverage-census]] (2026-09-19) — **자동 검사 커버리지 전수.** PR 반응 워크플로 22개 중 7개 · 브라우저 층 둘 다 경로 필터 · 시험 59개 중 28개 미실행. ⛔ **관문 코드가 필터에 없어 관문만 고치면 브라우저 시험이 안 돈다.** 원인은 **배선 규약이 두 벌**
 - ⭐ [[chalk-requirement-coverage-audit]] (2026-09-15) — Chalk 요구사항 정본 ID 75개 전수 대조. **구현 19 / 부분 32 / 미구현 17 / 미확인 7**. `traceability.json`에 Chalk ID 0건 · `CLS-04` 요구사항 충돌 · `HC-04` actor 2종
 - [[test-quality-review-2026-05-15]] (2026-05-15) — LangGraph 전환 후 테스트 수정 + 3-Phase 품질 개선 완료 (111 BE / 19 FE = 130 tests, HIGH 3건 해소)
 - [[e2e-curriculum-results]] — E2E 커리큘럼 6블록 전체 실행 결과

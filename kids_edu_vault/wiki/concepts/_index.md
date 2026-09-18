@@ -33,6 +33,9 @@ tags:
 ## Professional Channel
 - [[legal-brief-prep-loop]] — 변호사 준비서면 루프: 의뢰인 사실 추출, 해석 분기, truthworthy 교정, 변호사 pass/fail 감각
 
+## 일하는 방식
+- 🆕 [[verification-discipline]] — 검증 규율 3개. "확인했다"고 말하기 전에 방법의 사각지대까지 적는다
+
 ## Notes
 - 새 concept은 `_templates/concept.md`로 생성.
 - 외부 개념(예: TDD, Red-Green-Refactor)도 조직에서 특별히 의미가 있으면 등록.

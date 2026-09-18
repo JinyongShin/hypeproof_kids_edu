@@ -883,6 +883,26 @@
         "wiki/hot.md",
         "wiki/log.md"
       ]
+    },
+    "scratchpad/chalk-scan:ci-coverage-census.md": {
+      "hash": "f388af48fc3c5ee5504521987392d4ce",
+      "ingested_at": "2026-09-19",
+      "source_ref": "2026-09-19 자동 검사 커버리지 전수. 기준 hypeproof-studio main ce95747. 세션 2개가 독립 측정해 숫자 일치. 볼트 밖 경로이며 이 세션이 직접 확인하지 않음",
+      "pages_created": [
+        "wiki/validation/chalk-ci-coverage-census.md",
+        "wiki/concepts/verification-discipline.md"
+      ],
+      "pages_updated": [
+        "wiki/specs/chalk-pedagogy-gate.md",
+        "wiki/specs/chalk-implementation-status.md",
+        "wiki/validation/chalk-requirement-coverage-audit.md",
+        "wiki/components/chalk.md",
+        "wiki/concepts/_index.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md",
+        ".raw/.manifest.json"
+      ]
     }
   }
 }

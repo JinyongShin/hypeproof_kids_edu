@@ -13,6 +13,8 @@ tags:
   - requirements
   - traceability
 related:
+  - "[[chalk-ci-coverage-census]]"
+  - "[[verification-discipline]]"
   - "[[chalk-requirements]]"
   - "[[chalk-implementation-status]]"
   - "[[requirement-id-index]]"
