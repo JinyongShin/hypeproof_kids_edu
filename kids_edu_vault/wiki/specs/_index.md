@@ -13,6 +13,8 @@ tags:
 설계 문서·ADR 상위·요구사항. 한 기능/시스템 = 한 페이지. 상태: `draft → review → approved → implemented → superseded`.
 
 ## Active
+- 🆕 ⭐ [[chalk-pedagogy-gate]] (2026-09-18) — **교육 원칙 관문 검사기 v0.** PR `#1115` 머지. 검사 4종·조항 매핑·결정 6건·422 차단. `CR-GATE-03`이 처음 코드가 됐다
+- 🆕 [[chalk-studio-architecture]] (2026-09-18) — Studio·Chalk·Service 4계층·소유 경계(`ARC-01`)·**확정 14단계**·저장 구조. ⛔ 확정본을 지우는 경로가 없다
 - ⭐ [[requirement-id-index]] (2026-09-15) — **요구사항 ID 767개 전수 인덱스.** 두 저장소 정본, ID 하나 = 한 행(코드·원문·정의 위치·구현 상태). 번호 구멍 0 · `REQ-M30` 중복 1 · lab 미러가 `HC-09` 누락
 - ⭐ [[chalk-requirements]] (2026-09-15) — Chalk 요구사항 정본 정리. `CR-*` 89건 / 9묶음, 정본 15문서 매핑. **합격선 규칙이 없다**는 공백이 핵심
 - ⭐ [[chalk-implementation-status]] (2026-09-15) — Chalk 구현 현황. 기준 커밋 `4195faa`. 되는 것/안 되는 것·이슈·PR 전수·**배포 부채(운영이 main보다 PR 4건 뒤)**

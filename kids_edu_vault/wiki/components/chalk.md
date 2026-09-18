@@ -18,12 +18,16 @@ related:
   - "[[chalk-requirement-coverage-audit]]"
   - "[[requirement-id-index]]"
   - "[[chalk-target-shape-proposal]]"
+  - "[[chalk-pedagogy-gate]]"
+  - "[[chalk-studio-architecture]]"
+  - "[[chalk-entry-point-20260918]]"
 ---
 
 # Chalk
 
 > **강사용 제품.** Studio가 수업을 돌린다면 Chalk는 **수업을 만든다.**
 > 상태: ⭐ **구현됨 (2026-09-14 확인).** 현재 기능 3개 + 로드맵 4개. 아래 §2026-09-14 참조.
+> 🆕 **2026-09-18 — 관문이 코드가 됐다** → **[[chalk-pedagogy-gate]]** · 구조 → **[[chalk-studio-architecture]]** · ⛔ 진입점 미결 → **[[chalk-entry-point-20260918]]**
 > 📚 요구사항 정본 정리 → **[[chalk-requirements]]** (CR-* 89건) · 구현 현황 → **[[chalk-implementation-status]]** (`04f03d0`) · ID 전수 인덱스 → **[[requirement-id-index]]** · 반영 전수 감사 → **[[chalk-requirement-coverage-audit]]** (구현 19 / 부분 32 / 미구현 17 / 미확인 7)
 > ~~제안 단계(proposal-stage)~~ — 8/30~9/6 기록. 9/6 회의에서 [[jay-lee]]가 "초크 형태로 구현 중"이라 했고, 9/14 기능 페이지에서 요구사항·검증 근거까지 확인됐다.
 
@@ -227,3 +231,24 @@ Chalk  ──만든다──▶  수업 설계 파일  ──돌린다──▶ 
 - ⚠️ **`CLS-04`는 미구현이 아니라 요구사항끼리 부딪친 상태다** — "학생 허용 후 강사 수정"(`CLS-04` P1) ↔ "학생 파일 원격 수정 불허"(`classroom-admin.md`). [[chalk-target-shape-proposal]] 충돌 1이 이 자리다
 - ⚠️ **`HC-04`의 actor가 `user|policy` 둘뿐이다** — AI 제안·강사 개입을 구분하는 칸이 저장 스키마에 없다. *"강사가 손댄 부분도 독립 수행 증거에서 제외"*가 **지금 스키마로는 표현될 수 없다**
 - ⚠️ **`config/traceability.json`에 이 요구사항 ID가 0건** (노드 89개 전수 조회). 이슈 #996의 사각지대
+
+---
+
+## ⭐ 2026-09-18 — 관문이 합의에서 코드가 됐다
+
+> 출처는 `hypeproof-studio` 저장소이며 **이 볼트가 직접 확인하지 않았다**(전언). 상세 → [[chalk-pedagogy-gate]]
+
+**PR `#1115` 머지**(2026-09-18 13:55Z), 이슈 `#1114` 닫힘. `CR-GATE-03`("검사는 형식·권한에 더해 **내용 검사**를 포함해야 한다")이 처음으로 구현됐다.
+
+- **자리는 Chalk가 아니라 Service의 확정 핸들러다** — Chalk에 두면 생성기가 Service에 직접 요청해 **우회된다** → [[pedagogy-gate-at-service-freeze]]
+- 확정 시점 검사가 **13 → 14단계**. 차단은 **422 `pedagogy_blocked`**
+- 검사 4종 중 실질 차단은 **선행 조건 하나**이고, **그 조항의 의미가 아직 미확정**이다 → [[ruling-pedagogy-gate-implementation]]
+- 위 §게이트웨이 판정과 [[chalk-requirements]] §5의 "합격선 규칙이 없다"는 공백이 **일부만** 메워졌다. 주체·재판정·근거 공개는 여전히 `미확인`
+
+### 같은 작업에서 드러난 것
+
+- ⛔ **리허설은 미구현이 아니라 미결정이다.** `rehearsal: "not_run"`은 하드코딩 리터럴이고, **어디서 돌아야 하는지 문서가 갈라 말한다**(레이어 배정표는 Chalk, 요구사항·온보딩은 Studio). 결과가 돌아올 경로도 없다
+- ⛔ **제품 정의가 Chalk의 사용 환경을 정한 적이 없다.** 웹도 앱도 명시된 바 없고 웹/앱 이원 구조는 **요구사항 층(`ARC-02`)에서 처음 등장**한다 → [[chalk-entry-point-20260918]]
+- ⛔ **강사 페르소나가 없다.** 페르소나 3종이 전부 Studio 쪽이고 `educator-chalk`는 `status: new`(미조사)
+- ⚠️ **작업 41개 전부 완료를 증명할 근거 칸(`verification_inputs`)이 비어 있다** — 비면 그 덩어리는 `fulfilled`가 될 수 없다
+- ⛔ **확정본을 지우는 경로가 없다** — 제품 API로는 운영자 권한으로도 못 지운다 → [[chalk-studio-architecture]]

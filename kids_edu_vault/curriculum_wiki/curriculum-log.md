@@ -3,7 +3,7 @@ type: meta
 scope: edu-11-16
 title: "Curriculum Log"
 created: 2026-08-08
-updated: 2026-08-30
+updated: 2026-09-18
 tags:
   - meta/log
   - curriculum
@@ -12,6 +12,20 @@ tags:
 # Curriculum Log
 
 `curriculum_wiki/` 변경 이력. 최신 항목이 위. **추가 전용 — 과거 엔트리 수정 금지.**
+
+---
+
+## [2026-09-18] ruling | 조항 4건이 제품 검사가 됐다 — lint 2 첫 구현
+- Source: `hypeproof-studio` PR `#1115`(외부 저장소, **이 세션이 직접 확인하지 않음**) + `scratchpad/chalk-scan/gate-check-source-mapping.md`
+- 생성: [[ruling-pedagogy-gate-implementation]] (`gaps/`, `type: ingest-ruling`, **`scope: common`** — 두 라인 공통 사안)
+- 판정 **`adopt`**: 조항을 바꾸지 않고 채택됐다. **규칙 문서를 제품에 복사하지 않았고** 코드 주석에 조항 ID·경로·짧은 인용까지만 남겼다 → **이 볼트가 여전히 정본이다**
+- ⭐ **[[curriculum-schema]] lint 2가 첫 구현체를 얻었다.** 제품의 `step_evidence` 검사와 **대상·방식·수준(경고)까지 일치**한다. 문서의 *"lint 1~12 전부 미구현"* 문장을 정정했다 — 단 **구현은 이 볼트가 아니라 다른 저장소에 있다**
+- [[lesson-plan-quality-checklist]] 관문2-2·2-6·2-9가 제품 검사 3종으로 나갔다. 2-9는 **±10분 임계값까지 조항에 있어** 제품이 새로 정할 것이 없었다
+- ⛔ **되돌아온 판정 요구 ①** — `prerequisites`의 의미가 미확정인데 **그것이 유일한 실질 차단 검사**다. 자산 의존 관계([[placement-rules]] `requires`) ↔ 학습자 선행지식([[methods-index]] §선택가이드 2단계) 두 후보가 코드 주석에 병기돼 있다. **두 층을 함께 확정해야 한다** — 조항의 의미는 이 볼트가, `session-design`의 `prerequisites` 칸이 무엇을 담는가는 제품(`CH-01` 유래)이 정한다. 어긋나면 관문이 엉뚱한 것을 검사하고, 한쪽 몫으로만 적어 두면 **서로 정했다고 여겨 아무도 안 정한다**
+- ⛔ **되돌아온 판정 요구 ②** — **관문1(헌법)을 켜지 못했다.** [[edu-constitution]]이 아동·청소년 전제인데 제품 범위에 **성인 전문직 수업**이 있다. 켜면 성인 수업이 A-4·B-1에 걸리고, 끄면 아동 수업에서 헌법이 작동하지 않는다. **정확도가 아니라 정합성 문제.** `scope`에 성인 라인 값이 없다 — 제품 쪽 `CR-EDU-08`과 같은 사안
+- ⚠️ **관문2-4(금지 개입 4계열)는 관문2에서 유일하게 "필수. 없으면 미완성"인데 제품에 필드가 없다.** [[prohibited-moves]]가 설계한 *"강사 매뉴얼은 그 필드에서 자동 생성된다"*가 아직 성립하지 않는다
+- 📌 **드러난 것: 검사 대상 인스턴스가 이 볼트에 0건이다.** `activities/`·`assets/`·`curricula/`가 비어 있어 회귀 샘플을 커리큘럼 위키에서 가져올 수 없었고, 제품 데모는 사업 볼트의 `wiki/specs/track-b/` 수업 문서를 원재료로 썼다. **조항은 밖에서 먼저 실행됐고 정본 쪽에는 걸어 볼 부품이 아직 없다**
+- 자산 변경: [[curriculum-schema]](lint 절 정정) · [[lesson-plan-quality-checklist]](자동화 절) · [[curriculum-index]](gaps 4→5)
 
 ---
 

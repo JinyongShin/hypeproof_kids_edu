@@ -47,8 +47,9 @@ tags:
 - [[2026-04-17-jay-jinyong-call]] (2026-04-17) · [[2026-04-12-jay-workshop-structure]] · [[2026-04-11-call-note]] · [[2026-02-09-meeting]] · [[2026-01-26-meeting]] · [[2026-01-19-meeting]] · [[2026-01-12-meeting]] · [[2026-01-05-meeting]]
 - Research/Ops: [[2026-04-12-team-briefing-research]] (2026-04-12) — 소아암 환아 AI 코딩 파일럿 근거 요약 · [[2026-04-22-hospital-filamentary-checklist]] (2026-04-22) — 병원/필라멘트리 사전 확인 체크리스트 · [[2026-04-21-hospital-inquiry-draft]] (2026-04-21) — 국립암센터 행사 사전 확인 요청 초안 (9개 항목)
 
-### Decisions (30)
+### Decisions (31)
 - [[decisions/_index|_index]]
+- 🆕 [[pedagogy-gate-at-service-freeze]] (2026-09-17, accepted) — **교육 원칙 관문을 Service 확정 핸들러에 둔다.** Chalk에 두면 생성기가 우회한다
 - [[regular-meeting-monday-930]] · [[discord-for-comms]] · [[podcast-format-host-panels-guest]] · [[markdown-for-knowledge-share]] · [[ai-onboarding-role]] · [[fast-implementation-mode]] · [[combat-vs-cooperative-framing]]
 - Pivot (2026-04-12): [[pivot-to-chat-preview-wrapper]] · [[iframe-sandbox-over-webcontainers]] · [[parent-gated-signup-first]]
 - Tooling (2026-04-12): [[subagent-team-structure]]
@@ -89,8 +90,10 @@ tags:
 - [[pilot-gemini-api-key]] · [[pilot-server-domain]] · [[pilot-oauth-setup]] · [[pilot-cline-gemini-integration]] · [[pilot-game-starter-template]] · [[pilot-rehearsal-late-april]] · [[pilot-operator-guide]]
 - [[curriculum-submission-v2]] (2026-04-22) — 커리큘럼 협력사 제출용 포맷 (final)
 
-### Specs (31)
+### Specs (33)
 - [[specs/_index|_index]]
+- 🆕 ⭐ [[chalk-pedagogy-gate]] (2026-09-18) — **교육 원칙 관문 검사기 v0.** PR `#1115` 머지, 확정 시점 **14단계**로. 검사 4종·조항 매핑·결정 6건·**422** 차단. `CR-GATE-03`이 처음 코드가 됐다
+- 🆕 [[chalk-studio-architecture]] (2026-09-18) — Studio·Chalk·Service 4계층·소유 경계(`ARC-01`)·확정 14단계·저장 구조. ⛔ **확정본을 지우는 경로가 없다**
 - ⭐ [[requirement-id-index]] (2026-09-15) — **정본 요구사항 ID 767개 전수 인덱스** (`studio@04f03d0` · `lab@5c0a0859`). 계열 62 · 번호 구멍 **0** · 중복 정의 `REQ-M30` **1건** · lab 미러에 **`HC-09`·`SS-*` 없음** / studio main에 **`IC-01~07` 없음**
 - ⭐ [[chalk-requirements]] (2026-09-15) — Chalk 요구사항 정본 정리 `CR-*` 89건 / 9묶음. 정본 15문서 매핑 · 개념 사전 · 근거 지도 · **합격선의 주체·기준·임계값 전부 미확인**
 - ⭐ [[chalk-implementation-status]] (2026-09-15) — Chalk 구현 현황 (`04f03d0`). 화면 10개·D1 3테이블 / **리허설·설정핀·활성화 전부 미구현** · 이슈·PR 전수 · **운영이 main보다 PR 4건 뒤**
@@ -137,8 +140,9 @@ tags:
 - Business: [[hypeproof-business-strategy]] (2026-05-04) — 2채널 수익 전략 (비트리 채널 / 다이렉트 채널)
 - Professional Channel: [[legal-brief-prep-loop]] — 변호사 준비서면 루프 (사실 추출, 해석 분기, truthworthy 교정, pass/fail 감각)
 
-### Intel (15)
+### Intel (16)
 - [[intel/_index|_index]]
+- 🆕 [[chalk-instructor-field-reality]] (2026-09-18) — **강사 현장 실태.** 실시 회차 3건 전부 사후 기록 0건 · 계정·설치가 수업의 17% · **2시간 30분으로는 결과물이 안 나온다**
 - [[boa-dental-demand-validation]] — 보아치과/박정현 원장 AI 강의 수요 검증
 - Venue: [[environ-kukrip-amsenter]]
 - Synthesis: [[research-peds-onc-coding-ed]]

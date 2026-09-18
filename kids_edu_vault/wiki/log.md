@@ -2,7 +2,7 @@
 type: meta
 title: "Log"
 created: 2026-04-12
-updated: 2026-09-15
+updated: 2026-09-18
 tags:
   - meta/log
 ---
@@ -12,6 +12,29 @@ tags:
 볼트 변경 이력. 최신 항목이 위.
 
 ---
+
+## [2026-09-18] ingest | Chalk 관문 작업 — 결정·구현·발견 (2026-09-16~18)
+- Type: ingest (batch, 7 sources, **외부 경로**)
+- Sources: `scratchpad/chalk-scan/` 조사 보고 6건(`studio-architecture-dataflow` · `instructor-journey` · `vscodium-entry` · `lab-board-and-product-env` · `instructor-field-reality` · `studio-gate-placement`) + `HypeProof:_worklog/chalk-ops/OPS-LOG.md`
+- ⚠️ **전부 이 저장소 밖에서 왔고 이 세션이 직접 확인하지 않았다**(전언 + 조사 보고 경유). 새 페이지마다 `source_ref`와 확인 범위를 명시했다. 기준 `hypeproof-studio` main `75fe6e4` + PR `#1115`
+- 판정: **`wiki/` 트리** — 제품 실행 기록이다. 예외 1건만 `curriculum_wiki/`로 보냈다(아래)
+- Pages created: [[chalk-pedagogy-gate]] (`specs/`) · [[chalk-studio-architecture]] (`specs/`) · [[chalk-entry-point-20260918]] (`questions/`) · [[chalk-instructor-field-reality]] (`intel/`) · [[pedagogy-gate-at-service-freeze]] (`decisions/`) · [[ruling-pedagogy-gate-implementation]] (**`curriculum_wiki/gaps/`**, `type: ingest-ruling`·`scope: common`)
+- ⭐ **관문이 합의에서 코드가 됐다** — PR `#1115` 머지(09-18 13:55Z), 이슈 `#1114` 닫힘. `CR-GATE-03`("형식·권한에 더해 **내용 검사**")이 처음 구현. 확정 시점 검사가 **13 → 14단계**, 차단은 **422 `pedagogy_blocked`**. [[chalk-requirements]] §5가 못 박은 "합격선 규칙이 없다" 공백의 **첫 조각**이며 전부가 아니다 — 주체·재판정·근거 공개는 여전히 `미확인`
+- ⭐ **자리는 Chalk가 아니라 Service다** — Chalk에 두면 **생성기가 Service에 직접 요청해 우회한다**. ADR 0004가 *"내용 검사는 authoring API"*로 이미 규정하고 있었다. `ARC-01`과 충돌하지 않고 오히려 정합 → [[pedagogy-gate-at-service-freeze]]
+- ⭐ **"권한이 아니라 설계 속성"이 관문의 성격을 정했다** — 형제 정책 셋(feature·model·help-mode)은 권한이라 저장·확정·읽기 **세 번** 보지만 관문은 **확정 1회만** 본다. `readLesson()`은 관문을 부르지 않는다
+- ⭐ **완료 기준 검사는 freeze 경로에서 도달 불가이고 그게 정상이다** — 9번 `validateSessionDesign`이 `acceptance`를 이미 공백 불가로 요구해 400으로 먼저 막는다. 9번이 요구하지 **않는** 것이 `prerequisites`라 **선행 조건만 빈 수업이 관문까지 도달하는 유일한 모양**이고 실질 차단은 그 하나가 진다. 그런데 **그 의미가 두 층 다 미확정**이다 — **조항**(관문2-6이 활동 의존인가 학습자 선행지식인가, 볼트 몫)과 **제품 필드**(`prerequisites`에 강사가 무엇을 적는가, `CH-01`에서 온 제품 몫). **한쪽만 정하면 관문이 엉뚱한 것을 검사하게 되고, 서로 상대가 정했다고 여겨 아무도 안 정한다**
+- ⛔ **리허설은 미구현이 아니라 미결정이다** — `rehearsal: "not_run"`은 네 곳에 박힌 하드코딩 리터럴이고, **어디서 돌아야 하는지 문서가 갈라 말한다**(레이어 배정표는 Chalk / 요구사항·온보딩·`AE-11` 앱 증거는 Studio). 배정표가 가리키는 Chalk에는 **그 버튼이 없다**. 결과가 돌아올 경로도 없다 — 확정이 리허설을 기다리지 않는다
+- ⛔ **제품 정의가 Chalk의 사용 환경을 정한 적이 없다** — 웹도 앱도 명시된 바 없고 웹/앱 이원 구조는 **요구사항 층 `ARC-02`에서 처음 등장**한다(studio 소유). **진입점 재검토는 결정을 뒤집는 일이 아니라 비어 있는 결정을 처음 채우는 일이다** → [[chalk-entry-point-20260918]]
+- ⛔ **강사 페르소나가 없다** — 페르소나 3종이 전부 Studio 쪽이고 `educator-chalk`는 `status: new`(미조사). 제3자 강사 운영 회차도 **0건**(`CR-GATE-09`가 요구하는 검증 조건). *무엇을 고르든 이 공백은 남는다*
+- ⛔ **작업 41개 전부 `verification_inputs`가 비어 있다** — 비면 그 덩어리는 `fulfilled`가 될 수 없다. **완료를 증명할 근거 칸이 하나도 안 채워져 있다**
+- ⛔ **확정본을 지우는 경로가 없다** — `DELETE FROM authoring*`·`DROP TABLE` 0건, `.delete()` 핸들러 없음. ADR 0004이 그렇게 정했고 **운영자 권한으로도 제품 API로는 못 지운다**. 이것이 "시연은 프로세스 내부 러너로만" 결정의 근거다
+- ⚠️ **모바일 조항은 라이브 보드에만 걸린다** — `chalk/README.md` *"Readable in two seconds, on a phone, while walking the room."* **저작을 모바일로 한다는 서술은 없다**. 설계 문서가 경계를 긋는다 — *"390px 캡처를 모바일 Studio 앱 지원 증거로 쓰지 않는다."*
+- ✅ **딥링크는 전송로가 이미 있다** — Studio가 `hypeproof-studio://` 스킴을 등록하고 있고 프로토콜→창 열기 경로를 죽이지 않았다. 남은 것은 **수업 식별자 계약**과 **확장 `UriHandler`**(현재 `registerUriHandler` 0건). `vscodium`은 손댈 것이 없다
+- ⚠️ **`ENV-07` 미확인** — 앱의 존재는 요구사항이 전제하는데(`최소 앱 버전`) **그 앱이 무엇이고 어느 OS를 지원하는지 명시한 산출물이 없다**
+- ⚠️ **현장 실측이 없다** — 볼트 기준 실시 회차는 **셋**(5/26 맛빼기 · 7/29 치과 강의 · SK 가족 워크숍)이고 **전부 사후 현장 기록 0건**. 5/5 국립암센터는 **미실시**(연기 기록 명시). 계정·설치가 수업의 **17%**이고 *"2시간 30분으로는 결과물이 안 나온다"*가 가장 단단한 사실 → [[chalk-instructor-field-reality]]
+- 🔀 **커리큘럼 트리로 보낸 1건**: [[ruling-pedagogy-gate-implementation]]. 근거 — 조항이 **밖으로 나가 코드가 된 사건**과 **되돌아온 판정 요구 2건**(`prerequisites` 의미 · 성인 라인 `scope` 값)은 3년 뒤 다른 강의를 만들 때도 본다. `scope: common`(두 라인 공통 사안)
+- 📌 **[[curriculum-schema]]의 "lint 1~12 전부 미구현" 문장을 정정했다** — **lint 2는 구현됐다. 단 이 볼트가 아니라 `hypeproof-studio`에서다.** 조항은 복사되지 않았고 주석에 ID·경로·인용만 남았다 → **이 볼트가 여전히 정본이다**
+- Pages updated: [[chalk]](2026-09-18절 신설 + 헤더 링크) · [[chalk-requirements]](§B 관문에 구현 표시 + §5 부분 갱신 주석) · [[chalk-implementation-status]](related) · [[curriculum-schema]](lint 정정) · [[lesson-plan-quality-checklist]](관문2 세 항목 제품화 주석) · [[curriculum-index]] · [[specs/_index]] · [[questions/_index]] · [[decisions/_index]] · [[intel/_index]] · [[index]] · [[hot]] · [[log]] · [[curriculum-log]] · `.raw/.manifest.json`
 
 ## [2026-09-15] spec | 요구사항 ID 전수 인덱스 — 767개 ID, 한 행씩
 - Type: spec (신규) · 요청자 [[jay-lee]]: *"lab에 코드 기반으로 요구사항이 정의돼 있으니, 위키에서도 그 코드와 함께 빠짐없이 모든 코드에 해당하는 요구사항을 확인할 수 있게 해달라"*

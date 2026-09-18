@@ -93,8 +93,9 @@ tags:
 - [[lesson-plan-authoring-guide]] — 작성 순서·12절 규격·강사 자유도
 - [[lesson-plan-quality-checklist]] — 3관문 검증
 
-## gaps/ — 미해결 (4)
+## gaps/ — 미해결 (5)
 
+- 🆕 [[ruling-pedagogy-gate-implementation]] (`common`) — **조항 4건이 제품 검사로 구현됐다.** lint 2가 첫 구현체를 얻었다. 되돌아온 판정 요구 2건 — `prerequisites`의 의미 · 성인 라인 `scope` 값
 - [[edu-11-16-research-plan]] — 조사 계획·진행 상황·미조사 목록
 - [[ruling-profile-based-differentiation]] — `.raw` 승격 판정
 - [[ruling-startup-ir-asset-alignment]] — 창업·IR 라인 자산 승계 판정. **7 Assets 전면 / No-Debug 미승계**

@@ -68,6 +68,10 @@ tags:
 
 관문 1과 2의 대부분은 프론트매터 검사로 기계화 가능하다. `/wiki-lint` 확장 대상. → [[curriculum-schema]]
 
+> 🆕 **2026-09-18 — 관문 2의 세 항목이 제품 검사가 됐다.** `hypeproof-studio` 확정 핸들러(PR `#1115`):
+> **2-2**(성취기준 관찰 가능 동사) → `step_acceptance` *차단, 단 단계 단위 파생* · **2-6**(`requires` 선행) → `lesson_prerequisites` *차단, **조항 미확정*** · **2-9**(±10분) → `duration_consistency` *시간 필드가 없어 판정 불가*.
+> ⚠️ **관문 1은 켜지 못했다** — 헌법이 아동·청소년 전제인데 제품 범위에 성인 전문직 수업이 있다. 층 구분 값이 선행돼야 한다. → [[ruling-pedagogy-gate-implementation]]
+
 관문 3은 사람이 본다.
 
 ## 관련

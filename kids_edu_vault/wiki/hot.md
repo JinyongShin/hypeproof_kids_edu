@@ -2,12 +2,12 @@
 type: meta
 title: "Hot Cache"
 created: 2026-04-12
-updated: 2026-09-15
+updated: 2026-09-18
 tags:
   - meta/cache
 ---
 
-# Hot Cache — 2026-09-15
+# Hot Cache — 2026-09-18
 
 세션 시작 시 가장 먼저 읽는 캐시. **500단어 이내로 유지하고 작업이 끝날 때 덮어쓴다.** 이력은 [[log]], 목록은 [[index]].
 
@@ -31,6 +31,24 @@ tags:
 4. **10/3** [[bongho-tae]] 변호사+치과 원장 미팅 (케이스별 사업구조 + 1·2·3차 리뷰) · **10/7** [[jehyeong]] 치과 워크숍
 5. 워크숍(팀) **추석 이후로 연기** — [[jinyong-shin]]이 일정 투표·장소 예약
 6. ⛔ **법인·IP 귀속**(시한 8/22 경과) — Jay가 법무·IP를 회수할 의향을 밝혀 담당이 다시 Jay로 몰린다
+
+## 🆕 ⭐ Chalk 관문이 코드가 됐다 (2026-09-18)
+
+[[chalk-pedagogy-gate]] · 구조 [[chalk-studio-architecture]] · ⛔ 진입점 [[chalk-entry-point-20260918]] · 현장 [[chalk-instructor-field-reality]] · 결정 [[pedagogy-gate-at-service-freeze]] · 커리큘럼 판정 [[ruling-pedagogy-gate-implementation]]
+> ⚠️ 출처가 `hypeproof-studio`·`_worklog`이며 **볼트가 직접 확인하지 않았다**(전언). 기준 main `75fe6e4` + PR `#1115`
+
+- ★ **PR `#1115` 머지**(09-18 13:55Z), `#1114` 닫힘. `CR-GATE-03`(내용 검사)이 처음 구현. 확정 검사 **13→14단계**, 차단 **422 `pedagogy_blocked`**. §5 "합격선 규칙이 없다"의 **첫 조각이며 전부가 아니다**
+- ★ **자리는 Chalk가 아니라 Service** — Chalk에 두면 생성기가 직접 요청해 **우회**. ADR 0004가 이미 "내용 검사는 authoring API"로 규정
+- ★ **관문은 권한이 아니라 설계 속성** — 확정 **1회만** 본다. `readLesson()`은 부르지 않는다
+- ★ **실질 차단은 선행 조건 하나인데 그 조항의 의미가 미확정**(자산 의존 ↔ 학습자 선행지식). 완료 기준 검사는 9번이 먼저 400으로 막아 **도달 불가이고 그게 정상**
+- ⛔ **리허설은 미구현이 아니라 미결정** — 배정표는 Chalk / 요구사항·온보딩·`AE-11`은 Studio. **배정표가 가리키는 Chalk엔 버튼이 없다.** 결과가 돌아올 경로도 없다
+- ⛔ **제품 정의가 Chalk 사용 환경을 정한 적이 없다** — 웹/앱 이원은 요구사항 `ARC-02`에서 처음 등장. **진입점 재검토 = 비어 있는 결정을 처음 채우는 일**
+- ⛔ **강사 페르소나 없음** (3종 전부 Studio. `educator-chalk`는 `status: new`) · 제3자 강사 운영 **0건**
+- ⛔ **작업 41개 전부 `verification_inputs` 비어 있음** — 완료를 증명할 칸이 하나도 없다
+- ⛔ **확정본을 지우는 경로가 없다** — 제품 API로는 운영자도 못 지운다. → 시연은 프로세스 내부 러너로만
+- ⚠️ **모바일은 라이브 보드에만** — *"on a phone, while walking the room"*. 저작을 모바일로 한다는 서술은 없다
+- ✅ **딥링크 전송로는 이미 있다** (`hypeproof-studio://` 등록됨). 남은 건 **수업 식별자 계약 + 확장 `UriHandler`**. vscodium은 손댈 것 없음
+- 📌 **lint 2가 첫 구현체를 얻었다 — 단 다른 저장소에서.** 조항은 복사되지 않았고 **이 볼트가 정본**이다
 
 ## 🧱 Chalk — 요구사항/현황 두 장이 섰다 (2026-09-15)
 
@@ -101,7 +119,10 @@ KPI 2개: **연간 캠프 횟수** · **고객당 평균 유료 구매 전환율
 
 ## 열린 질문
 
-- ⛔ **Chalk 관문의 합격선을 누가 어떤 기준으로 정하는가** → [[chalk-requirements]] §5 · **Chalk 별도 저장소 분리**(PR #1005 요청, 결정 기록 없음)
+- ⛔ **선행 조건(`prerequisites`)의 의미 — 두 층을 함께 확정해야 한다.** 조항(볼트) + 필드 내용(제품, `CH-01` 유래). 한쪽만 정하면 관문이 엉뚱한 것을 검사한다 → [[ruling-pedagogy-gate-implementation]] §4①
+- ⛔ **진입점: 웹인가 앱인가** + **리허설을 어디에 둘 것인가** (같은 문제다) → [[chalk-entry-point-20260918]]
+- ⛔ **관문1을 켜려면 성인 라인 `scope` 값이 먼저** (= `CR-EDU-08`)
+- ⛔ **Chalk 관문의 합격선 주체·재판정·근거 공개** (기준 일부만 메워짐) → [[chalk-requirements]] §5 · **Chalk 별도 저장소 분리**(PR #1005 요청, 결정 기록 없음)
 - **[[sediment]]와 [[capability-measurement-module]]의 관계** — 되살아난 목적이 별개 모듈로 가고 있다
 - **7과 6은 언제 합쳐지는가** (커리큘럼 라인 `rules/`는 7 기준 — **사업 볼트 단독 판정 금지**)
 - **볼트·포털·Sediment 중 "팀의 기억"은 누구 몫인가**
@@ -116,4 +137,4 @@ KPI 2개: **연간 캠프 횟수** · **고객당 평균 유료 구매 전환율
 
 ## 자주 여는 곳
 
-[[2026-09-14-weekly-on-hypeproof]] · [[internal-productization]] · [[roles-kpi-proposal-20260914]] · [[chalk]] · [[chalk-requirements]] · [[chalk-implementation-status]] · [[chalk-requirement-coverage-audit]] · [[requirement-id-index]] · [[six-human-capabilities]] · [[hypeproof-operating-model]] · [[jeon-sangyeol-meeting-20260916]] · [[hypeproof-mission]]
+[[chalk-pedagogy-gate]] · [[chalk-entry-point-20260918]] · [[2026-09-14-weekly-on-hypeproof]] · [[internal-productization]] · [[roles-kpi-proposal-20260914]] · [[chalk]] · [[chalk-requirements]] · [[chalk-implementation-status]] · [[chalk-requirement-coverage-audit]] · [[requirement-id-index]] · [[six-human-capabilities]] · [[hypeproof-operating-model]] · [[jeon-sangyeol-meeting-20260916]] · [[hypeproof-mission]]

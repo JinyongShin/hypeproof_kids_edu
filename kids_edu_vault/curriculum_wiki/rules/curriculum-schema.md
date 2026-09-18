@@ -233,7 +233,9 @@ produced: []                     # 이 판정으로 생성된 자산
 11. **파일명 접두사와 `scope`가 모순 → 에러** (예: `startup-*.md` 에 `scope: edu-11-16`)
 12. 파일명이 볼트 전체(`wiki/` 포함)에서 중복 → 에러 (위키링크 해석 불가)
 
-> ⚠️ **lint 1~12 전부 미구현이다.** 규칙 10·11이 있었다면 `yeep-resource-manifest` 누락은 커밋 전에 걸렸다. → [[curriculum-hot]] P3
+> 🆕 **2026-09-18 정정 — lint 2는 구현됐다. 단 이 볼트가 아니라 `hypeproof-studio`에서다.** 교육 원칙 관문 검사기(PR `#1115`)의 `step_evidence` 검사가 lint 2와 **대상·방식·수준까지 일치**한다. 조항은 복사되지 않았고 주석에 ID·경로·인용만 남았다 — **이 문서가 여전히 정본이다.** → [[ruling-pedagogy-gate-implementation]]
+>
+> ⚠️ **나머지 lint 1·3~12는 여전히 미구현이다.** 규칙 10·11이 있었다면 `yeep-resource-manifest` 누락은 커밋 전에 걸렸다. → [[curriculum-hot]] P3
 
 ## 관련
 

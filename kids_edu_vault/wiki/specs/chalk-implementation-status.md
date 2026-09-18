@@ -13,6 +13,9 @@ tags:
   - product
   - implementation
 related:
+  - "[[chalk-pedagogy-gate]]"
+  - "[[chalk-studio-architecture]]"
+  - "[[chalk-entry-point-20260918]]"
   - "[[chalk]]"
   - "[[chalk-requirements]]"
   - "[[chalk-requirement-coverage-audit]]"

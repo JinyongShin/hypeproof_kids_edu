@@ -608,6 +608,281 @@
         "wiki/hot.md",
         "wiki/log.md"
       ]
+    },
+    ".raw/chalk-requirements-20260915.md": {
+      "hash": "75b65cd0958818ce3d4f86a0ed5bfcc9",
+      "ingested_at": "2026-09-15",
+      "source_ref": "lab session 2차 재검증판 · hypeprooflab@5c0a0859 · hypeproof-studio@04f03d0",
+      "pages_created": [
+        "wiki/specs/chalk-requirements.md"
+      ],
+      "pages_updated": [
+        "wiki/components/chalk.md",
+        "wiki/deliverables/chalk-target-shape-proposal.md",
+        "wiki/specs/capability-measurement-module.md",
+        "wiki/comms/2026-09-14-weekly-on-hypeproof.md",
+        "wiki/specs/_index.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ]
+    },
+    ".raw/chalk-studio-issues-prs-20260915.md": {
+      "hash": "d004e492dc45bfe08fbccbdc21792f25",
+      "ingested_at": "2026-09-15",
+      "source_ref": "jayleekr/hypeproof-studio@04f03d0 (2차 재검증, 1차 4195faa는 9커밋 뒤였음)",
+      "pages_created": [
+        "wiki/specs/chalk-implementation-status.md"
+      ],
+      "pages_updated": [
+        "wiki/components/chalk.md",
+        "wiki/deliverables/chalk-target-shape-proposal.md",
+        "wiki/specs/capability-measurement-module.md",
+        "wiki/comms/2026-09-14-weekly-on-hypeproof.md",
+        "wiki/specs/_index.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ]
+    },
+    ".raw/chalk-traceability-audit-20260915.md": {
+      "hash": "9aaafd3255a4b4760d2ef3ddd349459f",
+      "ingested_at": "2026-09-15",
+      "source_ref": "jayleekr/hypeproof-studio@04f03d061617e6d88e9f2b68eaa82c9933540aa5 (main=origin/main)",
+      "pages_created": [
+        "wiki/validation/chalk-requirement-coverage-audit.md"
+      ],
+      "pages_updated": [
+        "wiki/specs/chalk-requirements.md",
+        "wiki/specs/chalk-implementation-status.md",
+        "wiki/components/chalk.md",
+        "wiki/concepts/record-issuance-model.md",
+        "wiki/deliverables/jeon-sangyeol-meeting-20260916.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ]
+    },
+    ".raw/lab-requirement-id-inventory-20260915.md": {
+      "hash": "d2f327d5d20f3d89715057dd06dbca88",
+      "ingested_at": "2026-09-15",
+      "source_ref": "hypeprooflab@5c0a0859133b79c69736488a1da0e0a7f8633d0f (미러 스냅샷 hypeproof-studio@2d96413)",
+      "pages_created": [
+        "wiki/specs/requirement-id-index.md"
+      ],
+      "pages_updated": [
+        "wiki/specs/chalk-requirements.md",
+        "wiki/specs/chalk-implementation-status.md",
+        "wiki/validation/chalk-requirement-coverage-audit.md",
+        "wiki/components/chalk.md",
+        "wiki/specs/_index.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ]
+    },
+    "scratchpad/chalk-scan:studio-architecture-dataflow.md": {
+      "hash": "260630eafc1576f6c7f37778d7841aad",
+      "ingested_at": "2026-09-18",
+      "source_ref": "2026-09-16~18 Chalk 관문 작업. 기준 hypeproof-studio main 75fe6e4 + PR #1115. 볼트 밖 경로이며 이 세션이 직접 확인하지 않음(전언·조사 보고 경유)",
+      "pages_created": [
+        "wiki/specs/chalk-pedagogy-gate.md",
+        "wiki/specs/chalk-studio-architecture.md",
+        "wiki/questions/chalk-entry-point-20260918.md",
+        "wiki/intel/chalk-instructor-field-reality.md",
+        "wiki/decisions/pedagogy-gate-at-service-freeze.md",
+        "curriculum_wiki/gaps/ruling-pedagogy-gate-implementation.md"
+      ],
+      "pages_updated": [
+        "wiki/components/chalk.md",
+        "wiki/specs/chalk-requirements.md",
+        "wiki/specs/chalk-implementation-status.md",
+        "curriculum_wiki/rules/curriculum-schema.md",
+        "curriculum_wiki/design/lesson-plan-quality-checklist.md",
+        "curriculum_wiki/curriculum-index.md",
+        "curriculum_wiki/curriculum-log.md",
+        "wiki/specs/_index.md",
+        "wiki/questions/_index.md",
+        "wiki/decisions/_index.md",
+        "wiki/intel/_index.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ]
+    },
+    "scratchpad/chalk-scan:instructor-journey.md": {
+      "hash": "942113118c28838e828b59ba46436346",
+      "ingested_at": "2026-09-18",
+      "source_ref": "2026-09-16~18 Chalk 관문 작업. 기준 hypeproof-studio main 75fe6e4 + PR #1115. 볼트 밖 경로이며 이 세션이 직접 확인하지 않음(전언·조사 보고 경유)",
+      "pages_created": [
+        "wiki/specs/chalk-pedagogy-gate.md",
+        "wiki/specs/chalk-studio-architecture.md",
+        "wiki/questions/chalk-entry-point-20260918.md",
+        "wiki/intel/chalk-instructor-field-reality.md",
+        "wiki/decisions/pedagogy-gate-at-service-freeze.md",
+        "curriculum_wiki/gaps/ruling-pedagogy-gate-implementation.md"
+      ],
+      "pages_updated": [
+        "wiki/components/chalk.md",
+        "wiki/specs/chalk-requirements.md",
+        "wiki/specs/chalk-implementation-status.md",
+        "curriculum_wiki/rules/curriculum-schema.md",
+        "curriculum_wiki/design/lesson-plan-quality-checklist.md",
+        "curriculum_wiki/curriculum-index.md",
+        "curriculum_wiki/curriculum-log.md",
+        "wiki/specs/_index.md",
+        "wiki/questions/_index.md",
+        "wiki/decisions/_index.md",
+        "wiki/intel/_index.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ]
+    },
+    "scratchpad/chalk-scan:vscodium-entry.md": {
+      "hash": "340cdd973452f77513edcf24b630c8ff",
+      "ingested_at": "2026-09-18",
+      "source_ref": "2026-09-16~18 Chalk 관문 작업. 기준 hypeproof-studio main 75fe6e4 + PR #1115. 볼트 밖 경로이며 이 세션이 직접 확인하지 않음(전언·조사 보고 경유)",
+      "pages_created": [
+        "wiki/specs/chalk-pedagogy-gate.md",
+        "wiki/specs/chalk-studio-architecture.md",
+        "wiki/questions/chalk-entry-point-20260918.md",
+        "wiki/intel/chalk-instructor-field-reality.md",
+        "wiki/decisions/pedagogy-gate-at-service-freeze.md",
+        "curriculum_wiki/gaps/ruling-pedagogy-gate-implementation.md"
+      ],
+      "pages_updated": [
+        "wiki/components/chalk.md",
+        "wiki/specs/chalk-requirements.md",
+        "wiki/specs/chalk-implementation-status.md",
+        "curriculum_wiki/rules/curriculum-schema.md",
+        "curriculum_wiki/design/lesson-plan-quality-checklist.md",
+        "curriculum_wiki/curriculum-index.md",
+        "curriculum_wiki/curriculum-log.md",
+        "wiki/specs/_index.md",
+        "wiki/questions/_index.md",
+        "wiki/decisions/_index.md",
+        "wiki/intel/_index.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ]
+    },
+    "scratchpad/chalk-scan:lab-board-and-product-env.md": {
+      "hash": "ff5d1098e7faf19a26c625b13b3f4173",
+      "ingested_at": "2026-09-18",
+      "source_ref": "2026-09-16~18 Chalk 관문 작업. 기준 hypeproof-studio main 75fe6e4 + PR #1115. 볼트 밖 경로이며 이 세션이 직접 확인하지 않음(전언·조사 보고 경유)",
+      "pages_created": [
+        "wiki/specs/chalk-pedagogy-gate.md",
+        "wiki/specs/chalk-studio-architecture.md",
+        "wiki/questions/chalk-entry-point-20260918.md",
+        "wiki/intel/chalk-instructor-field-reality.md",
+        "wiki/decisions/pedagogy-gate-at-service-freeze.md",
+        "curriculum_wiki/gaps/ruling-pedagogy-gate-implementation.md"
+      ],
+      "pages_updated": [
+        "wiki/components/chalk.md",
+        "wiki/specs/chalk-requirements.md",
+        "wiki/specs/chalk-implementation-status.md",
+        "curriculum_wiki/rules/curriculum-schema.md",
+        "curriculum_wiki/design/lesson-plan-quality-checklist.md",
+        "curriculum_wiki/curriculum-index.md",
+        "curriculum_wiki/curriculum-log.md",
+        "wiki/specs/_index.md",
+        "wiki/questions/_index.md",
+        "wiki/decisions/_index.md",
+        "wiki/intel/_index.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ]
+    },
+    "scratchpad/chalk-scan:instructor-field-reality.md": {
+      "hash": "eb61c159a393cbb36c0fe05318f3a25c",
+      "ingested_at": "2026-09-18",
+      "source_ref": "2026-09-16~18 Chalk 관문 작업. 기준 hypeproof-studio main 75fe6e4 + PR #1115. 볼트 밖 경로이며 이 세션이 직접 확인하지 않음(전언·조사 보고 경유)",
+      "pages_created": [
+        "wiki/specs/chalk-pedagogy-gate.md",
+        "wiki/specs/chalk-studio-architecture.md",
+        "wiki/questions/chalk-entry-point-20260918.md",
+        "wiki/intel/chalk-instructor-field-reality.md",
+        "wiki/decisions/pedagogy-gate-at-service-freeze.md",
+        "curriculum_wiki/gaps/ruling-pedagogy-gate-implementation.md"
+      ],
+      "pages_updated": [
+        "wiki/components/chalk.md",
+        "wiki/specs/chalk-requirements.md",
+        "wiki/specs/chalk-implementation-status.md",
+        "curriculum_wiki/rules/curriculum-schema.md",
+        "curriculum_wiki/design/lesson-plan-quality-checklist.md",
+        "curriculum_wiki/curriculum-index.md",
+        "curriculum_wiki/curriculum-log.md",
+        "wiki/specs/_index.md",
+        "wiki/questions/_index.md",
+        "wiki/decisions/_index.md",
+        "wiki/intel/_index.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ]
+    },
+    "scratchpad/chalk-scan:studio-gate-placement.md": {
+      "hash": "f28ec49532fd615928170950a2c9ca0e",
+      "ingested_at": "2026-09-18",
+      "source_ref": "2026-09-16~18 Chalk 관문 작업. 기준 hypeproof-studio main 75fe6e4 + PR #1115. 볼트 밖 경로이며 이 세션이 직접 확인하지 않음(전언·조사 보고 경유)",
+      "pages_created": [
+        "wiki/specs/chalk-pedagogy-gate.md",
+        "wiki/specs/chalk-studio-architecture.md",
+        "wiki/questions/chalk-entry-point-20260918.md",
+        "wiki/intel/chalk-instructor-field-reality.md",
+        "wiki/decisions/pedagogy-gate-at-service-freeze.md",
+        "curriculum_wiki/gaps/ruling-pedagogy-gate-implementation.md"
+      ],
+      "pages_updated": [
+        "wiki/components/chalk.md",
+        "wiki/specs/chalk-requirements.md",
+        "wiki/specs/chalk-implementation-status.md",
+        "curriculum_wiki/rules/curriculum-schema.md",
+        "curriculum_wiki/design/lesson-plan-quality-checklist.md",
+        "curriculum_wiki/curriculum-index.md",
+        "curriculum_wiki/curriculum-log.md",
+        "wiki/specs/_index.md",
+        "wiki/questions/_index.md",
+        "wiki/decisions/_index.md",
+        "wiki/intel/_index.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ]
+    },
+    "HypeProof:_worklog/chalk-ops/OPS-LOG.md": {
+      "hash": "7d3e6ce12634cae216d4b1495a79e45d",
+      "ingested_at": "2026-09-18",
+      "source_ref": "2026-09-16~18 Chalk 관문 작업. 기준 hypeproof-studio main 75fe6e4 + PR #1115. 볼트 밖 경로이며 이 세션이 직접 확인하지 않음(전언·조사 보고 경유)",
+      "pages_created": [
+        "wiki/specs/chalk-pedagogy-gate.md",
+        "wiki/specs/chalk-studio-architecture.md",
+        "wiki/questions/chalk-entry-point-20260918.md",
+        "wiki/intel/chalk-instructor-field-reality.md",
+        "wiki/decisions/pedagogy-gate-at-service-freeze.md",
+        "curriculum_wiki/gaps/ruling-pedagogy-gate-implementation.md"
+      ],
+      "pages_updated": [
+        "wiki/components/chalk.md",
+        "wiki/specs/chalk-requirements.md",
+        "wiki/specs/chalk-implementation-status.md",
+        "curriculum_wiki/rules/curriculum-schema.md",
+        "curriculum_wiki/design/lesson-plan-quality-checklist.md",
+        "curriculum_wiki/curriculum-index.md",
+        "curriculum_wiki/curriculum-log.md",
+        "wiki/specs/_index.md",
+        "wiki/questions/_index.md",
+        "wiki/decisions/_index.md",
+        "wiki/intel/_index.md",
+        "wiki/index.md",
+        "wiki/hot.md",
+        "wiki/log.md"
+      ]
     }
   }
 }

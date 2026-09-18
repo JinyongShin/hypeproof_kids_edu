@@ -17,6 +17,9 @@ related:
   - "[[chalk-requirement-coverage-audit]]"
   - "[[requirement-id-index]]"
   - "[[chalk-target-shape-proposal]]"
+  - "[[chalk-pedagogy-gate]]"
+  - "[[chalk-studio-architecture]]"
+  - "[[chalk-entry-point-20260918]]"
   - "[[capability-measurement-module]]"
   - "[[six-human-capabilities]]"
   - "[[hypeproof-studio]]"
@@ -105,6 +108,10 @@ related:
 | CR-DEF-08 | **수업 설계 형식(스키마) 소유자를 확정한다** (제안: Service) | 없음 — 미결 |
 
 ### B. 관문 (CR-GATE, 9) — 가장 최근에 추가된 축
+
+> [!key-insight] 🆕 2026-09-18 — `CR-GATE-02`·`CR-GATE-03`이 구현됐다
+> 관문 검사기가 PR `#1115`로 머지됐다. **구현 자리는 확정(freeze) 시점**(= `CR-GATE-02`가 요구한 그대로)이고, **내용 검사**(= `CR-GATE-03`)가 형식·권한 축에 더해졌다. 단 자리는 Chalk가 아니라 **Service의 확정 핸들러**다 — Chalk에 두면 우회되기 때문. → [[chalk-pedagogy-gate]] · [[pedagogy-gate-at-service-freeze]]
+> 나머지 7건은 그대로다. 특히 `CR-GATE-08`(`RUN-01` 학생 조건 리허설)은 **미구현이면서 동시에 미결정**임이 이번에 드러났다 → [[chalk-entry-point-20260918]]
 
 | ID | 요구사항 | 정본 ID |
 |---|---|---|
@@ -205,6 +212,10 @@ related:
 반대 방향 1건: `HC-07`(비용·토큰량은 역량 등급이 아니다)은 교육 설계 자산 쪽에 없던 조항이다.
 
 ## 5. ⛔ 가장 큰 공백 — 합격선을 누가 어떤 기준으로 정하는가
+
+> [!note] 🆕 2026-09-18 부분 갱신
+> 아래 공백 중 **"기준"의 일부가 메워졌다** — 검사 항목 4종과 임계값(±10분)이 커리큘럼 조항에서 나와 코드가 됐다([[chalk-pedagogy-gate]]).
+> **그러나 주체·층위·재판정·근거 공개는 그대로 `미확인`**이고, 유일한 실질 차단 검사인 **선행 조건의 의미 자체가 미확정**이다([[ruling-pedagogy-gate-implementation]]). 아래 표는 유효하다.
 
 > [!warning] 관문이 필요하다는 합의는 있고, 관문을 통과시키는 규칙은 어디에도 없다.
 > 그리고 관문의 재료 세 줄(`RUN-01`·`RUN-02`·`VER-02`)은 전수 대조에서 **전부 미구현**으로 확인됐다 → [[chalk-requirement-coverage-audit]]
