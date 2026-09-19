@@ -50,7 +50,7 @@ tags:
 - `research-*` prefix = 여러 case를 묶은 합성.
 
 ## Chalk
-- 🆕 [[chalk-instructor-field-reality]] (2026-09-18) — **강사 현장 실태.** 실시 회차 3건 전부 사후 현장 기록 0건. 계정·설치가 최대 병목(수업의 17%) · 2시간 30분으로는 결과물이 안 나온다
+- 🆕 [[chalk-instructor-field-reality]] (2026-09-18) — **강사 현장 실태.** **이 볼트 기준** 실시 회차 3건 전부 사후 현장 기록 0건(⚠️ **lab에는 있다** — 2026-09-19 경계 정정). 계정·설치가 최대 병목(수업의 17%) · 2시간 30분으로는 결과물이 안 나온다
 
 ## LLM Pulse
 - [[intel/llm-pulse/_index|llm-pulse/_index]] — LLM Pulse 아카이브 인덱스
